@@ -1,0 +1,7 @@
+{% if locations %}
+<ul class="list-location">
+{% for location in locations %}
+<li data-checked-location="{{ location.id }}" class="list-location-item">{{ location.real_name }} - {{ location.nom }}, {{ location.name_fr }}</li>
+{% endfor %}
+</ul>
+{% endif %}

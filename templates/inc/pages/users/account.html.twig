@@ -1,0 +1,31 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+<div class="atypikhouse-container">
+
+{{ form_start(form) }}
+{{ form_label(form.value) }}
+{{ form_widget(form.value, {'value': iban, 'pattern':'de'}) }}
+{{ form_errors(form.value) }}
+<button type="submit" name="insert-rib" class="click click-success">Sauvegarder</button>
+{{ form_end(form) }}
+
+<table id="historical-table" class="text-center ath-table-form">
+    <thead>
+        <tr>
+            <th>Ticket</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ATH123</td>
+            <td>1523€</td>
+            <td>En cours de traitement</td>
+            <td><input type="submit" class="click click-success" value="Être payer" name="btn-valid"></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+{% include 'inc/parts/footer.html.twig' %}

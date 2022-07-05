@@ -1,0 +1,229 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+
+
+<div class="atypikhouse-container my-6">
+    <div class="page-title">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="navigation-link d-flex gap-1 my-3">
+        <a data-checked="add" class="click click-success">Ajouter une habitation</a>
+        <a data-checked="delete" class="click click-c5">Habitations</a>
+    </div>
+    <div class="host-wrapper" data-selected="add" >
+        {{ form_start(form) }}
+        <div class="img-uploaded"></div>
+        <h3>Essentiels</h3>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title) }}
+                    {{ form_errors(form.title) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.abstract) }}
+                    {{ form_widget(form.abstract) }}
+                    {{ form_errors(form.abstract) }}
+                </div>
+            </div>
+            <div>
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.price) }}
+                    {{ form_widget(form.price) }}
+                    {{ form_errors(form.price) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.pictures) }}
+                    {{ form_widget(form.pictures) }}
+                    {{ form_errors(form.pictures) }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.address) }}
+                    {{ form_widget(form.address) }}
+                    {{ form_errors(form.address) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.complAddress) }}
+                    {{ form_widget(form.complAddress) }}
+                    {{ form_errors(form.complAddress) }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.country) }}
+                    {{ form_widget(form.country) }}
+                    {{ form_errors(form.country) }}
+                </div>
+                <div class="location-inner form-group bloc-lg-6">
+                    <label>Emplacement (Important de sélectionner le pays avant)*</label>
+                    <input type="text" data-link="{{ path('location') }}" class="seach-location" name="seach_location" placeholder="Rechercher la ville de votre habitation" required>
+                    <div class="location-content search-place"></div>
+                    <input type="hidden" name="value_location">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.city) }}
+                    {{ form_widget(form.city) }}
+                    {{ form_errors(form.city) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.state) }}
+                    {{ form_widget(form.state) }}
+                    {{ form_errors(form.state) }}
+                </div>
+            </div>
+        <h3>Informations complémentaires</h3>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label for="animals">Animaux *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="animals_accepted" class="w-max-content" name="animals" value="TRUE" checked> <label for="animals_accepted">Acceptés</label></div>
+                            <div><input type="radio" id="animals_not_accepted" class="w-max-content" name="animals" value="FALSE"> <label for="animals_not_accepted">Pas acceptés</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label for="breakfast">Petit déjeuner *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="breakfast_accepted" class="w-max-content" name="breakfast" value="TRUE" checked> <label for="breakfast_accepted">Compris</label></div>
+                            <div><input type="radio" id="breakfast_not_accepted" class="w-max-content" name="breakfast" value="FALSE"> <label for="breakfast_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label for="water">Eau *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="water_accepted" class="w-max-content" name="water" value="TRUE" checked> <label for="water_accepted">Compris</label></div>
+                            <div><input type="radio" id="water_not_accepted" class="w-max-content" name="water" value="FALSE"> <label for="water_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label for="eletricity">Électricité *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="eletricity_accepted" class="w-max-content" name="eletricity" value="TRUE" checked> <label for="eletricity_accepted">Compris</label></div>
+                            <div><input type="radio" id="eletricity_not_accepted" class="w-max-content" name="eletricity" value="FALSE"> <label for="eletricity_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                {# <div class="form-group bloc-lg-6">
+                    {{ form_label(form.value) }}
+                    {{ form_widget(form.value) }}
+                    {{ form_errors(form.value) }}
+                </div> #}
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label for="parking">Parking *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="parking_accepted" class="w-max-content" name="parking" value="TRUE" checked> <label for="parking_accepted">Compris</label></div>
+                            <div><input type="radio" id="parking_not_accepted" class="w-max-content" name="parking" value="FALSE"> <label for="parking_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label for="minimum_age">Âge minimum *</label>
+                            <select name="minimum_age">
+                                <option value="0">0</option>
+                                <option value="3">3</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label for="surface">Surface habitable *</label>
+                            <input type="number" name="surface" id="surface" min="10" required>
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label for="piece">Nombre de pièce *</label>
+                            <input type="number" name="piece" id="piece" min="1" required value="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label for="arrival_from">Arrivée à partir de *</label>
+                            <select name="arrival_from" id="arrival_from">
+                                <option value="12h00">12h00</option>
+                                <option value="13h00">13h00</option>
+                                <option value="14h00">14h00</option>
+                                <option value="15h00">15h00</option>
+                                <option value="16h00">16h00</option>
+                            </select>
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label for="arrival_until">Arrivée jusqu'à *</label>
+                            <select name="arrival_until" id="arrival_until">
+                                <option value="20h00">20h00</option>
+                                <option value="21h00">21h00</option>
+                                <option value="22h00">22h00</option>
+                                <option value="23h00">23h00</option>
+                                <option value="23h59">23h59</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label for="departure_before">Départ avant *</label>
+                            <select class="required" name="departure_before">
+                                <option value="12h00">12h00</option>
+                                <option value="13h00">13h00</option>
+                                <option value="14h00">14h00</option>
+                                <option value="15h00" selected>15h00</option>
+                                <option value="16h00">16h00</option>
+                            </select>
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label for="max_people">Maximum de personnes *</label>
+                            <input type="number" name="max_people" id="max_people" min="1" required value="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label for="equipments">Équipements *(Séparez les équipements par une virgule)</label>
+                <textarea placeholder="Exemple: Lave linge,Parking,Cuisine,Wifi,Détecteur de fumée,Micro-ondes,Shampooing" name="equipments" id="equipments"></textarea>
+            </div>
+
+            <button type="submit" class="click click-success" name="add_dwelling">Ajouter ce logement</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

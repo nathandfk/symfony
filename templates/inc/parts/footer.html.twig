@@ -1,0 +1,64 @@
+    <footer class="footer bg-c5 py-3" id="footer">
+        <div class="atypikhouse-container">
+            <div class="footer-line-1">
+                <div class="d-grid grid-lg-4 grid-md-4 grid-sm-4">
+                    <div>
+                        <p><i class="fas fa-credit-card"></i> Paiement sécurisé</p>
+                        <p><i class="fas fa-clock"></i> Réservation 24H/24 - 7J/7</p>
+                        <p><i class="fas fa-headset"></i> Service client</p>
+                        <p><i class="fas fa-credit-card"></i> Traveller’s Choice 2022</p>
+                        <div class="w-7r">
+                            <img src="{{ ath_link }}/assets/pictures/logo-ath1.png" alt="AtypikHouse Logo">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="ff-m">Membres</h4>
+                        {% if not app.user %}
+                        <p><a href="{{ path('register') }}">S'inscrire</a></p>
+                        <p><a href="{{ path('register') }}">Mode hôte</a></p>
+                        {% else %}
+                        <p><a href="{{ path('host') }}">Mode hôte</a></p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h4 class="ff-m">Assistance</h4>
+                        <p><a href="{{ path('contact') }}">Contact</a></p>
+                        <p><a href="">Annuler une réservation</a></p>
+                        <p><a href="javascript:void(0);" data-popup = 'covid'>Nos mésures face au Covid-19</a></p>
+                        <p><a href="{{ path('contact', {'object': 'problème'}) }}">Signaler un problème</a></p>
+                    </div>
+                    <div>
+                        <h4 class="ff-m">Autres</h4>
+                        <p><a href="">A propos</a></p>
+                        <p><a href="">Actualité</a></p>
+                        <p><a href="">Réservation</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-line-2">
+                <div class="d-flex gap-1 m-auto w-max-content">
+                    <i class="fab fa-cc-visa size28"></i>
+                    <i class="fab fa-cc-amex size28"></i>
+                    <i class="fab fa-cc-mastercard size28"></i>
+                </div>
+                <hr class="my-3">
+                <div class="d-flex jc-space-between">
+                    <div>© 2022 AtypikHouse</div>
+                    <div class="d-flex gap-1">
+                        <a href="{{ path('legalnotice') }}">Mentions légales</a>
+                        <a href="{{ path('cgv') }}">CGV</a>
+                        <a href="{{ path('cgu') }}">CGU</a>
+                        <a href="{{ path('faq') }}">FAQ</a>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <a href=""><i class="fab fa-facebook-f size22"></i></a>
+                        <a href=""><i class="fab fa-tiktok size22"></i></a>
+                        <a href=""><i class="fab fa-instagram size22"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="append-script"></div>
+    </body>
+</html>

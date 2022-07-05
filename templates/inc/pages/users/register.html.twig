@@ -1,0 +1,101 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+{% if carousel == true %}
+{% include 'inc/parts/carousel.html.twig' %}
+{% endif %}
+
+<div class="atypikhouse-container my-6">
+    <div class="page-title">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    <div class="user-wrapper my-3">
+        <div class="user-register form-style">
+            <h2>S'inscrire</h2>
+            {{ form_start(form) }}
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.firstName) }}
+                        {{ form_widget(form.firstName) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.lastName) }}
+                        {{ form_widget(form.lastName) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.society) }}
+                        {{ form_widget(form.society) }}
+                        {{ form_errors(form.society) }}
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.birthday) }}
+                        {{ form_widget(form.birthday) }}
+                        {{ form_errors(form.birthday) }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.phoneNumber) }}
+                        {{ form_widget(form.phoneNumber) }}
+                        {{ form_errors(form.phoneNumber) }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.address) }}
+                        {{ form_widget(form.address) }}
+                        {{ form_errors(form.address) }}
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.complAddress) }}
+                        {{ form_widget(form.complAddress) }}
+                        {{ form_errors(form.complAddress) }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.city) }}
+                        {{ form_widget(form.city) }}
+                        {{ form_errors(form.city) }}
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.country) }}
+                        {{ form_widget(form.country) }}
+                        {{ form_errors(form.country) }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.password.first) }}
+                        {{ form_widget(form.password.first, {'attr': {required: 'required'}}) }}
+                        {{ form_errors(form.password.first) }}
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        {{ form_label(form.password.second) }}
+                        {{ form_widget(form.password.second, {'attr': {required: 'required'}}) }}
+                        {{ form_errors(form.password.second) }}
+                    </div>
+                </div>
+                <div>
+                    <input type="checkbox" class="w-max-content" name="register-opt-in" id="register-opt-in" required>
+                    <label for="register-opt-in">Je reconnais avoir lu <a href="{{ path('cgu') }}" class="c1">les conditions générales</a> de AtypikHouse</label>
+                </div>
+                <div class="form-group">
+                    <button class="click click-brown ml-auto" name="click-register">Je m'inscris</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

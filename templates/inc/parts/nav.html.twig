@@ -1,0 +1,32 @@
+<nav class="navbar" id="navbar">
+    <div class="atypikhouse-navbar-wrapper atypikhouse-container">
+        <div class="atypikhouse-navbar-display"> 
+            <div class="atypikhouse-logo">
+                <a href="{{ path('app_index') }}"><img src="{{ ath_link }}/assets/pictures/logo-ath4.png"></a>
+            </div>
+            <ul class="atypikhouse-menu">
+                <li><a href="{{ path('app_habitations') }}">Habitations</a></li>
+                <li><a href="{{ path('host') }}">Mode hôte</a></li>
+                <li><a href="{{ path('contact') }}">Contact</a></li>
+                <li><a class="fas fa-search size18 popup-open-search" href="javascript:void(0);"></a></li>
+            </ul>
+            <div class="atypikhouse-account">
+                <ul class="atypikhouse-account-menu" id="atypikhouse-account-menu">
+                    <a href="" class="navbar-account"><div class="navbar-user-rounded"><span class="fas fa-user"></span></div> <span>{% if app.user %}{{ app.user.firstName }} {{ app.user.lastName }}{% else %}Mon compte{% endif %}</span></a>
+                    <ul class="atypikhouse-account-submenu">
+                        {% if app.user %}
+                        <li><a href="{{ path('dashboard') }}">Mon compte</a></li>
+                        <li><a href="{{ path('payment') }}">Paiement</a></li>
+                        <li><a href="{{ path('message') }}">Messages</a></li>
+                        <li><a href="{{ path('historical') }}">Historique</a></li>
+                        <li class="click-brown"><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                        {% else %}
+                        <li><a href="{{ path('login') }}">Connexion</a></li>
+                        <li><a href="{{ path('register') }}">Inscription</a></li>
+                        {% endif %}
+                    </ul>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

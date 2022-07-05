@@ -1,0 +1,216 @@
+:root{
+    --c1: #2E7C30;
+    --hover-c1: #266929;
+    --c2: #5B3E36;
+    --hover-c2: #49322b;
+    --c3: #000000;
+    --c4: #ffffff;
+    --c5: #F5F5F5;
+
+    --black5: rgba(0 0 0 / 5%);
+    --black10: rgba(0 0 0 / 10%);
+    --black20: rgba(0 0 0 / 20%);
+    --black30: rgba(0 0 0 / 30%);
+    --black50: rgba(0 0 0 / 50%);
+    --black75: rgba(0 0 0 / 75%);
+    --black80: rgba(0 0 0 / 80%);
+}
+html, body{
+    color: var(--c3);
+}
+button{
+    background-color: transparent;
+}
+a, a:active, a:hover{
+    color: currentColor;
+}
+.navbar-account{
+    background: var(--black10);
+}
+.atypikhouse-account-menu > ul > li:hover{
+    background-color: var(--black10);
+}
+.atypikhouse-account-submenu{
+    background-color: var(--c4);
+}
+.c1, #c1{
+    color: var(--c1);
+}
+.c2, #c2{
+    color: var(--c2);
+}
+.c3, #c3{
+    color: var(--c3);
+}
+.c4, #c4{
+    color: var(--c4);
+}
+.c5, #c5{
+    color: var(--c4);
+}
+
+.bg-c1, #bg-c1{
+    background-color: var(--c1);
+}
+.bg-c2, #bg-c2{
+    background-color: var(--c2);
+}
+.bg-c3, #bg-c3{
+    background-color: var(--c3);
+}
+.bg-c4, #bg-c4{
+    background-color: var(--c4);
+}
+.bg-c5, #bg-c5{
+    background-color: var(--c5);
+}
+
+
+.header-text{
+    color: var(--c4);
+}
+.header-cover, .additional-cover{
+    background-color: var(--black30);
+}
+.section-why-form>span{
+    background-color: var(--black10);
+}
+
+#newsletter-form{
+    background-color: var(--c4);
+}
+
+.border-radius-form{
+    border-radius: 7px;
+    overflow: hidden;
+}
+.box-shadow{
+    box-shadow: 0px 0px 7px var(--black30);
+}
+.popup-search{
+    background: var(--c4);
+}
+.travelers{
+    background: var(--c4);
+}
+.more-picture{
+    background: var(--black50);
+    color: var(--c4);
+}
+.product-galery{
+    background: var(--c4);
+}
+.close-product-galery{
+    background: var(--c4);
+}
+.date-arrival-selected{
+    background: var(--c1);
+    color: var(--c4) !important;
+    border-color: var(--c1);
+}
+.date-departure-selected{
+    background: var(--c2);
+    color: var(--c4) !important;
+    border-color: var(--c2);
+}
+.date-arrival-selected:hover{
+    background: var(--c1);
+    color: var(--c4);
+    border-color: var(--c1) !important;
+}
+.date-departure-selected:hover{
+    background: var(--c2);
+    color: var(--c4) !important;
+    border-color: var(--c2);
+}
+.choice-travelers{
+    background: var(--c4);
+}
+.date-is-disponible{
+    color: black;
+}
+.date-is-disponible:hover{
+    color: black;
+}
+/* .search-departure-date .date-is-disponible:not(.date-arrival-selected):hover{
+    color: var(--c4);
+    background: var(--c2);
+} */
+.search-arrival-date .date-is-disponible:hover{
+    color: var(--c4);
+    background: var(--c1);
+}
+.notification-card{
+    background-color: var(--c1);
+    color: var(--c4);
+}
+.ath-table-form tbody>tr:nth-child(2n+2){
+    background-color: var(--black10);
+}
+.ath-table-form thead{
+    background-color: var(--black10);
+}
+.next{
+    background-color: var(--c1);
+    color: var(--c4);
+}
+.previous{
+    background-color: var(--c2);
+    color: var(--c4);
+}
+
+
+.click-brown{
+    background-color: var(--c2);
+    color: var(--c4);
+}
+.click-brown:hover{
+    background-color: var(--hover-c2) !important;
+    color: var(--c4);
+}
+
+.click-light-green{
+    background-color: var(--c4);
+    color: var(--c1);
+}
+.click-light-green:hover{
+    background-color: var(--c5);
+    color: var(--c1);
+}
+.click-danger{
+    background-color: darkred;
+    color: var(--c4);
+}
+.click-success{
+    background-color: var(--c1);
+    color: var(--c4);
+}
+.click-success:hover{
+    background-color: var(--hover-c1);
+    color: var(--c4);
+}
+.click-c5{
+    background-color: var(--c5);
+    color: var(--c3);
+}
+.choice-discussion:hover{
+    background-color: var(--c1);
+    color: var(--c4);
+}
+.alert-success{
+    background-color: var(--c1);
+    color: var(--c4);
+}
+.list-location{
+    background-color: var(--c4);
+}
+.list-location > li{
+    padding: 5px;
+    background-color: var(--c5);
+    margin: 5px 0px;
+    transition: all .2s;
+}
+.list-location > li:hover{
+    background-color: var(--c1);
+    color: var(--c4);
+}

@@ -1,0 +1,51 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+
+
+<div class="atypikhouse-container my-6">
+    <div class="page-title">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    <div class="message-wrapper">
+        <div class="message-col1">
+            <div class="message-col1-header message-header">
+                <h4>Messages</h4>
+            </div>
+            <div class="message-col1-body message-body">
+                {% for i in 0..9 %}
+                <div class="bg-c5 choice-discussion">
+                    <h4>Nathan DIAFOUKA</h4>
+                    <h5>23/01/2022 12h04</h5>
+                    <p>Votre demande de réservation a été accepté, merci de trouver ci-dessous l'adresse complète et les indications</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="message-col2">
+            <div class="message-col2-header message-header">
+                <h4>Nathan DIAFOUKA</h4>
+            </div>
+            <div class="message-col2-body message-body">
+                {% for i in 0..4 %}
+                <div class="content-message message-received bg-c1 c4">
+                    <h4>Nathan DIAFOUKA</h4>
+                    <h5>23/01/2022 12h04</h5>
+                    <p>Votre demande de réservation a été accepté, merci de trouver ci-dessous l'adresse complète et les indications</p>
+                </div>
+                <div class="content-message message-send bg-c2 c4">
+                    <h4>Nathan DIAFOUKA</h4>
+                    <h5>23/01/2022 12h04</h5>
+                    <p>Votre demande de réservation a été accepté, merci de trouver ci-dessous l'adresse complète et les indications</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="message-col2-footer">
+                <textarea></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

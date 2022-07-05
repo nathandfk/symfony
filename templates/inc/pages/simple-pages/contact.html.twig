@@ -1,0 +1,58 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+{% if carousel == true %}
+{% include 'inc/parts/carousel.html.twig' %}
+{% endif %}
+
+
+<div class="atypikhouse-container">
+    <div class="page-title">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p>Les champs avec un indice (*) sont à renseigner obligatoirement.</p>
+    <div class="contact-form grid-lg-2 my-4 border-radius-form box-shadow">
+        <div>
+            <img src="assets/pictures/pic-ath3.jpg" alt="Image du formulaire de contact"/>
+        </div>
+        <form class="p-2">
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <label>Prénom *</label>
+                    <input type="text" placeholder="Prénom *" name="first-name" required>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <label>Nom *</label>
+                    <input type="text" placeholder="Nom *" name="last-name" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <label>Téléphone</label>
+                    <input type="text" placeholder="Téléphone" name="first-name">
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <label>E-mail *</label>
+                    <input type="text" placeholder="E-mail *" name="last-name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Objet *</label>
+                <input type="text" placeholder="Objet *" name="object">
+            </div>
+            <div class="form-group">
+                <label>Message *</label>
+                <textarea placeholder="Message *" name="message" required></textarea>
+            </div>
+
+            <input type="submit" class="ml-auto click click-success" value="Envoyer ma demande">
+        </form>
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

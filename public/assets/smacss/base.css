@@ -1,0 +1,68 @@
+@font-face {
+    font-family: jostLight;
+    src: url('../typography/jost/Jost-Light.ttf');
+}
+@font-face {
+    font-family: jostRegular;
+    src: url('../typography/jost/Jost-Regular.ttf');
+}
+@font-face {
+    font-family: jostMedium;
+    src: url('../typography/jost/Jost-Medium.ttf');
+}
+@font-face {
+    font-family: jostSemiBold;
+    src: url('../typography/jost/Jost-SemiBold.ttf');
+}
+@font-face {
+    font-family: jostBold;
+    src: url('../typography/jost/Jost-Bold.ttf');
+}
+*{
+    font-family: jostLight;
+    box-sizing: border-box;
+}
+html, body{
+    margin: 0;
+    padding: 0;
+}
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+a{
+    text-decoration: none;
+}
+button{
+    border: none;
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+h1, h2, h3, h4, h5, h6{
+    padding: 0;
+    margin: 0;
+}
+select{
+    -webkit-appearance: none;
+}
+input, select, textarea{
+    width: 100%;
+    padding: .5rem .8rem;
+    border-radius: 5px;
+    border: 2px solid;
+    outline: none;
+    border-color: var(--c5);
+}
+table.ath-table-form{
+    width: 100%;
+}
+.ath-table-form td, .ath-table-form th{
+    padding: 10px;
+}

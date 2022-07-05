@@ -1,0 +1,50 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+{% if carousel == true %}
+{% include 'inc/parts/carousel.html.twig' %}
+{% endif %}
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <p>Email: {{ app.user.email }}</p>
+{% endif %}
+{% if app.user %}
+    <p>Email: {{ app.user.email }}</p>
+{% endif %}
+
+<div class="atypikhouse-container my-6">
+    <div class="page-title">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    <div class="user-wrapper my-3">
+        <div class="user-login form-style">
+            <h2>Se connecter</h2>
+            <form class="user-login-form" method="post">
+                <div class="form-group">
+                    <label for="username">E-mail</label>
+                    <input type="email" name="email" value="{{ last_username }}" id="username" placeholder="Adresse électronique" required/>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" name="password" id="password" placeholder="Mot de passe" required/>
+                </div>
+                <a href="">Mot de passe oublié ?</a>
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                {% if app.user %}
+                    <div class="mb-3">
+                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="form-group">
+                    <button type="submit" name="btn-connect" class="click click-success ml-auto">Je me connecte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

@@ -1,0 +1,64 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+{% if carousel == true %}
+{% include 'inc/parts/carousel.html.twig' %}
+{% endif %}
+{% include 'inc/modules/search/popupsearch.html.twig' %}
+
+
+<div class="atypikhouse-container my-3">
+    <div class="main-page">
+        <div class="dwelling-wrapper">
+            <div class="dwelling-inner-research">
+            {% include 'inc/modules/search/search.html.twig' %}
+
+            </div> 
+            <div class="page-title my-2">
+                <h1 class="text-uppercase c1 size22 ff-r">{{ title }}</h1>
+            </div>
+            <div class="search-dwelling">
+                <div class="search-dwelling-items">
+                    {% for dwellings in dataDwellings %}
+                        <a href="{{ path('app_habitation', {'slug': dwellings[0].title, 'id': dwellings[0].id}) | replace({'%20':'-', '%c3%a9':'e', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) |lower }}" class="search-dwelling-item">
+                            <div class="search-dwelling-picture border-radius-form">
+                                {% set pictures = dwellings[0].pictures | split(',') %}
+                                <img src="{{ pictures[0] }}"/>
+                            </div>
+                            
+                            <div class="dwelling-item-info d-flex flex flex-dir-col jc-space-between gap-1">
+                                <div class="my-1 d-flex flex flex-dir-col">
+                                    <span><i class="fas fa-star c1 size18"></i> {{ dwellings[5] }} ( {{ dwellings[3].count }} {% if dwellings[3].count > 1 %} Commentaires {% else %} Commentaire {% endif %})</span>
+                                    <span>A partir de <span class="c1 ff-m size24">{{ dwellings[0].price }}€</span></span>
+                                </div>
+                                <div class="my-1">
+                                    {% for limit in dwellings[1] %}
+                                    {% if limit.field == "_limit_animals" %}
+                                    <span>{% if limit.value > 0 %}Animaux acceptés,{% else %}Animaux non acceptés,{% endif %}</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <span>etc,...</span>
+
+                                </div>
+                                <div class="my-1 d-flex flex flex-dir-col">
+                                    <span>{{ dwellings[0].title }}</span>
+                                    <span>{{ dwellings[2].real_name }} ({{ dwellings[2].code }}) - {{ dwellings[2].nom }}</span>
+                                    <span>{{ dwellings[2].name_fr }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                    <div class="btn-navigate d-flex jc-center gap-2 my-3">
+                        <a class="navigate-left click click-brown" href="">Précédent</a>
+                        <a class="navigate-right click click-success" href="">Suivant</a>
+                    </div>
+                </div>
+                <div class="search-dwelling-gps">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

@@ -1,0 +1,47 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+{% if carousel == true %}
+{% include 'inc/parts/carousel.html.twig' %}
+{% endif %}
+{% include 'inc/modules/search/popupsearch.html.twig' %}
+
+
+<div class="atypikhouse-container my-3">
+    <div class="main-page">
+        <div class="dwelling-wrapper">
+            <div class="dwelling-inner-research">
+            {% include 'inc/modules/search/search.html.twig' %}
+
+            </div> 
+            <div class="page-title my-2">
+                <h1 class="text-uppercase c1 size22 ff-r">{{ title }}</h1>
+            </div>
+            <div class="grid-lg-4 dwelling-items">
+                {% for dwellings in dataDwellings %}
+                {% set productUrl = dwellings[0].title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+                    <a href="{{ path('app_habitation', {'slug': productUrl, 'id': dwellings[0].id}) | lower }}" class="dwelling-item">
+                        <div class="dwelling-item-picture border-radius-form">
+                            {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"/>
+                        </div>
+                        
+                        <div class="dwelling-item-info">
+                            <div class="my-1"><i class="fas fa-star c1 size18"></i> {{ dwellings[5] }} ( {{ dwellings[3].count }} {% if dwellings[3].count > 1 %} Commentaires {% else %} Commentaire {% endif %})</div>
+                            <div>A partir de <span class="c1 ff-m size24">{{ dwellings[0].price }}€</span></div>
+                            <div>{{ dwellings[0].title }}</div>
+                            <div>{{ dwellings[2].real_name }} ({{ dwellings[2].code }}) - {{ dwellings[2].nom }}</div>
+                            <div class="c1 ff-m size22">{{ dwellings[2].name_fr }}</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="btn-navigate d-flex jc-center gap-2 my-3">
+            {{ knp_pagination_render(dataDwellings) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}
