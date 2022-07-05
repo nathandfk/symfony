@@ -20,6 +20,7 @@ class HostController extends AbstractController
     #[Route('/mon-compte/hote', name: 'host')]
     public function host(Request $request, DataSite $dataSite, UserInterface $user, SluggerInterface $slugger, ManagerRegistry $doctrine)
     {
+        de
 
         $dwelling = new Dwelling();
         $form = $this->createForm(DwellingType::class, $dwelling);
