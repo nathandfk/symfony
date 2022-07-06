@@ -61,10 +61,18 @@ class DwellingRepository extends ServiceEntityRepository
         return $execute->fetchAllAssociative();
     }
 
-    public function showDataDwellings(int $id=0, string $start_date = "", string $end_date = "")
+    public function showDataDwellings(int $id=0, string $start_date = "", string $end_date = "", string $place = "", int $maxPeople = 0)
     {
-
-        $id!=0 ? $where = "WHERE id = $id" : $where = "";
+        if (!empty($place)) {
+            $ex = explode(", ", $place);
+            if (count($ex) > 1) {
+                $place = $ex[0];
+            }
+        }
+        $where = "";
+        $where = $id!=0 && !empty($place) ? "WHERE id = $id AND city LIKE '%$place%'" : $where;
+        $where = !empty($place) && ($id==0) ? "WHERE city LIKE '%$place%'" : $where;
+        $where = empty($place) && ($id>0) ? "WHERE id = $id" : $where;
         !empty($start_date) && !empty($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = "";
 
         $resultDwellings = $this->showDwellings("*", $where);
@@ -83,7 +91,7 @@ class DwellingRepository extends ServiceEntityRepository
 
         foreach ($resultDwellings as $dwelling) {
             $id = $dwelling['id'];
-            $country_id = $dwelling['country_id'];
+            $country_id = $dwelling['country'];
             $user_id = $dwelling['user_id'];
             $users = $this->users->showUsers("first_name, last_name, email, roles, statut", "WHERE id= $user_id");
 
@@ -92,6 +100,17 @@ class DwellingRepository extends ServiceEntityRepository
                 continue;
             }
             $resultDwellingMeta = $this->dwelling_meta->showDwellingMeta($id);
+            if ($maxPeople > 0) {
+                $value = 0;
+                foreach ($resultDwellingMeta as $key) {
+                    if ($key['field'] == "_max_people") {
+                        $value = $key['value'];
+                    }
+                }
+                if ($value < $maxPeople) {
+                    continue;
+                }
+            }
             $location = $this->country->findOneCountry($country_id);
 
             $countComments = $this->posts->showPosts("count(*) count", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');

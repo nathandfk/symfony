@@ -42,7 +42,7 @@
                     <div class="product-page-stline">
                         <div class="product-col-1">
                             <h1 class="c1 ff-m">{{ dwelling[0].title }}</h1>
-                            <div> {{ dwelling[2].name_fr }}</div>
+                            <div>{{ dwelling[0].city }}, {{ dwelling[0].state }}, {{ dwelling[2].name_fr }}</div>
                             <div>A partir de <span class="c1 ff-m size24">{{ dwelling[0].price }}€</span></div>
                             <p>{{ dwelling[0].abstract }}</p>
                             <p><a><i class="fas fa-star size18"></i> Ajouter au favoris</a></p>
@@ -252,15 +252,28 @@
                         return [$url, $ckeck_url, $dwelling_id, $arrival, $departure, $local, $auth, "{{ path('login') }}"]
                     }
                 </script>
+                <div id="map"></div>
+                <script>
+                var ville = {
+                    "lat": "{{ dwelling[0].longitude }}", "lon": "{{ dwelling[0].latitude }}",
+                }
+                var map = L.map('map').setView([ville.lon, ville.lat], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    minZoom: 1,
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap | AtypikHouse'
+                }).addTo(map);
+                var marker = L.marker([ville.lon, ville.lat]).addTo(map);
+                {# var marker = L.marker([48.86, 2.33]).addTo(map); #}
+                </script>
 
                 {% endfor %}
         </div>
     </div>
-    <div id="map"></div>
 </div>
 
 
-<script>
+{# <script>
     var villes = {
         "Paris": {"lat": 48.852969, "lon":2.349903},
         "Brest": {"lat": 48.383, "lon": -4.500},
@@ -278,7 +291,7 @@
         .addTo(map);
         marqueur.bindPopup("<p>Paris</p>")
     }
-    {# var marker = L.marker([48.86, 2.33]).addTo(map); #}
-</script>
+    {# var marker = L.marker([48.86, 2.33]).addTo(map); 
+</script>#}
 
 {% include 'inc/parts/footer.html.twig' %}

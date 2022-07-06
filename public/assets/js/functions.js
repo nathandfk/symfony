@@ -7,6 +7,7 @@ function dom($value, $all = false, $bool = false){
     }
 }
 
+
 function notification(msg, icon) {
     localStorage.setItem('notification-msg', msg)
     localStorage.setItem('notification-icon', icon)

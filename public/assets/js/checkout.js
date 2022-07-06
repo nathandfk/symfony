@@ -16,7 +16,7 @@ if (event.target.name == 'checking-dispo' && dataProduct()[6] != "") {
 
       // The items the customer wants to buy
       const items = [{ id: "xl-tshirt" }];
-      
+
       let elements;
       
       initialize();
