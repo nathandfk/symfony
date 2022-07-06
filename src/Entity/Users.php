@@ -7,6 +7,7 @@ use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\PseudoTypes\False_;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -39,7 +40,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private $society;
 
     #[ORM\Column(type: 'date', nullable: true)]
-    #[Assert\Regex("/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/")]
     private $birthday;
 
     #[ORM\Column(type: 'string', length: 150, unique: true)]
@@ -71,14 +71,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank()]
     private $city;
 
-    #[ORM\Column(type: 'string', length: 100)]
-    #[Assert\Length(max: 100)]
-    #[Assert\NotBlank()]
+    #[ORM\Column(type: 'integer')]
     private $country;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Length(max: 255)]
     private $activationKey;
+
+    #[ORM\Column(type: 'boolean')]
+    private $statut;
+
+    #[ORM\Column(type: 'string', length: 50)]
+    private $host;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank()]
@@ -92,6 +96,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\NotBlank()]
     private $updatedAt;
+
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserMeta::class)]
     private $userMetas;
@@ -110,15 +115,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
+
     public function __construct()
     {
         $this->userMetas = new ArrayCollection();
-        $this->pictures = new ArrayCollection();
         $this->dwellings = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->roles = ["ROLE_USER"];
         $this->messages = new ArrayCollection();
+        $this->statut = FALSE;
+        $this->host = "PRIVATE";
     }
     
     public function getId(): ?int
@@ -264,17 +271,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getCountry(): ?string
+    public function getCountry(): ?int
     {
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(int $country): self
     {
         $this->country = $country;
 
         return $this;
     }
+
 
     public function getActivationKey(): ?string
     {
@@ -287,6 +295,32 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getStatut(): ?bool
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?bool $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getHost(): ?string
+    {
+        return $this->host;
+    }
+
+    public function setHost(?string $host): self
+    {
+        $this->host = $host;
+
+        return $this;
+    }
+
+
 
     public function getAddedAt(): ?\DateTimeImmutable
     {
@@ -483,6 +517,5 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 
 }

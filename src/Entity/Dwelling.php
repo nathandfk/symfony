@@ -59,7 +59,7 @@ class Dwelling
     #[ORM\Column(type: 'string', length: 255)]
     private $state;
 
-    #[ORM\ManyToOne(targetEntity: Country::class, inversedBy: 'dwellings')]
+    #[ORM\Column(type: 'integer')]
     private $country;
 
     #[ORM\Column(type: 'float')]
@@ -215,12 +215,12 @@ class Dwelling
         return $this;
     }
 
-    public function getCountry(): ?Country
+    public function getCountry(): ?int
     {
         return $this->country;
     }
 
-    public function setCountry(?Country $country): self
+    public function setCountry(?int $country): self
     {
         $this->country = $country;
 

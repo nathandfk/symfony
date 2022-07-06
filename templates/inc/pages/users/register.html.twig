@@ -4,6 +4,16 @@
 {% if carousel == true %}
 {% include 'inc/parts/carousel.html.twig' %}
 {% endif %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
 
 <div class="atypikhouse-container my-6">
     <div class="page-title">

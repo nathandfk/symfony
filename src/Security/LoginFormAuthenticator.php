@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use App\Entity\Users;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +24,12 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'login';
 
     private UrlGeneratorInterface $urlGenerator;
+    private $doctrine;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator, ManagerRegistry $doctrine)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->doctrine = $doctrine;
     }
 
     public function authenticate(Request $request): Passport
@@ -50,7 +54,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('app_index'));
+        return new RedirectResponse($this->urlGenerator->generate('login'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 

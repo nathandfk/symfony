@@ -2,19 +2,15 @@
 
 namespace App\Controller;
 
-use App\Data\Functions as DataFunctions;
 use App\Entity\Country;
-use App\Entity\Dwelling;
 use App\Entity\UserMeta;
 use App\Entity\Users;
-use App\Form\DwellingType;
 use App\Form\UserMetaType;
 use App\Form\UsersType;
 use App\Repository\ReservationRepository;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,39 +24,45 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class UsersController extends AbstractController
 {
     #[Route('/users/register', name: 'register')]
-    public function register(Request $request, ManagerRegistry $doctrine, AuthenticationUtils $authenticationUtils,  UserPasswordHasherInterface $passwordHasher, Security $security): Response
+    public function register(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security): Response
     {
         $security = $security->getUser();
         if ($security) {
             return $this->redirectToRoute('app_index');
         }
-        $repository = $doctrine->getRepository(Country::class);
-        $countries = $repository->findAll();
-
-        // $countriesRepository = $this->objectManager
-        // ->getRepository(Country::class);
-        // $countries = $countriesRepository->findAll();
 
         $user = new Users();
         $form = $this->createForm(UsersType::class, $user);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $activate = $this->generator(24);
-            $em = $doctrine->getManager();
-            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-            $user->setActivationKey($activate);
-            $user->setAddedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-            $user->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-            $em->persist($user);
-            $em->flush();
-            $this->addFlash("success", "Inscription réussie");
-            return $this->redirectToRoute('app_index');
+
+        if ($form->isSubmitted() 
+        && $form->get('firstName')->isValid() && $form->get('lastName')->isValid()
+        && $form->get('password')->isValid() && $form->get('society')->isValid()
+        && $form->get('birthday')->isValid() && $form->get('email')->isValid()
+        && $form->get('phoneNumber')->isValid() && $form->get('address')->isValid()
+        && $form->get('complAddress')->isValid() && $form->get('city')->isValid()
+        && $form->get('country')->isValid()) {
+            $repository = $doctrine->getRepository(Country::class);
+            $country = $repository->findOneBy(["id" => $user->getCountry()]);
+            if ($country && $_POST['register-opt-in'] == "on") {
+                $activate = $this->generator(24);
+                $em = $doctrine->getManager();
+                $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+                $user->setActivationKey($activate);
+                $user->setAddedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
+                $user->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
+                $em->persist($user);
+                $em->flush();
+                $this->addFlash("success", "Inscription réussie");
+                return $this->redirectToRoute('app_index');
+            }
+        } else {
+            $this->addFlash("error", "Inscription échouée, veuillez recommencer");
         }
         return $this->render('inc/pages/users/register.html.twig', [
             'carousel' => true,
             'title' => 'Mon compte',
-            'form' => $form->createView(),
-            'countries' => $countries,
+            'form' => $form->createView()
         ]);
     }
 
