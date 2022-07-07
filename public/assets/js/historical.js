@@ -1,6 +1,8 @@
 dom('html, body').addEventListener('click', event =>{
     if (event.target) {
         let closestTable = event.target.closest("#historical-table")
+        if (closestTable) {
+            
             checked = closestTable.querySelectorAll(".historical-checked")
             checkedValue = []
         if (event.target.className == "historical-checked-all") {
@@ -39,5 +41,6 @@ dom('html, body').addEventListener('click', event =>{
             }
         }
         
+        }
     }
 })

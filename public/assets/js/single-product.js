@@ -60,28 +60,29 @@ dom("html, body").addEventListener('click', event => {
         <div id="payment-message" class="hidden"></div>
     </form>`
 
-    let user = `<div>
-        <table class="text-left">
-            <thead>
-                <th>Récapitulatif</th>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td>Période du</td>
-                    <td><span class="reservation-arrival-date c2 size18"></span> - <span class="reservation-departure-date c2 size18"></span></td>
-                </tr>
-            </tbody>
-        </table>
-        <h4 class="c1">Les dates que vous venez de vérifier sont disponibles.</h4>
-        <div class="d-flex gap-1">
-        <div class="edit-reservation-date click click-brown">Modifier mes dates</div>
-        <a href='`+dataProduct()[7]+`' class="click click-success">Je me connecte</a>
-        </div>
-    </div>`
-
     if (event.target) {
         if(event.target.name == 'checking-dispo') {
+
+                let user = `<div>
+                <table class="text-left">
+                    <thead>
+                        <th>Récapitulatif</th>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Période du</td>
+                            <td><span class="reservation-arrival-date c2 size18"></span> - <span class="reservation-departure-date c2 size18"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4 class="c1">Les dates que vous venez de vérifier sont disponibles.</h4>
+                <div class="d-flex gap-1">
+                <div class="edit-reservation-date click click-brown">Modifier mes dates</div>
+                <a href='`+dataProduct()[7]+`' class="click click-success">Je me connecte</a>
+                </div>
+            </div>`
+
             let closestForm = event.target.closest('.product-form-check')
                 arrivalDate = closestForm.querySelector('.single-product-arrival').dataset.period
                 arrivalShow = closestForm.querySelector('.single-product-arrival').innerHTML

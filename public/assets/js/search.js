@@ -10,6 +10,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
     })
 
     dom('html, body').addEventListener("click", event => {
+        if (dom('.calendar-wrapper')) {
         let bodyClosest = event.target.closest('body')
         let targetDateClosest = event.target.closest('.target-data')
         let searchClosest = event.target.closest('.module-search-wrapper')
@@ -192,6 +193,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 closest.querySelector('ul').remove()
             }
         }
+    }
     })
 
 
