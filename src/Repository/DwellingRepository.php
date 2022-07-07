@@ -93,10 +93,12 @@ class DwellingRepository extends ServiceEntityRepository
             $id = $dwelling['id'];
             $country_id = $dwelling['country'];
             $user_id = $dwelling['user_id'];
-            $users = $this->users->showUsers("first_name, last_name, email, roles, statut", "WHERE id= $user_id");
+            $users = $this->users->showUsers("first_name, last_name, email, roles, statut, host", "WHERE id= $user_id");
 
             !empty($date) ? $checkReservation = $this->reservation->showReservation("*", 'WHERE dwelling_id='.$id.' AND '.$date) : $checkReservation = false;
             if ($checkReservation) {
+                continue;
+            } else if ($users[0]['host'] == "PRIVATE" || $users[0]['host'] == "CLOSED") {
                 continue;
             }
             $resultDwellingMeta = $this->dwelling_meta->showDwellingMeta($id);

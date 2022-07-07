@@ -104,10 +104,13 @@ window.addEventListener("DOMContentLoaded", (event) => {
     // })
     if (dom('.alert')) {
         setTimeout(() => {
-            dom('.alert').classList.add('alert-dismiss')
+            dom('.alert').classList.add('alert-not-dismiss')
             setTimeout(() => {
-                dom('.alert').remove()
-            }, 500);
-        }, 6000);
+                dom('.alert').classList.remove('alert-not-dismiss')
+                setTimeout(() => {
+                    dom('.alert').remove()
+                }, 500);
+            }, 7000);
+        }, 300);
     }
 })

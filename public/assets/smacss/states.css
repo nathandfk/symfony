@@ -529,13 +529,13 @@
 .alert{
     padding: 10px;
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 2rem;
+    right: -20rem;
     width: 19rem;
     border-radius: 5px;
     box-shadow: 0px 0px 5px var(--black20);
     transition: all .5s;
 }
-.alert-dismiss{
-    right: -20rem;
+.alert-not-dismiss{
+    right: 2rem;
 }

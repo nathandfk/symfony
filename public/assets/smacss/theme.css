@@ -201,6 +201,10 @@ a, a:active, a:hover{
     background-color: var(--c1);
     color: var(--c4);
 }
+.alert-error{
+    background-color: var(--c2);
+    color: var(--c4);
+}
 .list-location{
     background-color: var(--c4);
 }
@@ -213,4 +217,10 @@ a, a:active, a:hover{
 .list-location > li:hover{
     background-color: var(--c1);
     color: var(--c4);
+}
+.user-view-cover{
+    background-color: var(--black30);
+}
+.form-user-view{
+    background-color: var(--c4);
 }

@@ -98,29 +98,8 @@
     </div>
     <div data-selected="users" class="d-none">
         <h3>Utilisateurs du site</h3>
-        <input type="text" name="" placeholder="Recherche l'utilisateur">
-        <table id="historical-table" class="text-center ath-table-form">
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Email</th>
-                    <th>Roles</th>
-                    <th>Détails</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>DIAFOUKA</td>
-                    <td>Nathan</td>
-                    <td>diafoukanathan@gmail.com</td>
-                    <td>ROLE_USER</td>
-                    <td class="d-flex gap-1">
-                        <button name="btn-valid" class="click click-success m-auto d-flex gap-1">Voir <i class="fas fa-eye"></i></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <input type="text" id="search-users" data-link="{{ path('admin_users_list') }}" placeholder="Recherche l'utilisateur">
+        <div class="users-list"></div>
     </div>
     <div data-selected="settings" class="d-none">
         <h3>Paramètres</h3>
