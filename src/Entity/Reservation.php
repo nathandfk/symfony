@@ -51,8 +51,8 @@ class Reservation
     public function __construct()
     {
         $this->reservationMetas = new ArrayCollection();
-        $this->reservedAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->reservedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
     }
 
     public function getId(): ?int

@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     const templates = `
         <div class="user-view-wrapper">
         <div class="user-view-cover"></div>
-        <form data-id="{{user-id}}" id="form-user-view" name="form-user-view" class="form-user-view" method="POST">
+        <form id="form-user-view" name="form-user-view" class="form-user-view" method="POST">
             <div class="user-view-header">
                 <h2>
                     Détails de l'utilisateur
@@ -29,20 +29,21 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 <div>
                     <h4>Rôles</h4>
                     <div class="d-flex gap-1 ai-center">
-                        <input type="checkbox" name="user_role" id="user_role" class="w-max-content" {{user_role}}> <label for="user_role">Rôle user</label>
+                        <input type="checkbox" name="moderator_role" id="moderator_role" class="w-max-content" {{moderator_role}}> <label for="moderator_role">Rôle modérateur</label>
                     </div>
                     <div class="d-flex gap-1 ai-center">
-                    <input type="checkbox" name="host_role" id="host_role" class="w-max-content" {{host_role}}> <label id="host_role">Rôle hôte</label>
+                        <input type="checkbox" name="host_role" id="host_role" class="w-max-content" {{host_role}}> <label id="host_role">Rôle hôte</label>
                     </div>
                     <div class="d-flex gap-1 ai-center">
-                    <input type="checkbox" name="admin_role" id="admin_role" class="w-max-content" {{admin_role}}> <label id="admin_role">Rôle admin</label>
+                        <input type="checkbox" name="admin_role" id="admin_role" class="w-max-content" {{admin_role}}> <label id="admin_role">Rôle admin</label>
                     </div>
+                    <input type="hidden" value="{{user-id}}" id="user_id" name="user_id">
                 </div>
                 <div>
                     <h4>Hôte</h4>
                     <div>
-                        <label for="host_level">Statut de l'utilisateur hôte</label>
-                        <select name="host_level" id="host_level">
+                        <label for="host_statut">Statut de l'utilisateur hôte</label>
+                        <select name="host_statut" id="host_statut">
                             <option value="PRIVATE" {{private}}>Désactiver les habitats associés</option>
                             <option value="PUBLIC" {{public}}>Activer les habitats associés</option>
                             <option value="BLOCKED" {{blocked}}>Bannir l'utilisateiur</option>
@@ -54,22 +55,25 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 <input type="submit" class="click click-success" id="update-user" value="Modifier">
             </div>
         </form>
-        </div>
-    `
-    if (dom('.users-list')) {
-        empty = ''
-        fetch('/admin/users-list', {headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
-            }, method: 'POST', body: JSON.stringify({value: empty}) })
-        .then(data => data.text())
-        .then(response => {
-            if (response != "" && response != " ") {
-                dom('.users-list').innerHTML = response
-            } else {
-                dom('.users-list').innerHTML = ""
-            }
-        })
+        </div>`
+    function list() {
+        if (dom('.users-list')) {
+            empty = ''
+            fetch('/admin/users-list', {headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                }, method: 'POST', body: JSON.stringify({value: empty}) })
+            .then(data => data.text())
+            .then(response => {
+                if (response != "" && response != " ") {
+                    dom('.users-list').innerHTML = response
+                } else {
+                    dom('.users-list').innerHTML = ""
+                }
+            })
+        }
     }
+    list()
+
     dom('html, body').addEventListener('keyup', event => {
         if(event.target.id == "search-users"){
             let link = event.target.dataset.link
@@ -102,18 +106,20 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 if (obj.response == "success") {
                     let dashBoardClosest = event.target.closest('.dashboard-wrapper')
                     let createElement = document.createElement('div')
-
+                    console.log(obj.user_role)
                     result = templates
                     .replace('{{firstName}}', obj.first_name)
                     .replace('{{lastName}}', obj.last_name)
                     .replace('{{email}}', obj.email)
                     .replace('{{number}}', obj.number)
-                    .replace('{{user_role}}', obj.user)
+                    .replace('{{moderator_role}}', obj.moderator_role)
                     .replace('{{admin_role}}', obj.admin)
+                    .replace('{{host_role}}', obj.host)
                     .replace('{{private}}', obj.private_host)
                     .replace('{{public}}', obj.public_host)
                     .replace('{{blocked}}', obj.blocked_host)
-
+                    .replace('{{user-id}}', obj.user_id)
+                    
                     dashBoardClosest.appendChild(createElement)
                     createElement.innerHTML = result
                     dashBoardClosest.querySelector('.user-view-cover').classList.add('cover-not-dismiss')
@@ -152,16 +158,16 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 var json = JSON.stringify(object);
                 fetch("/admin/user-edit", {headers: {
                     'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
-                    }, method: 'POST', body: JSON.stringify(json) })
+                    }, method: 'POST', body: json })
                 .then(data => data.json())
                 .then(response => {
-                    console.log(response)
+                    const obj = JSON.parse(response)
+                    if (obj.response == "success") {
+                        notification(obj.message, obj.icon)
+                        list()
+                    }
+                    
                 })
-                console.log(json)
-                // for (let i = 0; i < 4; i++) {
-                    
-                    
-                // }
                 
             }
             

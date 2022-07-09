@@ -250,24 +250,7 @@ class UsersController extends AbstractController
         }
     }
 
-    #[Route('/mon-compte/message', name: 'message')]
-    public function message(Request $request, Security $security)
-    {   
-        
-        $security = $security->getUser();
-        if (!$security) {
-            return $this->redirectToRoute('app_index');
-        }
-        $user = new Users();
-        $userData = $security->getUserIdentifier();
-        $form = $this->createForm(UsersType::class, $user);
-        $form->handleRequest($request);
-        return $this->render('inc/pages/users/message.html.twig', [
-            'carousel' => true,
-            'title' => 'Mon compte',
-            'form' => $form->createView()
-        ]);
-    }
+
 
     public function generator(int $limit = 8, $remove = []){
         $character = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'A', 'b', 'B', 'c', 'C', '?', '!', '-', '_','d', 'D', 'e', 'E', 'f', 'F', 'g', 'h', 'i', 'j', 'k'];

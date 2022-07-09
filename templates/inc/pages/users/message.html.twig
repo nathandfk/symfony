@@ -13,13 +13,15 @@
                 <h4>Messages</h4>
             </div>
             <div class="message-col1-body message-body">
-                {% for i in 0..9 %}
-                <div class="bg-c5 choice-discussion">
-                    <h4>Nathan DIAFOUKA</h4>
-                    <h5>23/01/2022 12h04</h5>
-                    <p>Votre demande de réservation a été accepté, merci de trouver ci-dessous l'adresse complète et les indications</p>
-                </div>
-                {% endfor %}
+                {% if selected %}
+                    {% for element in selected %}
+                    <div class="bg-c5 choice-discussion">
+                        <h4>{{ element.fn2 }} {{ element.ln2 }}</h4>
+                        <h5>{{ element.added_at }}</h5>
+                        <p>{{ element.message |slice(0, 150)}}...</p>
+                    </div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="message-col2">
@@ -27,18 +29,23 @@
                 <h4>Nathan DIAFOUKA</h4>
             </div>
             <div class="message-col2-body message-body">
-                {% for i in 0..4 %}
-                <div class="content-message message-received bg-c1 c4">
-                    <h4>Nathan DIAFOUKA</h4>
-                    <h5>23/01/2022 12h04</h5>
-                    <p>Votre demande de réservation a été accepté, merci de trouver ci-dessous l'adresse complète et les indications</p>
-                </div>
-                <div class="content-message message-send bg-c2 c4">
-                    <h4>Nathan DIAFOUKA</h4>
-                    <h5>23/01/2022 12h04</h5>
-                    <p>Votre demande de réservation a été accepté, merci de trouver ci-dessous l'adresse complète et les indications</p>
-                </div>
-                {% endfor %}
+                {% if details %}
+                    {% for element in details %}
+                    {% if element.sender_id != app.user.id %}
+                    <div class="content-message message-received bg-c1 c4">
+                        <h4>{{ element.fn2 }} {{ element.ln2 }}</h4>
+                        <h5>{{ element.added_at }}</h5>
+                        <p>{{ element.message}}</p>
+                    </div>
+                    {% elseif element.sender_id == app.user.id %}
+                    <div class="content-message message-send bg-c2 c4">
+                        <h4>{{ element.fn2 }} {{ element.ln2 }}</h4>
+                        <h5>{{ element.added_at }}</h5>
+                        <p>{{ element.message}}</p>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="message-col2-footer">
                 <textarea></textarea>

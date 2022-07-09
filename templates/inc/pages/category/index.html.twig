@@ -19,7 +19,7 @@
             </div>
             <div class="grid-lg-4 dwelling-items">
                 {% for dwellings in dataDwellings %}
-                {% set productUrl = dwellings[0].title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+                {% set productUrl = dwellings[0].title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
                     <a href="{{ path('app_habitation', {'slug': productUrl, 'id': dwellings[0].id}) | lower }}" class="dwelling-item">
                         <div class="dwelling-item-picture border-radius-form">
                             {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}

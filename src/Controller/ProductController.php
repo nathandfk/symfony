@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Data\Calendar;
 use App\Entity\Dwelling;
+use App\Entity\Message;
+use App\Entity\Posts;
 use App\Entity\Reservation;
 use App\Entity\ReservationMeta;
 use App\Entity\Users;
@@ -21,7 +23,7 @@ use Symfony\Component\Security\Core\Security;
 class ProductController extends AbstractController
 {
     #[Route('/habitation/{slug}/{id}', name: 'app_habitation')]
-    public function habitation(string $slug, int $id, DwellingRepository $dwelRep, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
+    public function habitation(string $slug, int $id, DwellingRepository $dwelRep, ReservationRepository $reservRep, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
     {
         if (isset($_REQUEST['payment_intent']) && $_REQUEST['redirect_status'] === 'succeeded') {
 
@@ -39,6 +41,49 @@ class ProductController extends AbstractController
             }
             $reservation->setStatut('RESERVED');
             $entityManager->flush();
+
+            $repository = $doctrine->getRepository(Posts::class);
+            $welcome = $repository->findOneBy(['type' => 'WELCOME']);
+            $historical = $reservRep->historical(true, 0, false, 0, $reservationMetaId->getId());
+            $firstname = "";
+            $lastname = "";
+            $product_title = "";
+            $insertTotalPrice = "";
+            $arrival = "";
+            $departure = "";
+            $userDwellingId = "";
+            $userClientId = "";
+            $city = "";
+            foreach ($historical as $element) {
+                $firstname = $element[0];
+                $lastname = $element[1];
+                $product_title = $element[4];
+                $insertTotalPrice = $element[9];
+                $arrival = $element[5];
+                $departure = $element[6];
+                $userDwellingId = $element[13];
+                $userClientId = $element[14];
+                $city = $element[12];
+            }
+            $message = $welcome->getDescription();
+            $message = str_replace("_firstname_", $firstname, $message);
+            $message = str_replace("_lastname_", $lastname, $message);
+            $message = str_replace("_title_", $product_title, $message);
+            $message = str_replace("_totalprice_", $insertTotalPrice, $message);
+            $message = str_replace("_arrival_", $arrival, $message);
+            $message = str_replace("_departure_", $departure, $message);
+            $message = str_replace("_city_", $city, $message);
+            $em = $doctrine->getManager();
+            $insertMessage = new Message();
+            $repository = $doctrine->getRepository(Users::class);
+            $sender = $repository->find($userDwellingId);
+            $recipient = $repository->find($userClientId);
+            $insertMessage->setSender($sender);
+            $insertMessage->setRecipient($recipient);
+            $insertMessage->setMessage($message);
+            $em->persist($insertMessage);
+            $em->flush();                
+                    
 
             return $this->redirectToRoute('checkout_success', [
                 'id' => $reservation->getId()
@@ -205,8 +250,12 @@ class ProductController extends AbstractController
                 $repository = $doctrine->getRepository(Users::class);
                 $users = $repository->findBy(array("email" => $userAuth));
                 $auth_id = "";
+                $firstname = "";
+                $lastname = "";
                 foreach ($users as $user) {
                     $auth_id = $user->getId();
+                    $firstname = $user->getFirstName();
+                    $lastname = $user->getLastName();
                 }
                 /* End Id User Connected */
 
@@ -255,7 +304,7 @@ class ProductController extends AbstractController
                 if ($output) {
                     $clientSecret = $output['clientSecret'];
                     $paymentIntent = explode('_secret_', $clientSecret);
-                    $this->insertReservation($doctrine, $id, "IN_PROGRESS", $arrival, $departure, $paymentIntent[0], $clientSecret, $adults, $childrens, $babies, $animals, $insertTotalPrice, $countDay, $subTotalPrice, $taxService);
+                    $this->insertReservation($doctrine, $id, "IN_PROGRESS", $arrival, $departure, $paymentIntent[0], $clientSecret, $adults, $childrens, $babies, $animals, $insertTotalPrice, $countDay, $subTotalPrice, $taxService, json_encode($dwellings));
                 }
                 if (count($dateCheck) > 0) {
                     $output = '{"clientSecret": "ND"}';
@@ -290,10 +339,10 @@ class ProductController extends AbstractController
 
 
 
-    public function insertReservation($doctrine, $dwelling_id, $statut, $arrival, $departure, $paymentIntent, $clientSecret, $adults, $childrens, $babies, $animals, $totalPrice, $countDay, $subTotalPrice, $taxService)
+    public function insertReservation($doctrine, $dwelling_id, $statut, $arrival, $departure, $paymentIntent, $clientSecret, $adults, $childrens, $babies, $animals, $totalPrice, $countDay, $subTotalPrice, $taxService, $dataDwelling)
     {
         $dataPayment = ["_payment_intent" => $paymentIntent, "_client_secret" => $clientSecret, "_adults" => $adults, "_childrens" => $childrens, "_babies" => $babies, "_animals" => $animals, "_price_of_reservation" => $totalPrice,
-        "_nb_day" => $countDay, "_sub_total_price" => $subTotalPrice, "_tax_service" => $taxService];
+        "_nb_day" => $countDay, "_sub_total_price" => $subTotalPrice, "_tax_service" => $taxService, "_data_dwelling" => $dataDwelling];
         $em = $doctrine->getManager();
         $insertReservation = new Reservation();
         $repository = $doctrine->getRepository(Dwelling::class);

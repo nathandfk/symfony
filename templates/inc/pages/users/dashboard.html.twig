@@ -103,6 +103,29 @@
     </div>
     <div data-selected="settings" class="d-none">
         <h3>Paramètres</h3>
+        <form>
+            <div class="my-2">
+                <label>Message de réservation</label>
+                <textarea></textarea>
+                <div>Insérer dans votre message</div>
+                <ul>
+                    <li>_firstname_ pour le prénom</li>
+                    <li>_lastname_ pour le nom</li>
+                    <li>_title_ pour le titre</li>
+                    <li>_totalprice_ pour le prix total</li>
+                    <li>_arrival_ pour la date d'arrivée</li>
+                    <li>_departure_ pour la date de départ</li>
+                </ul>
+            </div>
+            <div>
+                <label>Frais de service</label>
+                <input type="number" min="0" max="100">
+            </div>
+            <div>
+                <label></label>
+                <textarea></textarea>
+            </div>
+        </form>
     </div>
 </div>
 </div>

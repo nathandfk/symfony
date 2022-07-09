@@ -65,8 +65,8 @@ class Posts
     public function __construct()
     {
         $this->postMetas = new ArrayCollection();
-        $this->addedAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
     }
 
     public function getId(): ?int
