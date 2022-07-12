@@ -289,7 +289,6 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                             }
                         }
                     });
-                    console.log(result)
                 })
                 .catch(error => console.log('error', error));
                 } else {

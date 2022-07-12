@@ -55,7 +55,7 @@ class MessageRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = "SELECT $selector FROM `message` m JOIN users u1 ON u1.id = m.sender_id JOIN users u2 ON u2.id = m.recipient_id  $where";
-        var_dump($sql);
+
         $prepare = $conn->prepare($sql);
         $execute = $prepare->executeQuery();
         return $execute->fetchAllAssociative();
