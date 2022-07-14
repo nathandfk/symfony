@@ -539,3 +539,21 @@
 .alert-not-dismiss{
     right: 2rem;
 }
+
+.card{
+    box-shadow: 0px 0px 7px var(--black20);
+    padding: 20px;
+    border-radius: 7px;
+    max-width: 30rem;
+    opacity: 1;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 500;
+    transition: all .5s;
+}
+.card-dismiss{
+    opacity: 0;
+    transform: translate(-50%, -80%);
+}

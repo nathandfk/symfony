@@ -19,7 +19,12 @@ class Dwelling
     private $id;
 
     #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'dwellings')]
+    #[Assert\NotBlank()]
     private $user;
+
+    #[ORM\ManyToOne(targetEntity: Posts::class, inversedBy: 'dwellings')]
+    #[Assert\NotBlank()]
+    private $type;
 
     #[ORM\Column(type: 'json')]
     #[Assert\NotBlank()]
@@ -68,6 +73,9 @@ class Dwelling
     #[ORM\Column(type: 'float')]
     private $latitude;
 
+    #[ORM\Column(type: 'boolean')]
+    private $activate;
+
     #[ORM\Column(type: 'datetime_immutable')]
     private $addedAt;
 
@@ -82,6 +90,10 @@ class Dwelling
 
     #[ORM\OneToMany(mappedBy: 'dwelling', targetEntity: Reservation::class)]
     private $reservations;
+
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private $deletedAt;
 
 
     public function __construct()
@@ -104,6 +116,18 @@ class Dwelling
     public function setUser(?Users $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getType(): ?Posts
+    {
+        return $this->type;
+    }
+
+    public function setType(?Posts $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -253,6 +277,18 @@ class Dwelling
     }
 
 
+    public function isActivate(): ?bool
+    {
+        return $this->activate;
+    }
+
+    public function setActivate(bool $activate): self
+    {
+        $this->activate = $activate;
+
+        return $this;
+    }
+    
     public function getAddedAt(): ?\DateTimeInterface
     {
         return $this->addedAt;
@@ -277,6 +313,18 @@ class Dwelling
         return $this;
     }
 
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+    
     /**
      * @return Collection<int, DwellingMeta>
      */
@@ -366,6 +414,4 @@ class Dwelling
 
         return $this;
     }
-
-
 }

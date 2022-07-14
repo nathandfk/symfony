@@ -62,11 +62,15 @@ class Posts
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostMeta::class)]
     private $postMetas;
 
+    #[ORM\OneToMany(mappedBy: 'type', targetEntity: Dwelling::class)]
+    private $dwellings;
+
     public function __construct()
     {
         $this->postMetas = new ArrayCollection();
         $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
         $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->dwellings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -230,6 +234,36 @@ class Posts
             // set the owning side to null (unless already changed)
             if ($postMeta->getPost() === $this) {
                 $postMeta->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dwelling>
+     */
+    public function getDwellings(): Collection
+    {
+        return $this->dwellings;
+    }
+
+    public function addDwelling(Dwelling $dwelling): self
+    {
+        if (!$this->dwellings->contains($dwelling)) {
+            $this->dwellings[] = $dwelling;
+            $dwelling->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDwelling(Dwelling $dwelling): self
+    {
+        if ($this->dwellings->removeElement($dwelling)) {
+            // set the owning side to null (unless already changed)
+            if ($dwelling->getType() === $this) {
+                $dwelling->setType(null);
             }
         }
 

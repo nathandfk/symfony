@@ -14,18 +14,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 class UsersController extends AbstractController
 {
     #[Route('/users/register', name: 'register')]
     public function register(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security): Response
     {
+        // MailerInterface $mailer
         $security = $security->getUser();
         if ($security) {
             return $this->redirectToRoute('app_index');
@@ -53,10 +54,22 @@ class UsersController extends AbstractController
                 $user->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
                 $em->persist($user);
                 $em->flush();
+                // $email = (new Email())
+                //     ->from('hello@example.com')
+                //     ->to('you@example.com')
+                //     //->cc('cc@example.com')
+                //     //->bcc('bcc@example.com')
+                //     //->replyTo('fabien@example.com')
+                //     //->priority(Email::PRIORITY_HIGH)
+                //     ->subject('Time for Symfony Mailer!')
+                //     ->text('Sending emails is fun again!')
+                //     ->html('<p>See Twig integration for better HTML integration!</p>');
+
+                // $mailer->send($email);
                 $this->addFlash("success", "Inscription réussie");
                 return $this->redirectToRoute('app_index');
             }
-        } else {
+        } else if($form->isSubmitted() && !$form->isValid()) {
             $this->addFlash("error", "Inscription échouée, veuillez recommencer");
         }
         return $this->render('inc/pages/users/register.html.twig', [

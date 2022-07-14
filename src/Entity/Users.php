@@ -7,7 +7,6 @@ use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\PseudoTypes\False_;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -113,6 +112,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'sender', targetEntity: Message::class)]
     private $messages;
 
+    #[ORM\Column(type: 'boolean')]
+    private $account;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private $deletedAt;
+
 
 
 
@@ -126,6 +131,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $this->messages = new ArrayCollection();
         $this->statut = FALSE;
         $this->host = "PRIVATE";
+        $this->account = TRUE;
     }
     
     public function getId(): ?int
@@ -321,6 +327,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
+    public function isAccount(): ?bool
+    {
+        return $this->account;
+    }
+
+    public function setAccount(bool $account): self
+    {
+        $this->account = $account;
+
+        return $this;
+    }
 
     public function getAddedAt(): ?\DateTimeImmutable
     {
@@ -346,6 +363,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
     /**
      * @return Collection<int, UserMeta>
      */
@@ -517,5 +545,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
 }

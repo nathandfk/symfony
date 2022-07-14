@@ -140,62 +140,62 @@ window.addEventListener("DOMContentLoaded", (event) => {
             .catch()
         }
     })
-    dom('html, body').addEventListener('click', event => {
-        if(event.target.name == "btn-see-user") {
+    // dom('html, body').addEventListener('click', event => {
+    //     if(event.target.name == "btn-see-user") {
 
-            let dataId = event.target.dataset.id
-            let dataLink = event.target.dataset.link
+    //         let dataId = event.target.dataset.id
+    //         let dataLink = event.target.dataset.link
             
-            fetch(dataLink, {headers: {
-                'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
-                }, method: 'POST', body: JSON.stringify({id: dataId}) })
-            .then(data => data.json())
-            .then(response => {
-                const obj = JSON.parse(response)
-                if (obj.response == "success") {
-                    let dashBoardClosest = event.target.closest('.dashboard-wrapper')
-                    let createElement = document.createElement('div')
-                    console.log(obj.user_role)
-                    result = templates
-                    .replace('{{firstName}}', obj.first_name)
-                    .replace('{{lastName}}', obj.last_name)
-                    .replace('{{email}}', obj.email)
-                    .replace('{{number}}', obj.number)
-                    .replace('{{moderator_role}}', obj.moderator_role)
-                    .replace('{{admin_role}}', obj.admin)
-                    .replace('{{host_role}}', obj.host)
-                    .replace('{{private}}', obj.private_host)
-                    .replace('{{public}}', obj.public_host)
-                    .replace('{{blocked}}', obj.blocked_host)
-                    .replace('{{user-id}}', obj.user_id)
+    //         fetch(dataLink, {headers: {
+    //             'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+    //             }, method: 'POST', body: JSON.stringify({id: dataId}) })
+    //         .then(data => data.json())
+    //         .then(response => {
+    //             const obj = JSON.parse(response)
+    //             if (obj.response == "success") {
+    //                 let dashBoardClosest = event.target.closest('.dashboard-wrapper')
+    //                 let createElement = document.createElement('div')
+    //                 console.log(obj.user_role)
+    //                 result = templates
+    //                 .replace('{{firstName}}', obj.first_name)
+    //                 .replace('{{lastName}}', obj.last_name)
+    //                 .replace('{{email}}', obj.email)
+    //                 .replace('{{number}}', obj.number)
+    //                 .replace('{{moderator_role}}', obj.moderator_role)
+    //                 .replace('{{admin_role}}', obj.admin)
+    //                 .replace('{{host_role}}', obj.host)
+    //                 .replace('{{private}}', obj.private_host)
+    //                 .replace('{{public}}', obj.public_host)
+    //                 .replace('{{blocked}}', obj.blocked_host)
+    //                 .replace('{{user-id}}', obj.user_id)
                     
-                    dashBoardClosest.appendChild(createElement)
-                    createElement.innerHTML = result
-                    dashBoardClosest.querySelector('.user-view-cover').classList.add('cover-not-dismiss')
-                    setTimeout(() => {
-                        dashBoardClosest.querySelector('.form-user-view').classList.add('user-view-not-dismiss')
-                    }, 300);
-                } else {
-                    notification("Une erreur s'est produite, veuillez actualiser votre page et recommencer", "fas fa-exclamation")
-                }
-            })
+    //                 dashBoardClosest.appendChild(createElement)
+    //                 createElement.innerHTML = result
+    //                 dashBoardClosest.querySelector('.user-view-cover').classList.add('cover-not-dismiss')
+    //                 setTimeout(() => {
+    //                     dashBoardClosest.querySelector('.form-user-view').classList.add('user-view-not-dismiss')
+    //                 }, 300);
+    //             } else {
+    //                 notification("Une erreur s'est produite, veuillez actualiser votre page et recommencer", "fas fa-exclamation")
+    //             }
+    //         })
 
 
             
         
-        } else if(event.target.classList.contains('close-user-view')){
-            let dashBoardClosest = event.target.closest('.dashboard-wrapper')
-            dashBoardClosest.querySelector('.user-view-cover').classList.remove('cover-not-dismiss')
-            dashBoardClosest.querySelector('.form-user-view').classList.remove('user-view-not-dismiss')
-            setTimeout(() => {
-                dashBoardClosest.querySelector('.user-view-wrapper').remove()
-            }, 1000);
-        } else if(event.target.dataset.checked == "host"){
-            historical("host")
-        } else if(event.target.dataset.checked == "admin"){
-            historical("admin")
-        }
-    })
+    //     } else if(event.target.classList.contains('close-user-view')){
+    //         let dashBoardClosest = event.target.closest('.dashboard-wrapper')
+    //         dashBoardClosest.querySelector('.user-view-cover').classList.remove('cover-not-dismiss')
+    //         dashBoardClosest.querySelector('.form-user-view').classList.remove('user-view-not-dismiss')
+    //         setTimeout(() => {
+    //             dashBoardClosest.querySelector('.user-view-wrapper').remove()
+    //         }, 1000);
+    //     } else if(event.target.dataset.checked == "host"){
+    //         historical("host")
+    //     } else if(event.target.dataset.checked == "admin"){
+    //         historical("admin")
+    //     }
+    // })
     dom('html, body').addEventListener('submit', event => {
         
         if (event.target) {

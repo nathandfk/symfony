@@ -201,6 +201,10 @@ a, a:active, a:hover{
     background-color: var(--c1);
     color: var(--c4);
 }
+.alert-danger{
+    background-color: var(--c2);
+    color: var(--c4);
+}
 .alert-error{
     background-color: var(--c2);
     color: var(--c4);
@@ -222,5 +226,8 @@ a, a:active, a:hover{
     background-color: var(--black30);
 }
 .form-user-view{
+    background-color: var(--c4);
+}
+.card{
     background-color: var(--c4);
 }

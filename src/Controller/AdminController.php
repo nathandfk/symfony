@@ -28,12 +28,17 @@ class AdminController extends AbstractController
         if ($security) {
             $roles = $security->getRoles();
             $response = ['users' => '', 'errors' => "Aucune donnée chargéee"];
-            if (!in_array('ROLE_ADMIN', $roles)) {
+            if (!in_array('ROLE_ADMIN', $roles) || !in_array('ROLE_MODERATOR', $roles)) {
                 $response = ['users' => '', 'errors' => "Vous n'avez pas les droits nécessaire pour accéder à ce bloc" ];
             } else {
                 $value = $data['value'];
-                $users = empty($value) ? $dataUsers->showUsers("*", " ORDER BY id DESC LIMIT 15")
-                : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' || last_name LIKE '%$value%' || email LIKE '%$value%' || host LIKE '%$value%' || roles LIKE '%$value%' LIMIT 15");
+                if (in_array('ROLE_ADMIN', $roles)) {
+                    $users = empty($value) ? $dataUsers->showUsers("*", " ORDER BY id DESC LIMIT 15")
+                    : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' || last_name LIKE '%$value%' || email LIKE '%$value%' || host LIKE '%$value%' || roles LIKE '%$value%' LIMIT 15");
+                } else {
+                    $users = empty($value) ? $dataUsers->showUsers("*", "WHERE roles NOT LIKE '%ROLE_ADMIN%' ORDER BY id DESC LIMIT 15")
+                    : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' || last_name LIKE '%$value%' || email LIKE '%$value%' || host LIKE '%$value%' || roles LIKE '%$value%' AND roles NOT LIKE '%ROLE_ADMIN%'  LIMIT 15");
+                }
                 
                 if (!isset($users) || empty($users)) {
                     $response = ['users' => '', 'errors' => 'Aucune donnée trouvée'];
@@ -48,7 +53,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/user-view', name: 'admin_user_view')]
-    public function view(ManagerRegistry $doctrine, Request $request, Security $security, UsersRepository $users, DwellingRepository $dwelRep, PaginatorInterface $paginator): Response
+    public function view(ManagerRegistry $doctrine, Security $security, UsersRepository $users): Response
     {
         $security = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -62,6 +67,7 @@ class AdminController extends AbstractController
         $repository = $doctrine->getRepository(Users::class);
         $user = $repository->find($id);
         $roles = $user->getRoles();
+            $account = $user->isAccount();
             $userId = $user->getId();
             $firstName = $user->getFirstName();
             $lastName = $user->getLastName();
@@ -69,7 +75,8 @@ class AdminController extends AbstractController
             $number = !is_null($user->getPhoneNumber()) ? $user->getPhoneNumber() : "";
             $host = $user->getHost();
             
-            
+            $unlocked = $account ? 'checked' : '';
+            $locked = $account ? '' : 'checked';
             $adminRole = in_array("ROLE_ADMIN", $roles) ? "checked" : "";
             $hostRole = in_array("ROLE_HOST", $roles) ? "checked" : "";
             $moderatorRole = in_array("ROLE_MODERATOR", $roles) ? "checked" : "";
@@ -83,7 +90,8 @@ class AdminController extends AbstractController
             "number":"'.$number.'","admin":"'.$adminRole.'",
             "host":"'.$hostRole.'","moderator_role":"'.$moderatorRole.'",
             "private_host":"'.$privateHost.'", "public_host":"'.$publicHost.'", 
-            "blocked_host":"'.$blockedHost.'", "user_id":"'.$userId.'"}';
+            "blocked_host":"'.$blockedHost.'", "user_id":"'.$userId.'",
+            "account_locked":"'.$locked.'", "account_unlocked":"'.$unlocked.'"}';
         } else {
             $output = '{"response":"error"}';
         }
@@ -92,7 +100,7 @@ class AdminController extends AbstractController
 
 
     #[Route('/admin/user-edit', name: 'admin_user_update')]
-    public function update(ManagerRegistry $doctrine, Request $request, Security $security, UsersRepository $users, DwellingRepository $dwelRep, PaginatorInterface $paginator): Response
+    public function update(ManagerRegistry $doctrine): Response
     {
         // $security = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -102,6 +110,7 @@ class AdminController extends AbstractController
         (isset($data['admin_role']) && !empty($data['admin_role'])) ? array_push($roles, "ROLE_ADMIN") : "";
         (isset($data['host_role']) && !empty($data['host_role'])) ? array_push($roles, "ROLE_HOST") : "";
         (isset($data['moderator_role']) && !empty($data['moderator_role'])) ? array_push($roles, "ROLE_MODERATOR") : "";
+        $accountStatus = (isset($data['account_status']) && !empty($data['account_status']) && $data['account_status']=='locked') ? false : true;
          
         
         $userId = $data['user_id'];
@@ -117,6 +126,7 @@ class AdminController extends AbstractController
             $hostStatut = in_array($data['host_statut'], $allHostStatus) ? $data['host_statut'] : $lastHost;
             $getUser->setRoles($roles);
             $getUser->setHost($hostStatut);
+            $getUser->setAccount($accountStatus);
             $getUser->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
             $em->persist($getUser);
             $em->flush();

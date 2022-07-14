@@ -1,6 +1,5 @@
 window.addEventListener("DOMContentLoaded", (event) => {
     const templates = `
-        <div class="user-view-wrapper">
         <div class="user-view-cover"></div>
         <form id="form-user-view" name="form-user-view" class="form-user-view" method="POST">
             <div class="user-view-header">
@@ -50,12 +49,20 @@ window.addEventListener("DOMContentLoaded", (event) => {
                         </select>
                     </div>
                 </div>
+                <div>
+                    <h4>Statut du compte</h4>
+                    <div class="d-flex gap-1 ai-center">
+                        <input type="radio" name="account_status" value="locked" id="account_locked" class="w-max-content" {{account_locked}}> <label for="account_locked">Bloquer</label>
+                    </div>
+                    <div class="d-flex gap-1 ai-center">
+                        <input type="radio" name="account_status" value="unlocked" id="account_unlocked" class="w-max-content" {{account_unlocked}}> <label for="account_unlocked">Débloquer</label>
+                    </div>
+                </div>
             </div>
             <div class="user-view-footer">
                 <input type="submit" class="click click-success" id="update-user" value="Modifier">
             </div>
-        </form>
-        </div>`
+        </form>`
     function list() {
         if (dom('.users-list')) {
             empty = ''
@@ -93,9 +100,12 @@ window.addEventListener("DOMContentLoaded", (event) => {
     })
     dom('html, body').addEventListener('click', event => {
         if(event.target.name == "btn-see-user") {
-
-            let dataId = event.target.dataset.id
+            let dataId = event.target.closest('tr').dataset.id
+            if (dataId != "" && dataId != " " && !dom('.user-view-wrapper')) {
             let dataLink = event.target.dataset.link
+            let dashBoardClosest = event.target.closest('.dashboard-wrapper')
+                createElement = document.createElement('div')
+                createElement.setAttribute('class', 'user-view-wrapper')
             
             fetch(dataLink, {headers: {
                 'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
@@ -104,9 +114,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
             .then(response => {
                 const obj = JSON.parse(response)
                 if (obj.response == "success") {
-                    let dashBoardClosest = event.target.closest('.dashboard-wrapper')
-                    let createElement = document.createElement('div')
-                    console.log(obj.user_role)
                     result = templates
                     .replace('{{firstName}}', obj.first_name)
                     .replace('{{lastName}}', obj.last_name)
@@ -119,6 +126,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     .replace('{{public}}', obj.public_host)
                     .replace('{{blocked}}', obj.blocked_host)
                     .replace('{{user-id}}', obj.user_id)
+                    .replace('{{account_locked}}', obj.account_locked)
+                    .replace('{{account_unlocked}}', obj.account_unlocked)
                     
                     dashBoardClosest.appendChild(createElement)
                     createElement.innerHTML = result
@@ -129,17 +138,19 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 } else {
                     notification("Une erreur s'est produite, veuillez actualiser votre page et recommencer", "fas fa-exclamation")
                 }
+                
             })
 
+            }
 
             
         
         } else if(event.target.classList.contains('close-user-view')){
-            let dashBoardClosest = event.target.closest('.dashboard-wrapper')
-            dashBoardClosest.querySelector('.user-view-cover').classList.remove('cover-not-dismiss')
-            dashBoardClosest.querySelector('.form-user-view').classList.remove('user-view-not-dismiss')
+            let wrapperClosest = event.target.closest('.user-view-wrapper')
+            wrapperClosest.querySelector('.user-view-cover').classList.remove('cover-not-dismiss')
+            wrapperClosest.querySelector('.form-user-view').classList.remove('user-view-not-dismiss')
             setTimeout(() => {
-                dashBoardClosest.querySelector('.user-view-wrapper').remove()
+                wrapperClosest.remove()  
             }, 1000);
         }
     })

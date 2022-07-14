@@ -4,7 +4,9 @@
 <div class="dashboard-wrapper my-4">
     <div class="navigation-link d-flex gap-1">
         <a data-checked="profil" class="click click-success">Mon profil</a>
+        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
         <a data-checked="users" class="click click-c5">Utilisateurs</a>
+        {% endif %}
         <a data-checked="settings" class="click click-c5">Paramètres</a>
     </div>
     <div data-selected="profil" class="form-style">
@@ -96,17 +98,19 @@
         </div>  
         {{ form_end(form) }}
     </div>
+    {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
     <div data-selected="users" class="d-none">
         <h3>Utilisateurs du site</h3>
         <input type="text" id="search-users" data-link="{{ path('admin_users_list') }}" placeholder="Recherche l'utilisateur">
         <div class="users-list"></div>
     </div>
+    {% endif %}
     <div data-selected="settings" class="d-none">
         <h3>Paramètres</h3>
-        <form>
+        <form id="settings-wrapper" method="POST">
             <div class="my-2">
                 <label>Message de réservation</label>
-                <textarea></textarea>
+                <textarea name="message_setting" id="message_setting"></textarea>
                 <div>Insérer dans votre message</div>
                 <ul>
                     <li>_firstname_ pour le prénom</li>
@@ -119,13 +123,32 @@
             </div>
             <div>
                 <label>Frais de service</label>
-                <input type="number" min="0" max="100">
+                <input type="number" min="0" max="100" name="tax_setting" id="tax_setting">
             </div>
-            <div>
-                <label></label>
-                <textarea></textarea>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <label>Ajouter un type d'habitation</label>
+                    <input type="text" name="type_setting" name="type_setting" id="type_setting" placeholder="exp: Yourte, Cabane dans les arbre, Cabane flottante">
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <label>Ajouter un équipement</label>
+                    <input type="text" name="equipment_setting" id="equipment_setting" placeholder="exp: Wifi, Eau">
+                </div>
             </div>
+
+            <button type="submit" class="click click-success">Appliquer</button>
+
         </form>
+        <div id='delete-account'>
+            <div class="card card-dismiss d-none text-center">
+                <h3>Voulez-vous vraiment supprimer votre compte ?</h3>
+                <div class="d-flex gap-1 w-max-content m-auto">
+                    <input type="submit" value="Non" id='btn-delete-cancel' class="click click-success">
+                    <input type="submit" value="Oui" id='btn-delete-confirm' class="click click-brown">
+                </div>
+            </div>
+            <input type="submit" value="Supprimer mon compte" id='btn-delete-account' class="click click-brown">
+        </div>
     </div>
 </div>
 </div>

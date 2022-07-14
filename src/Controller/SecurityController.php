@@ -66,11 +66,8 @@ class SecurityController extends AbstractController
             $email = $user->getUserIdentifier();
             $repository = $doctrine->getRepository(Users::class);
             $user = $repository->findOneBy(["email" => $email]);
-            if ($user->getStatut() == FALSE) {
-                $this->addFlash('error', 'Connexion échouée');
-                return $this->redirectToRoute('logout');
-            } else {
-                $this->addFlash('success', 'Connexion réussie');
+            if ($user->getStatut() == TRUE) {
+                $this->addFlash('success', 'Connexion établie');
                 return $this->redirectToRoute('app_index');
             }
         }

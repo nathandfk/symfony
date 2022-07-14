@@ -19,5 +19,5 @@ swagger:
   controller: api_platform.swagger.action.ui
 
 app_logout:
-    path: /logout
+    path: logout
     methods: GET
