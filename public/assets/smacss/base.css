@@ -59,6 +59,7 @@ input, select, textarea{
     border: 2px solid;
     outline: none;
     border-color: var(--c5);
+    font-size: 14px;
 }
 table.ath-table-form{
     width: 100%;

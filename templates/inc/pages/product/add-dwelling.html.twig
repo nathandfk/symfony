@@ -17,14 +17,20 @@
             {{ message }}
         </div>
     {% endfor %}
+<div class="dashboard-wrapper">
     <div class="navigation-link d-flex gap-1 my-3">
         <a data-checked="add" class="click click-success">Ajouter une habitation</a>
-        <a data-checked="delete" class="click click-c5">Habitations</a>
+        <a data-checked="show" class="click click-c5">Habitations</a>
     </div>
     <div class="host-wrapper" data-selected="add" >
         {{ form_start(form) }}
         <div class="img-uploaded"></div>
         <h3>Essentiels</h3>
+            <div class="form-group">
+                {{ form_label(form.type) }}
+                {{ form_widget(form.type) }}
+                {{ form_errors(form.type) }}
+            </div>
             <div class="form-row">
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.title) }}
@@ -217,12 +223,16 @@
             </div>
             <div>
                 <label for="equipments">Équipements *(Séparez les équipements par une virgule)</label>
+                
                 <textarea placeholder="Exemple: Lave linge,Parking,Cuisine,Wifi,Détecteur de fumée,Micro-ondes,Shampooing" name="equipments" id="equipments"></textarea>
             </div>
 
             <button type="submit" class="click click-success" name="add_dwelling">Ajouter ce logement</button>
         {{ form_end(form) }}
     </div>
+    <div class="host-wrapper" data-selected="show" >
+    </div>
+</div>
 </div>
 
 

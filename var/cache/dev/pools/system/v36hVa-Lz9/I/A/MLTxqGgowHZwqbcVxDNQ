@@ -26,15 +26,10 @@ return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\
             'initializable' => [
                 false,
             ],
-            'schema' => [
-                [
-                    'maxLength' => 25,
-                ],
-            ],
         ],
         'Symfony\\Component\\PropertyInfo\\Type' => [
             'builtinType' => [
-                1 => 'string',
+                1 => 'int',
             ],
             'nullable' => [
                 1 => true,

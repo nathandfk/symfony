@@ -106,40 +106,57 @@
     </div>
     {% endif %}
     <div data-selected="settings" class="d-none">
-        <h3>Paramètres</h3>
-        <form id="settings-wrapper" method="POST">
-            <div class="my-2">
-                <label>Message de réservation</label>
-                <textarea name="message_setting" id="message_setting"></textarea>
-                <div>Insérer dans votre message</div>
-                <ul>
-                    <li>_firstname_ pour le prénom</li>
-                    <li>_lastname_ pour le nom</li>
-                    <li>_title_ pour le titre</li>
-                    <li>_totalprice_ pour le prix total</li>
-                    <li>_arrival_ pour la date d'arrivée</li>
-                    <li>_departure_ pour la date de départ</li>
-                </ul>
-            </div>
-            <div>
-                <label>Frais de service</label>
-                <input type="number" min="0" max="100" name="tax_setting" id="tax_setting">
-            </div>
-            <div class="form-row">
-                <div class="form-group bloc-lg-6">
-                    <label>Ajouter un type d'habitation</label>
-                    <input type="text" name="type_setting" name="type_setting" id="type_setting" placeholder="exp: Yourte, Cabane dans les arbre, Cabane flottante">
+        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
+        <div class="my-2">
+            <h3>Recherche</h3>
+            <input type="text" id="settings-search" placeholder="Rechercher un équipement ou un type">
+            <div class="settings-result"></div>
+        </div>
+        <div class="my-4">
+            <h3>Paramètres</h3>
+            <form id="settings-wrapper" method="POST">
+                <div class="my-1">
+                    <label>Titre de la page d'accueil *</label>
+                    <input type="text" name="home_title_setting" id="home_title_setting">
                 </div>
-                <div class="form-group bloc-lg-6">
-                    <label>Ajouter un équipement</label>
-                    <input type="text" name="equipment_setting" id="equipment_setting" placeholder="exp: Wifi, Eau">
+                <div class="my-1">
+                    <label>Email de l'administration *</label>
+                    <input type="email" placeholder="gestion@atypikhouse.com" name="email_admin_setting" id="email_admin_setting">
                 </div>
-            </div>
+                <div class="my-1">
+                    <label>Message de réservation *</label>
+                    <textarea name="message_setting" id="message_setting"></textarea>
+                    <div>Insérer dans votre message</div>
+                    <ul>
+                        <li>_firstname_ pour le prénom</li>
+                        <li>_lastname_ pour le nom</li>
+                        <li>_title_ pour le titre</li>
+                        <li>_totalprice_ pour le prix total</li>
+                        <li>_arrival_ pour la date d'arrivée</li>
+                        <li>_departure_ pour la date de départ</li>
+                    </ul>
+                </div>
+                <div>
+                    <label>Frais de service (En pourcentage) *</label>
+                    <input type="number" min="0" max="100" name="tax_setting" id="tax_setting">
+                </div>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        <label>Ajouter un type d'habitation</label>
+                        <input type="text" name="type_setting" name="type_setting" id="type_setting" class="reset-value" placeholder="exp: Yourte, Cabane dans les arbre, Cabane flottante">
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        <label>Ajouter un équipement</label>
+                        <input type="text" name="equipment_setting" id="equipment_setting" class="reset-value" placeholder="exp: Wifi, Eau">
+                    </div>
+                </div>
 
-            <button type="submit" class="click click-success">Appliquer</button>
+                <button type="submit" class="click click-success">Appliquer</button>
 
-        </form>
-        <div id='delete-account'>
+            </form>
+        </div>
+        {% endif %}
+        <div id='delete-account' class="my-2">
             <div class="card card-dismiss d-none text-center">
                 <h3>Voulez-vous vraiment supprimer votre compte ?</h3>
                 <div class="d-flex gap-1 w-max-content m-auto">

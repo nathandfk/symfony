@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Country;
 use App\Entity\Dwelling;
+use App\Entity\Posts;
 use Symfony\Component\Form\AbstractType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -25,6 +26,11 @@ class DwellingType extends AbstractType
         $choice = ['Entrer votre pays' => ''];
         foreach ($this->countries as $country) {
             $choice += [$country->getNameFr() => $country->getId()];
+        }
+
+        $types = ["Choisissez le type d'habitat" => ''];
+        foreach ($this->type as $element) {
+            $types += [$element->getDescription() => $element->getId()];
         }
         $builder
             ->add('pictures', FileType::class, [
@@ -66,6 +72,7 @@ class DwellingType extends AbstractType
             ->add('state', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Région *'], 'label' => 'Région *'])
             ->add('longitude', HiddenType::class, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Longitude *'], 'label' => 'Longitude *'])
             ->add('latitude', HiddenType::class, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Latitude *'], 'label' => 'Latitude *'])
+            ->add('type', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Type *', 'choices'  => $types,])
 
             // ->add('addedAt')
             // ->add('updatedAt')
@@ -84,5 +91,9 @@ class DwellingType extends AbstractType
         $repository = $doctrine->getRepository(Country::class);
         $countries = $repository->findBy(['europe' => '1'], ['nameFr' => "ASC"]);
         $this->countries = $countries;
+
+        $repository = $doctrine->getRepository(Posts::class);
+        $type = $repository->findBy(['type' => 'TYPE', 'deletedAt' => null], ['description' => 'ASC']);
+        $this->type = $type;
     }
 }

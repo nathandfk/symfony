@@ -118,7 +118,7 @@ class ProductController extends AbstractController
 
 
     #[Route('/checkout', name: 'single_product_check', methods:["POST"])]
-    public function check(ReservationRepository $reservation, DwellingRepository $dwelRep)
+    public function check(ReservationRepository $reservation, ManagerRegistry $doctrine, DwellingRepository $dwelRep)
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $arrival = $data['arrival'];
@@ -137,7 +137,9 @@ class ProductController extends AbstractController
             foreach ($dwellings as $dwelling) {
                 $price = $dwelling[0]['price'];
             }
-            $tax_service = 10;
+            $postRep = $doctrine->getRepository(Posts::class);
+            $tax = $postRep->findOneBy(['type' => strtoupper("tax")]);
+            $tax_service = $tax ? intval($tax->getDescription()) : 10;
             $stripe = false;
             $dayOf = intval($countDay)-1;
             $totalPrice = $this->priceOfClient(intval($price), $dayOf, $tax_service, $stripe, false, false);

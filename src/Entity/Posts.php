@@ -41,13 +41,11 @@ class Posts
     #[ORM\Column(type: 'text')]
     private $description;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, nullable:true)]
     #[Assert\Length(max: 50)]
-    #[Assert\NotBlank()]
     private $statut;
 
-    #[ORM\Column(type: 'string', length: 25, nullable: true)]
-    #[Assert\Length(max: 25)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $number;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -64,6 +62,9 @@ class Posts
 
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Dwelling::class)]
     private $dwellings;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private $deletedAt;
 
     public function __construct()
     {
@@ -155,7 +156,7 @@ class Posts
         return $this->statut;
     }
 
-    public function setStatut(string $statut): self
+    public function setStatut(?string $statut): self
     {
         $this->statut = $statut;
 
@@ -266,6 +267,18 @@ class Posts
                 $dwelling->setType(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }

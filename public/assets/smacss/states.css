@@ -214,6 +214,7 @@
     text-align: center;
     font-size: 14px;
     width: max-content;
+    border: 0;
 }
 .click-rounded{
     width: 40px;
