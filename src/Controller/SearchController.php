@@ -22,16 +22,16 @@ class SearchController extends AbstractController
             return $this->redirectToRoute('app_habitations');
         }
         $maxPeople = 0;
-        $start_date = !empty($_GET['arrival']) ? $_GET['arrival'] : '';
-        $end_date = !empty($_GET['departure']) ? $_GET['departure'] : '';
-        $search = !empty($_GET['place']) ? $_GET['place'] : '';
-        $maxPeople += !empty($_GET['children']) ? intval($_GET['children']) : 0;
-        $maxPeople += !empty($_GET['adult']) ? intval($_GET['adult']) : 0;
-        $maxPeople += !empty($_GET['baby']) ? intval($_GET['baby']) : 0;
-        $maxPeople += !empty($_GET['animal']) ? intval($_GET['animal']) : 0;
+        $start_date = !is_null($_GET['arrival']) ? $_GET['arrival'] : null;
+        $end_date = !is_null($_GET['departure']) ? $_GET['departure'] : null;
+        $search = !is_null($_GET['place']) ? $_GET['place'] : null;
+        $maxPeople += !is_null($_GET['children']) ? intval($_GET['children']) : null;
+        $maxPeople += !is_null($_GET['adult']) ? intval($_GET['adult']) : null;
+        $maxPeople += !is_null($_GET['baby']) ? intval($_GET['baby']) : null;
+        $maxPeople += !is_null($_GET['animal']) ? intval($_GET['animal']) : null;
 
         $calendar = $calendar->calendar();
-        $dataDwellings = $dwelRep->showDataDwellings(0, $start_date, $end_date, $search, $maxPeople);
+        $dataDwellings = $dwelRep->showDataDwellings(null, $start_date, $end_date, $search, $maxPeople);
         $dataDwellings = $paginator->paginate(
             $dataDwellings,
             $request->query->getInt('page', 1),

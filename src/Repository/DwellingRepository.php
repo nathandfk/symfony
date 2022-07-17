@@ -65,22 +65,48 @@ class DwellingRepository extends ServiceEntityRepository
         return $execute->fetchAllAssociative();
     }
 
-    public function showDataDwellings(int $id=0, string $start_date = "", string $end_date = "", string $place = "", int $maxPeople = 0, int $filterType = 0, bool $orderTitle = false, int $limitPrice = 0)
+    public function showDataDwellings(int $id = null, string $start_date = null, string $end_date = null, string $place = null, int $maxPeople = null, $limitPrice = null, int $filterType = null, bool $orderTitle = null)
     {
-        if (!empty($place)) {
+        if (!is_null($place)) {
             $ex = explode(", ", $place);
             if (count($ex) > 1) {
                 $place = $ex[0];
             }
         }
-        $where = "";
-        $where = $id!=0 && !empty($place) ? "WHERE id = $id AND city LIKE '%$place%'" : $where;
-        $where = !empty($place) && ($id==0) ? "WHERE city LIKE '%$place%'" : $where;
-        $where = empty($place) && ($id>0) ? "WHERE id = $id" : $where;
-        !empty($start_date) && !empty($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = "";
+        // $where = "";
+        // $where = !is_null($id) && !is_null($place) ? "WHERE id = $id AND city LIKE '%$place%'" : $where;
+        // $where = !is_null($place) && is_null($id) ? "WHERE city LIKE '%$place%'" : $where;
+        // $where = is_null($place) && !is_null($id) ? "WHERE id = $id" : $where;
+        // !is_null($start_date) && !is_null($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = "";
 
-        $resultDwellings = $this->showDwellings("*", $where);
-        if (!empty($start_date) && !empty($end_date)) {
+        $where = !is_null($id) || !is_null($start_date) || !is_null($id) || !is_null($end_date)
+        || !is_null($place) || !is_null($maxPeople) || !is_null($limitPrice)
+        || !is_null($filterType) ? "WHERE " : "";
+
+        $element = "";
+
+        $element .= !is_null($id) ? "id = $id" : "";
+
+        $element .= !is_null($id) && !is_null($place) ? " AND city LIKE '%$place%' " : "";
+        $element .= !is_null($place) && is_null($id) ? "city LIKE '%$place%'" : "";
+
+        $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) ? " AND ".$limitPrice." " : "";
+        $element .= is_null($id) && is_null($place) && !is_null($limitPrice) ? $limitPrice." " : "";
+        $element .= (is_null($id) || is_null($place)) && !is_null($limitPrice) ? " AND ".$limitPrice." " : "";
+
+        $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) && !is_null($filterType) ? " AND `type_id`=".$filterType." " : "";
+        $element .= is_null($id) && is_null($place) && is_null($limitPrice) && !is_null($filterType) ? " `type_id`=".$filterType : "";
+        $element .= (is_null($id) || is_null($place) || is_null($limitPrice)) && !is_null($filterType) ? " AND `type_id`=".$filterType." " : "";
+
+        if (!is_null($orderTitle) && is_bool($orderTitle)) {
+        $order = $orderTitle ? "ASC" : "DESC";
+        $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) && !is_null($filterType) && !is_null($orderTitle) ? " ORDER BY title $order " : "";
+        $element .= (is_null($id) || is_null($place) || is_null($limitPrice) || is_null($filterType)) && !is_null($orderTitle) ? " ORDER BY title $order " : "";
+        $element .= is_null($id) && is_null($place) && is_null($limitPrice) && is_null($filterType) && !is_null($orderTitle) ? " ORDER BY title $order " : "";
+        }
+
+        $resultDwellings = $this->showDwellings("*", $where.$element);
+        if (!is_null($start_date) && !is_null($end_date)) {
             $range = $this->date_range("$start_date", "$end_date");
             $date = "";
             foreach ($range as $value) {
@@ -92,7 +118,6 @@ class DwellingRepository extends ServiceEntityRepository
         }
 
         $finalResult = [];
-
         foreach ($resultDwellings as $dwelling) {
             $dwelRep = $this->find($dwelling['id']);
 
@@ -225,7 +250,6 @@ class DwellingRepository extends ServiceEntityRepository
             $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate, $type->getDescription(), $equipmentsValue]; //15
             array_push($finalResult, $dwellings);
         }
-
 
         return $finalResult;
     }

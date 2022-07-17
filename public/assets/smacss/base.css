@@ -67,3 +67,16 @@ table.ath-table-form{
 .ath-table-form td, .ath-table-form th{
     padding: 10px;
 }
+
+[type=range] {
+    background: black;
+    -webkit-appearance: none;
+    padding: 0;
+    font: inherit;
+    outline: none;
+    color: #069;
+    opacity: .8;
+    box-sizing: border-box;
+    transition: opacity .2s;
+    cursor: pointer;
+}

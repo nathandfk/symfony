@@ -14,11 +14,41 @@
             {% include 'inc/modules/search/search.html.twig' %}
 
             </div> 
-            {% if dataDwellings %}
-            <div class="w-10r my-4">
-                <div><i class="fas fa-filter"></i> Filtre</div>
-                <input type="range" id="cowbell" name="cowbell" 
-                min="0" max="100" value="100" step="1">
+            {% if (dataDwellings and min and max and value) %}
+            <div class="w-10r my-4 filter-wrapper">
+                <div class="my-2">
+                    <div class="cp" id="open_filter"><i class="fas fa-filter"></i> Filtre</div>
+                    <div class="card card-dismiss d-none" method="GET">
+                        <div class="d-flex jc-space-between">
+                            <h3>Filtre</h3> <span class="fas fa-times size24" id="close_filter"></span>
+                        </div>
+                        <div>
+                            
+                            <div>
+                                <label>Ordre</label>
+                                <select name="order">
+                                    <option value="toc" {% if app.request.query.get("type") == 'toc' %}selected="selected"{% endif %}>Classé les titres par ordre croissant</option>
+                                    <option value="tod" {% if app.request.query.get("type") == 'tod' %}selected="selected"{% endif %}>Classé les titres par ordre décroissant</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Type</label>
+                                
+                                <select name="type">
+                                    {% for type in types %}
+                                    <option value="{{ type.id }}" {% if app.request.query.get("type") == type.id %}selected="selected"{% endif %}>{{ type.description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <input type="submit" value="Appliquer" id="filter_apply" class="click click-success ml-auto">
+                    </div>
+                </div>
+                <div class="filter_range">
+                    <label>{{ value }}</label>
+                    <input type="range" id="price_range" name="price_range" data-link="{{ path('app_habitations') }}"
+                    min="{{ min }}" max="{{ max }}" value="{{ value }}" step="10">
+                </div>
             </div>
             {% endif %}
             <div class="page-title my-2">

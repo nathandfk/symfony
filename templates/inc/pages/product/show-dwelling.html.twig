@@ -232,6 +232,24 @@
                         </div>
                     </div>
                     {% endif %}
+                    {% if app.user %}
+                    <h3>Vous pouvez laisser un commentaire</h3>
+                    <div class="d-flex gap-1 w-75 my-2">
+                        <form id="user-like">
+                            <div class="criteria">Propreté <span>{% for i in 1..5 %}<button class="fas fa-star cp criteria-star" name="_cleanliness" value="{{ i }}"></button>{% endfor %}</span></div>
+                            <div class="criteria">Précision <span>{% for i in 1..5 %}<button class="fas fa-star cp criteria-star" name="_precision" value="{{ i }}"></button>{% endfor %}</span></div>
+                            <div class="criteria">Communication <span>{% for i in 1..5 %}<button class="fas fa-star cp criteria-star" name="_communication" value="{{ i }}"></button>{% endfor %}</span></div>
+                            <div class="criteria">Emplacement <span>{% for i in 1..5 %}<button class="fas fa-star cp criteria-star" name="_location" value="{{ i }}"></button>{% endfor %}</span></div>
+                            <div class="criteria">Arrivée <span>{% for i in 1..5 %}<button class="fas fa-star cp criteria-star" name="_arrival" value="{{ i }}"></button>{% endfor %}</span></div>
+                            <div class="criteria">Rapport qualité prix <span>{% for i in 1..5 %}<button class="fas fa-star cp criteria-star" name="_value_for_money" value="{{ i }}"></button>{% endfor %}</span></div>
+                            <input type="submit" class="click click-success" name="btn-like" value="Envoyer">
+                        </form>
+                        <form id="user-comment" class="w-50">
+                            <textarea rows="6"></textarea>
+                            <input type="submit" class="click click-success ml-auto" name="btn-comment" value="Commenter">
+                        </form>
+                    </div>
+                    {% endif %}
                 </div>
                 {% if app.user %}
                     {% set email = app.user.email %}
@@ -267,6 +285,9 @@
                 {% endfor %}
         </div>
     </div>
+
+
+
 </div>
 
 

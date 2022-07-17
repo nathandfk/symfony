@@ -211,5 +211,75 @@ dom("html, body").addEventListener('mouseup', event => {
     });
     text = adultsText + childrensText + babiesText + animalsText
     innerClosest.querySelector(".nb-traverlers").innerHTML = text
+    } else if (event.target.className == 'criteria') {
+        let closest = event.target.closest('.criteria')
+            count = closest.querySelector('span').childElementCount
+            console.log(count)
+    }
+})
+dom("html, body").addEventListener('click', event => {
+    if (event.target.classList.contains('criteria-star')) {
+        let closest = event.target.closest('.criteria')
+            span = closest.querySelector('span')
+            count = closest.querySelector('span').childElementCount
+
+
+        let index = null;
+        for (let i = 0; i < count; i++) {
+            if (span.children[i].classList.contains("c1")) {
+                span.children[i].classList.remove("c1")
+            }
+            if (event.target == span.children[i]) {
+                index = i
+            } 
+        }
+        if (index!=null) {
+            for (let i = 0; i <= index; i++) {
+                span.children[i].classList.add("c1")
+            } 
+        }       
+    } else if (event.target.name == "btn-comment"){
+        
+    }
+})
+
+let data = {_cleanliness:"", _precision: "",
+_communication:"", _location:"", 
+_arrival:"", _value_for_money:""}
+dom("html, body").addEventListener('submit', event => {
+    if (event.target) {
+        if (event.target.id == "user-like") {
+            event.preventDefault()
+            var formData = new FormData(event.target);
+            var object = {};
+                formData.forEach((value, key) => object[key] = value);
+            var json = JSON.stringify(object);
+                check = JSON.parse(json)
+
+            data._cleanliness = check._cleanliness ? check._cleanliness : data._cleanliness
+            data._precision = check._precision ? check._precision : data._precision
+            data._communication = check._communication ? check._communication : data._communication
+            data._location = check._location ? check._location : data._location
+            data._arrival = check._arrival ? check._arrival : data._arrival
+            data._value_for_money = check._value_for_money ? check._value_for_money : data._value_for_money
+            
+            if (event.target.name == "btn-like") {
+                fetch("/product/likes", 
+                    {headers: {
+                    'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                    }, method: 'POST', body: JSON.stringify(data) })
+                    .then(res => res.json())
+                    .then(response => {
+                        const obj = JSON.parse(response);
+                        if(obj.response == "success") {
+
+                        }
+                    })
+            }
+            
+            
+        } else if (event.target.id == "user-comment"){
+            event.preventDefault()
+        }
     }
 })
