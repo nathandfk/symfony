@@ -65,13 +65,15 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 255)]
     private $complAddress;
 
+    #[ORM\ManyToOne(targetEntity: Country::class, inversedBy: 'users')]
+    private $Country;
+
+
     #[ORM\Column(type: 'string', length: 75)]
     #[Assert\Length(max: 75)]
     #[Assert\NotBlank()]
     private $city;
 
-    #[ORM\Column(type: 'integer')]
-    private $country;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Length(max: 255)]
@@ -120,7 +122,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
-
     public function __construct()
     {
         $this->userMetas = new ArrayCollection();
@@ -132,6 +133,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $this->statut = FALSE;
         $this->host = "PRIVATE";
         $this->account = TRUE;
+        $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->deletedAt = null;
     }
     
     public function getId(): ?int
@@ -264,6 +268,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getCountry(): ?Country
+    {
+        return $this->Country;
+    }
+
+    public function setCountry(?Country $Country): self
+    {
+        $this->Country = $Country;
+
+        return $this;
+    }
+
     public function getCity(): ?string
     {
         return $this->city;
@@ -272,19 +288,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCity(string $city): self
     {
         $this->city = $city;
-
-        return $this;
-    }
-
-
-    public function getCountry(): ?int
-    {
-        return $this->country;
-    }
-
-    public function setCountry(int $country): self
-    {
-        $this->country = $country;
 
         return $this;
     }
@@ -545,6 +548,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
 
 }

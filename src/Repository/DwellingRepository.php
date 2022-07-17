@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Country;
 use App\Entity\Dwelling;
+use App\Entity\Posts;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,6 +24,7 @@ class DwellingRepository extends ServiceEntityRepository
     private $reservation;
     private $dwelling_meta;
     private $users;
+    private $doctrine;
     public function __construct(ManagerRegistry $registry, CountryRepository $country, PostsRepository $posts, ReservationRepository $reservation, DwellingMetaRepository $dwelling_meta, UsersRepository $users, PostMetaRepository $pm)
     {
         parent::__construct($registry, Dwelling::class);
@@ -31,6 +34,7 @@ class DwellingRepository extends ServiceEntityRepository
         $this->dwelling_meta = $dwelling_meta;
         $this->users = $users;
         $this->post_meta = $pm;
+        $this->doctrine = $registry;
     }
 
     public function add(Dwelling $entity, bool $flush = false): void
@@ -61,7 +65,7 @@ class DwellingRepository extends ServiceEntityRepository
         return $execute->fetchAllAssociative();
     }
 
-    public function showDataDwellings(int $id=0, string $start_date = "", string $end_date = "", string $place = "", int $maxPeople = 0)
+    public function showDataDwellings(int $id=0, string $start_date = "", string $end_date = "", string $place = "", int $maxPeople = 0, int $filterType = 0, bool $orderTitle = false, int $limitPrice = 0)
     {
         if (!empty($place)) {
             $ex = explode(", ", $place);
@@ -90,15 +94,28 @@ class DwellingRepository extends ServiceEntityRepository
         $finalResult = [];
 
         foreach ($resultDwellings as $dwelling) {
+            $dwelRep = $this->find($dwelling['id']);
+
+            if ($dwelRep->getDeletedAt() != null || $dwelRep->isActivate() == false) {
+                continue;
+            }
+            $equipmentsValue = [];
+            $postRep = $this->doctrine->getRepository(Posts::class);
+            $type = $postRep->find($dwelRep->getType());
+
+            foreach ($dwelRep->getEquipments() as $id) {
+                $equipment = $postRep->find($id);
+                array_push($equipmentsValue, $equipment->getDescription());
+            }
+
             $id = $dwelling['id'];
-            $country_id = $dwelling['country'];
-            $user_id = $dwelling['user_id'];
-            $users = $this->users->showUsers("first_name, last_name, email, roles, statut, host", "WHERE id= $user_id");
+            $user_id = $dwelRep->getUser()->getId();
+            $users = $this->users->showUsers("first_name, last_name, email, roles, statut, host, deleted_at", "WHERE id= $user_id");
 
             !empty($date) ? $checkReservation = $this->reservation->showReservation("*", 'WHERE dwelling_id='.$id.' AND '.$date) : $checkReservation = false;
             if ($checkReservation) {
                 continue;
-            } else if ($users[0]['host'] == "PRIVATE" || $users[0]['host'] == "CLOSED") {
+            } else if ($users[0]['host'] == "PRIVATE" || $users[0]['host'] == "CLOSED" || $users[0]['deleted_at'] != null) {
                 continue;
             }
             $resultDwellingMeta = $this->dwelling_meta->showDwellingMeta($id);
@@ -113,7 +130,7 @@ class DwellingRepository extends ServiceEntityRepository
                     continue;
                 }
             }
-            $location = $this->country->findOneCountry($country_id);
+            $location = $this->doctrine->getRepository(Country::class)->find($dwelRep->getCountry());
 
             $countComments = $this->posts->showPosts("count(*) count", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');
             $comments = $this->posts->showPosts("user_id, dwelling_id, type, description, added_at", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');
@@ -199,13 +216,13 @@ class DwellingRepository extends ServiceEntityRepository
 
 
             !empty($resultDwellingMeta) ? $dwellingMeta = $resultDwellingMeta : $dwellingMeta = "";
-            !empty($location) ? $country = $location[0] : $country = "";
+            !empty($location) ? $country = $location->getNameFr() : $country = "";
             !empty($countComments) ? $nbComments = $countComments[0] : $nbComments = "";
             !empty($comments) ? $comments = $comments : $comments = "";
             !empty($totalLikes) ? $nbLikes = $totalLikes : $nbLikes = "";
             !empty($users) ? $users = $users : $users = "";
 
-            $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate];
+            $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate, $type->getDescription(), $equipmentsValue]; //15
             array_push($finalResult, $dwellings);
         }
 

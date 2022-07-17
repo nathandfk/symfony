@@ -13,14 +13,16 @@
         </div>
     {% endfor %}
     {% for message in app.flashes('error') %}
-        <div class="alert alert-success">
+        <div class="alert alert-error">
             {{ message }}
         </div>
     {% endfor %}
 <div class="dashboard-wrapper">
     <div class="navigation-link d-flex gap-1 my-3">
         <a data-checked="add" class="click click-success">Ajouter une habitation</a>
+        {% if (is_granted("ROLE_HOST") or is_granted("ROLE_MODERATOR") or is_granted("ROLE_ADMIN")) %}
         <a data-checked="show" class="click click-c5">Habitations</a>
+        {% endif %}
     </div>
     <div class="host-wrapper" data-selected="add" >
         {{ form_start(form) }}
@@ -96,6 +98,11 @@
                     {{ form_widget(form.state) }}
                     {{ form_errors(form.state) }}
                 </div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.equipments) }}
+                {{ form_widget(form.equipments) }}
+                {{ form_errors(form.equipments) }}
             </div>
         <h3>Informations complémentaires</h3>
             <div class="form-row">
@@ -220,11 +227,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <label for="equipments">Équipements *(Séparez les équipements par une virgule)</label>
-                
-                <textarea placeholder="Exemple: Lave linge,Parking,Cuisine,Wifi,Détecteur de fumée,Micro-ondes,Shampooing" name="equipments" id="equipments"></textarea>
             </div>
 
             <button type="submit" class="click click-success" name="add_dwelling">Ajouter ce logement</button>

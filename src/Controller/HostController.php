@@ -6,39 +6,34 @@ use App\Data\DataSite;
 use App\Entity\Country;
 use App\Entity\Dwelling;
 use App\Entity\DwellingMeta;
+use App\Entity\Posts;
+use App\Entity\Users;
 use App\Form\DwellingType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class HostController extends AbstractController
 {
     #[Route('/mon-compte/hote', name: 'host')]
-    public function host(Request $request, DataSite $dataSite, UserInterface $user, SluggerInterface $slugger, ManagerRegistry $doctrine)
+    public function host(Request $request, DataSite $dataSite, UserInterface $user, SluggerInterface $slugger, ManagerRegistry $doctrine, Security $security)
     {
-
+        $auth = $security->getUser();
+        if (!$auth) {
+            return $this->redirectToRoute('app_index');
+        }
         $dwelling = new Dwelling();
         $form = $this->createForm(DwellingType::class, $dwelling);
         $form->handleRequest($request);
-
         $getEmail = $user->getUserIdentifier();
         $dataSite = $dataSite->getDataUser($doctrine, $getEmail, 0);
 
-
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            $country = $dwelling->getCountry();
-            $country = intval($country);
-            $repository = $doctrine->getRepository(Country::class);
-            $country = $repository->findOneBy(["id" => $country]);
-
-            if ($country) {
-
-
                 $dataDwellingMeta = [
                     "_animals" => $_POST['animals'],
                     "_breakfast" => $_POST['breakfast'],
@@ -51,9 +46,9 @@ class HostController extends AbstractController
                     "_arrival_from" => $_POST['arrival_from'],
                     "_arrival_until" => $_POST['arrival_until'],
                     "_departure_before" => $_POST['departure_before'],
-                    "_max_people" => $_POST['max_people'],
-                    "_equipments" => $_POST['equipments']
+                    "_max_people" => $_POST['max_people']
                 ];
+                
                 foreach ($dataDwellingMeta as $key => $value) {
                     if ($value == "") {
                         $this->addFlash("error", "Un ou plusieurs champs sont vides, veuillez vérifier vos données ou actualiser votre page ensuite réessayer");
@@ -96,35 +91,45 @@ class HostController extends AbstractController
                         array_push($finalPictures, $newFilename);
                         }
                     }
-                
-                $em = $doctrine->getManager();
-                $dwelling->setUser($dataSite);
-                $dwelling->setPictures($finalPictures);
-                $dwelling->setAddedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-                $dwelling->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-                $em->persist($dwelling);
-                $em->flush();
-
-
-                foreach ($dataDwellingMeta as $key => $value) {
-                    $dwellingMeta = new DwellingMeta();
-                    $repository = $doctrine->getRepository(Dwelling::class);
-                    $dwellingId = $repository->findBy([], ['id' => 'DESC'], 1);
-                    $dwellingData = $repository->findOneBy(['id' => $dwellingId]);
-                    $dwellingMeta->setDwelling($dwellingData);
-                    $dwellingMeta->setField($key);
-                    $dwellingMeta->setValue($value);
-                    $em->persist($dwellingMeta);
+                    $em = $doctrine->getManager();
+                    $dwelling->setUser($dataSite);
+                    $dwelling->setPictures($finalPictures);
+                    $em->persist($dwelling);
                     $em->flush();
-                }
 
-                $this->addFlash("success", "Insertion réussie");
+
+                    foreach ($dataDwellingMeta as $key => $value) {
+                        $dwellingMeta = new DwellingMeta();
+                        $repository = $doctrine->getRepository(Dwelling::class);
+                        $dwellingId = $repository->findBy([], ['id' => 'DESC'], 1);
+                        $dwellingData = $repository->findOneBy(['id' => $dwellingId]);
+                        $dwellingMeta->setDwelling($dwellingData);
+                        $dwellingMeta->setField($key);
+                        $dwellingMeta->setValue($value);
+                        $em->persist($dwellingMeta);
+                        $em->flush();
+                    }
+                    $flash='';
+                    $roles = [];
+                    if (!in_array('ROLE_HOST', $auth->getRoles())) {
+                        $em = $doctrine->getManager();
+                        $repository = $doctrine->getRepository(Users::class);
+                        $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
+                        foreach ($auth->getRoles() as $key) {
+                            array_push($roles, $key);
+                        }
+                        array_push($roles, 'ROLE_HOST');
+                        $user->setRoles($roles);
+                        $em->persist($user);
+                        $em->flush();
+                        $flash = 'Un nouveau rôle a été ajouté à votre compte. Vous allez être déconnecté';
+                    }
+                    $this->addFlash("success", "Insertion réussie ! $flash");
                 }
                 return $this->redirectToRoute('host');
             } else if($form->isSubmitted() && !$form->isValid()) {
                 $this->addFlash("error", "Une ou plusieurs erreurs se sont produites, il pourrait s'agir des champs mal renseignés");
             }
-        }
         return $this->render('inc/pages/product/add-dwelling.html.twig', [
             'carousel' => true,
             'title' => 'Mode hôte',

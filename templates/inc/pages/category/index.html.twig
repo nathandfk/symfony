@@ -14,6 +14,13 @@
             {% include 'inc/modules/search/search.html.twig' %}
 
             </div> 
+            {% if dataDwellings %}
+            <div class="w-10r my-4">
+                <div><i class="fas fa-filter"></i> Filtre</div>
+                <input type="range" id="cowbell" name="cowbell" 
+                min="0" max="100" value="100" step="1">
+            </div>
+            {% endif %}
             <div class="page-title my-2">
                 <h1 class="text-uppercase c1 size22 ff-r">{{ title }}</h1>
             </div>
@@ -30,8 +37,8 @@
                             <div class="my-1"><i class="fas fa-star c1 size18"></i> {{ dwellings[5] }} ( {{ dwellings[3].count }} {% if dwellings[3].count > 1 %} Commentaires {% else %} Commentaire {% endif %})</div>
                             <div>A partir de <span class="c1 ff-m size24">{{ dwellings[0].price }}€</span></div>
                             <div>{{ dwellings[0].title }}</div>
-                            <div>{{ dwellings[0].city }}, {{ dwellings[0].state }} - {{ dwellings[2].name_fr }}</div>
-                            <div class="c1 ff-m size22">{{ dwellings[2].name_fr }}</div>
+                            <div>{{ dwellings[0].city }}, {{ dwellings[0].state }}</div>
+                            <div class="c1 ff-m size22">{{ dwellings[2] }}</div>
                         </div>
                     </a>
                 {% endfor %}

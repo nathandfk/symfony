@@ -23,7 +23,7 @@ class UsersType extends AbstractType
     {
         $choice = ['Entrer votre pays' => ''];
         foreach ($this->countries as $country) {
-            $choice += [$country->getNameFr() => $country->getId()];
+            $choice += [$country->getNameFr() => $country];
         }
         $builder
             ->add('firstName', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Prénom *'], 'label' => 'Prénom *'])
@@ -59,7 +59,9 @@ class UsersType extends AbstractType
     }
     public function __construct(ManagerRegistry $doctrine){
         $repository = $doctrine->getRepository(Country::class);
-        $countries = $repository->findBy([], ['nameFr' => "ASC"]);
+        $countries = $repository->findBy([], []);
         $this->countries = $countries;
     }
 }
+
+

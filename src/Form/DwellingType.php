@@ -8,7 +8,6 @@ use App\Entity\Posts;
 use Symfony\Component\Form\AbstractType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -25,12 +24,17 @@ class DwellingType extends AbstractType
     {
         $choice = ['Entrer votre pays' => ''];
         foreach ($this->countries as $country) {
-            $choice += [$country->getNameFr() => $country->getId()];
+            $choice += [$country->getNameFr() => $country];
         }
 
         $types = ["Choisissez le type d'habitat" => ''];
         foreach ($this->type as $element) {
-            $types += [$element->getDescription() => $element->getId()];
+            $types += [$element->getDescription() => $element];
+        }
+
+        $equipments = [];
+        foreach ($this->equipments as $element) {
+            $equipments += [$element->getDescription() => $element->getId()];
         }
         $builder
             ->add('pictures', FileType::class, [
@@ -65,19 +69,15 @@ class DwellingType extends AbstractType
             ->add('abstract', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Résumé *'], 'label' => 'Résumé *'])
             ->add('description', TextareaType::class, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Description *'], 'label' => 'Description *'])
             ->add('price', NumberType::class, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Exemple: 129'], 'label' => 'Prix (Les prix sont en euros, entrez uniquement le nombre) *'])
+            ->add('equipments', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Équipements *', 'choices'  => $equipments, 'multiple' => true])
             ->add('address', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Adresse *'], 'label' => 'Adresse *'])
             ->add('complAddress', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Complément d\'adresse'], 'label' => 'Complément d\'adresse'])
-            ->add('country', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Pays *', 'choices'  => $choice,])
-            ->add('city', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Ville *'], 'label' => 'Ville *'])
-            ->add('state', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Région *'], 'label' => 'Région *'])
+            ->add('city', null, ['required' => true, 'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Ville *'], 'label' => 'Ville *'])
+            ->add('state', null, ['required' => true, 'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Région *'], 'label' => 'Région *'])
             ->add('longitude', HiddenType::class, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Longitude *'], 'label' => 'Longitude *'])
             ->add('latitude', HiddenType::class, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Latitude *'], 'label' => 'Latitude *'])
-            ->add('type', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Type *', 'choices'  => $types,])
-
-            // ->add('addedAt')
-            // ->add('updatedAt')
-            // ->add('user')
-            // ->add('city')
+            ->add('type', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Type *', 'choices'  => $types])
+            ->add('country', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Pays *', 'choices'  => $choice])
         ;
     }
 
@@ -95,5 +95,8 @@ class DwellingType extends AbstractType
         $repository = $doctrine->getRepository(Posts::class);
         $type = $repository->findBy(['type' => 'TYPE', 'deletedAt' => null], ['description' => 'ASC']);
         $this->type = $type;
+
+        $equipments = $repository->findBy(['type' => 'EQUIPMENT', 'deletedAt' => null], ['description' => 'ASC']);
+        $this->equipments = $equipments;
     }
 }

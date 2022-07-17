@@ -246,4 +246,27 @@ class SettingsController extends AbstractController
         return new JsonResponse($output);
     }
 
+
+    #[Route('/account/delete', name: 'delete')]
+    public function deleteAccount(ManagerRegistry $doctrine, Request $request, Security $security, UsersRepository $dataUsers, DwellingRepository $dwelRep, PaginatorInterface $paginator)
+    {
+        $auth = $security->getUser();
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            return $this->redirectToRoute('app_index');
+        }
+        if ($auth) {
+            $em = $doctrine->getManager();
+            $repository = $doctrine->getRepository(Users::class);
+            $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
+            $user->setDeletedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
+            $em->persist($user);
+            $em->flush($user);
+            $output = '{"response":"success", "message":"Votre compte a correctement été supprimé, vous allez être déconnecté !", "icon":"fas fa-exclamation", "redirect":"/logout"}';
+        } else {
+            $output = '{"response":"error", "message":"Vous ne vous êtes pas authentifié", "icon":"fas fa-exclamation", "redirect":""}';
+        }
+        return new JsonResponse($output);
+    }
+
 }

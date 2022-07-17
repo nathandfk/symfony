@@ -35,7 +35,7 @@ class SearchController extends AbstractController
         $dataDwellings = $paginator->paginate(
             $dataDwellings,
             $request->query->getInt('page', 1),
-            12);
+            3);
         $locations = [];
         foreach ($dataDwellings as $key) {
             array_push($locations, [$key[0]['city'], $key[0]['longitude'], $key[0]['latitude']]);

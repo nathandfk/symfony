@@ -36,13 +36,7 @@ class UsersController extends AbstractController
         $form = $this->createForm(UsersType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() 
-        && $form->get('firstName')->isValid() && $form->get('lastName')->isValid()
-        && $form->get('password')->isValid() && $form->get('society')->isValid()
-        && $form->get('birthday')->isValid() && $form->get('email')->isValid()
-        && $form->get('phoneNumber')->isValid() && $form->get('address')->isValid()
-        && $form->get('complAddress')->isValid() && $form->get('city')->isValid()
-        && $form->get('country')->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $repository = $doctrine->getRepository(Country::class);
             $country = $repository->findOneBy(["id" => $user->getCountry()]);
             if ($country && $_POST['register-opt-in'] == "on") {
@@ -50,8 +44,6 @@ class UsersController extends AbstractController
                 $em = $doctrine->getManager();
                 $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
                 $user->setActivationKey($activate);
-                $user->setAddedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-                $user->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
                 $em->persist($user);
                 $em->flush();
                 // $email = (new Email())
@@ -87,6 +79,7 @@ class UsersController extends AbstractController
         $identifier = $user->getUserIdentifier();
         $repository = $doctrine->getRepository(Users::class);
         $getUser = $repository->findOneBy(['email' => $identifier]);
+
         $dataUser = [
             'first_name' =>$getUser->getFirstName(),
             'last_name' =>$getUser->getLastName(),
@@ -97,12 +90,12 @@ class UsersController extends AbstractController
             'address' =>$getUser->getAddress(),
             'compl_address' =>$getUser->getComplAddress(),
             'city' =>$getUser->getCity(),
-            'country' =>$getUser->getCountry(),
+            'country' => $getUser->getCountry()->getId(),
         ];
         $user = new Users();
         $form = $this->createForm(UsersType::class, $user);
         $form->handleRequest($request);
-        // $2y$13$qs0aHk/GF0yZB/J5V1YzPOFqGCsujoF674t/luf5AD0tRbZVNgcSi
+        
         if ($form->isSubmitted() 
                 && $form->get('firstName')->isValid() 
                 && $form->get('lastName')->isValid()
@@ -157,7 +150,6 @@ class UsersController extends AbstractController
                 $this->addFlash("success", "Mise à jour de votre profil réussie, votre mot de passe a également été modifié");
                 return $this->redirectToRoute('dashboard');
         }
-        // Azerty123@@
         return $this->render('inc/pages/users/dashboard.html.twig', [
             'carousel' => true,
             'title' => 'Mon compte',
