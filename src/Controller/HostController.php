@@ -160,7 +160,7 @@ class HostController extends AbstractController
 
                 $repository = $doctrine->getRepository(Users::class);
                 $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
-                if ($dwel) {
+                if ($dwel && ($dwel->getUser()->getId() == $user->getId())) {
                     $arrayDate = $this->date_range($arrival, $departure);
                     foreach ($arrayDate as $value) {
                         $startDate = "start_date = '$value'";

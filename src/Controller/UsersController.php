@@ -80,18 +80,18 @@ class UsersController extends AbstractController
         $repository = $doctrine->getRepository(Users::class);
         $getUser = $repository->findOneBy(['email' => $identifier]);
 
-        $dataUser = [
-            'first_name' =>$getUser->getFirstName(),
-            'last_name' =>$getUser->getLastName(),
-            'email' =>$getUser->getEmail(),
-            'society' =>$getUser->getSociety(),
-            'birthday' =>$getUser->getBirthday(),
-            'phone_number' =>$getUser->getPhoneNumber(),
-            'address' =>$getUser->getAddress(),
-            'compl_address' =>$getUser->getComplAddress(),
-            'city' =>$getUser->getCity(),
-            'country' => $getUser->getCountry()->getId(),
-        ];
+        // $dataUser = [
+        //     'first_name' =>$getUser->getFirstName(),
+        //     'last_name' =>$getUser->getLastName(),
+        //     'email' =>$getUser->getEmail(),
+        //     'society' =>$getUser->getSociety(),
+        //     'birthday' =>$getUser->getBirthday(),
+        //     'phone_number' =>$getUser->getPhoneNumber(),
+        //     'address' =>$getUser->getAddress(),
+        //     'compl_address' =>$getUser->getComplAddress(),
+        //     'city' =>$getUser->getCity(),
+        //     'country' => $getUser->getCountry()->getId(),
+        // ];
         $user = new Users();
         $form = $this->createForm(UsersType::class, $user);
         $form->handleRequest($request);
@@ -154,7 +154,7 @@ class UsersController extends AbstractController
             'carousel' => true,
             'title' => 'Mon compte',
             'form' => $form->createView(),
-            'userdata' => $dataUser
+            'userdata' => $getUser
         ]);
     }
 
@@ -174,6 +174,7 @@ class UsersController extends AbstractController
         if ($userMetaSearch) {
             $iban = $userMetaSearch->getValue();
         }
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $doctrine->getManager();
             if ($userMetaSearch) {

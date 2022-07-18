@@ -28,7 +28,7 @@ class CheckoutController extends AbstractController
 
         $second = strtotime($seconDate->format('Y-m-d H:i:s'));
 
-        if (($second-$first)>30) {
+        if (($second-$first)>120) {
             return $this->redirectToRoute("app_habitations");
         }
 

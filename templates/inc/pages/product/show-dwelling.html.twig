@@ -54,6 +54,7 @@
                             {# <a><i class="fas fa-heart size18"></i> Ajouter une mention j'aime</a> #}
                             <div><a>Signaler ce logement</a></div>
                         </div>
+                        {% if app.user %}
                         {% if dwelling[0].user_id != app.user.id %}
                         <div class="product-col-2">
                             <div class="product-form-check">
@@ -123,6 +124,7 @@
                                 </div>
                                 <input type="submit" name="note-unavailable" class="click click-success w-100" value="Noter indisponible">
                             </div>
+                        {% endif %}
                         {% endif %}
                     </div>
                     <div class="product-page-ndline my-4">

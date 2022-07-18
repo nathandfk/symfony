@@ -20,12 +20,12 @@
             <div class="form-row">
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.firstName) }}
-                    {{ form_widget(form.firstName, {'value': userdata.first_name}) }}
+                    {{ form_widget(form.firstName, {'value': userdata.firstName}) }}
                     {{ form_errors(form.firstName) }}
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.lastName) }}
-                    {{ form_widget(form.lastName, {'value': userdata.last_name}) }}
+                    {{ form_widget(form.lastName, {'value': userdata.lastName}) }}
                     {{ form_errors(form.lastName) }}
                 </div>
             </div>
@@ -37,8 +37,10 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.birthday) }}
-                    {{ form_widget(form.birthday, {value: "now"|date("dd-MM-yyyy")}) }}
+                    
+                    {{ form_widget(form.birthday, {values: '2022'}) }}
                     {{ form_errors(form.birthday) }}
+                    {{ form_help(form.birthday) }}
                 </div>
             </div>
             <div class="form-row">
@@ -48,7 +50,7 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.phoneNumber) }}
-                    {{ form_widget(form.phoneNumber, {'value': userdata.phone_number}) }}
+                    {{ form_widget(form.phoneNumber, {'value': userdata.phoneNumber}) }}
                     {{ form_errors(form.phoneNumber) }}
                 </div>
             </div>
@@ -60,7 +62,7 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.complAddress) }}
-                    {{ form_widget(form.complAddress, {'value': userdata.compl_address}) }}
+                    {{ form_widget(form.complAddress, {'value': userdata.complAddress}) }}
                     {{ form_errors(form.complAddress) }}
                 </div>
             </div>
@@ -72,7 +74,7 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.country) }}
-                    {{ form_widget(form.country, {'value': userdata.country}) }}
+                    {{ form_widget(form.country, {'value': userdata.country.id}) }}
                     {{ form_errors(form.country) }}
                 </div>
             </div>

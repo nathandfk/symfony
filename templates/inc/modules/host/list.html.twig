@@ -1,53 +1,32 @@
-{% if historical %}
+{% if datas %}
 <table id="historical-table" class="text-center ath-table-form">
     <thead>
         <tr>
-            <th></th>
-            <th colspan="3">Client</th>
-            <th>Habitation</th>
-            <th>Période de la réservation</th>
+            <th>Image</th>
+            <th>Titre</th>
             <th>Prix</th>
-            <th>Statut</th>
+            <th>Ville</th>
+            <th>Etat</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
+        {% for dwelling in datas %}
         <tr>
-            <td></td>
-            <td class="bg-c5">Prénom</td>
-            <td class="bg-c5">Nom</td>
-            <td class="bg-c5">E-mail</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        {% for histo in historical %}
-        <tr>
-            <td><input type="checkbox" value="{{ histo[8] }}" class="historical-checked"></td>
-            <td>{{ histo[0] }}</td>
-            <td>{{ histo[1] }}</td>
-            <td>{{ histo[2] }}</td>
-            {% set productUrl = histo[4] | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
-            <td><a href="{{ path('app_habitation', {'slug': productUrl, 'id': histo[3] }) | lower }}">{{ histo[4] }}</a></td>
-            <td>{{ histo[5]|date("d-m-Y") }} - {{ histo[6]|date("d-m-Y") }}</td>
-            <td class="c1 ff-m">{{ histo[9] }} €</td>
-            <td>{{ histo[7] }}</td>
+            {% set pictures = dwelling.pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
+            <td class="w-7r h-7r"><img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"></td>
+            <td>{{ dwelling.title }}</td>
+            <td>{{ dwelling.price }}</td>
+            <td>{{ dwelling.city }}</td>
+            <td>{{ dwelling.state }}</td>
+            {% set productUrl = dwelling.title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+            <td class="d-flex gap-1 w-max-content m-auto ai-center">
+                <a href="{{ path('edit_dwelling', {id: dwelling.id}) }}" class="click click-brown">Modifier</a>
+                <a href='{{ path('app_habitation', {'slug': productUrl, 'id': dwelling.id}) | lower }}' class="click click-success">Voir</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
-    <tfoot>
-        <tr>
-            <td><input type="checkbox" class="historical-checked-all"></td>
-            <td>Action</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="d-flex gap-1 m-auto w-max-content">
-            <input type="submit" class="click click-brown" value="Annuler" name="btn-refuse">
-            <input type="submit" class="click click-success" value="Valider" name="btn-valid">
-            </td>
-        </tr>
-    </tfoot> 
 </table>
 {% endif %}
 

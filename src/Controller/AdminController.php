@@ -34,10 +34,10 @@ class AdminController extends AbstractController
                 $value = $data['value'];
                 if (in_array('ROLE_ADMIN', $roles)) {
                     $users = empty($value) ? $dataUsers->showUsers("*", " ORDER BY id DESC LIMIT 15")
-                    : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' || last_name LIKE '%$value%' || email LIKE '%$value%' || host LIKE '%$value%' || roles LIKE '%$value%' LIMIT 15");
+                    : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' OR last_name LIKE '%$value%' OR (email LIKE '%$value%' OR host LIKE '%$value%' OR roles LIKE '%$value%') LIMIT 15");
                 } else {
                     $users = empty($value) ? $dataUsers->showUsers("*", "WHERE roles NOT LIKE '%ROLE_ADMIN%' ORDER BY id DESC LIMIT 15")
-                    : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' || last_name LIKE '%$value%' || email LIKE '%$value%' || host LIKE '%$value%' || roles LIKE '%$value%' AND roles NOT LIKE '%ROLE_ADMIN%'  LIMIT 15");
+                    : $dataUsers->showUsers("*", "WHERE first_name LIKE '%$value%' OR last_name LIKE '%$value%' OR (email LIKE '%$value%' OR host LIKE '%$value%') OR roles LIKE '%$value%' AND roles NOT LIKE '%ROLE_ADMIN%'  LIMIT 15");
                 }
                 
                 if (!isset($users) || empty($users)) {

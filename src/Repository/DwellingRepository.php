@@ -58,12 +58,15 @@ class DwellingRepository extends ServiceEntityRepository
 
     public function showDwellings(string $selector="*", string $where="")
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT $selector FROM dwelling d $where";
-        $prepare = $conn->prepare($sql);
-        $execute = $prepare->executeQuery();
-        
-        return $execute->fetchAllAssociative();
+        try {
+            $conn = $this->getEntityManager()->getConnection();
+            $sql = "SELECT $selector FROM dwelling d $where";
+            $prepare = $conn->prepare($sql);
+            $execute = $prepare->executeQuery();
+            
+            return $execute->fetchAllAssociative();
+        } catch (\Throwable $th) {
+        }
     }
 
     public function showDataDwellings(int $id = null, string $start_date = null, string $end_date = null, string $place = null, int $maxPeople = null, $limitPrice = null, int $filterType = null, bool $orderTitle = null)

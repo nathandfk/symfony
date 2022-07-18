@@ -24,12 +24,12 @@ class DwellingType extends AbstractType
     {
         $choice = ['Entrer votre pays' => ''];
         foreach ($this->countries as $country) {
-            $choice += [$country->getNameFr() => $country];
+            $choice += [$country->getNameFr() => $country->getId()];
         }
 
         $types = ["Choisissez le type d'habitat" => ''];
         foreach ($this->type as $element) {
-            $types += [$element->getDescription() => $element];
+            $types += [$element->getDescription() => $element->getId()];
         }
 
         $equipments = [];

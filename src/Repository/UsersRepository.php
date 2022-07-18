@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 
 /**
  * @extends ServiceEntityRepository<Users>
@@ -41,12 +42,15 @@ class UsersRepository extends ServiceEntityRepository
     
     public function showUsers(string $selector="*", string $where="")
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT $selector FROM users u $where";
-        $prepare = $conn->prepare($sql);
-        $execute = $prepare->executeQuery();
+        try {
+            $conn = $this->getEntityManager()->getConnection();
+            $sql = "SELECT $selector FROM users u $where";
+            $prepare = $conn->prepare($sql);
+            $execute = $prepare->executeQuery();
+            return $execute->fetchAllAssociative();
+        } catch (Exception $th) {
+        }
         
-        return $execute->fetchAllAssociative();
     }
 
 //    /**

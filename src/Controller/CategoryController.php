@@ -53,7 +53,7 @@ class CategoryController extends AbstractController
             12);
         $price = ($min >= 0 && $max>=$value) ? $value : $max; 
         return $this->render('inc/pages/category/index.html.twig', [
-            'carousel' => true,
+            'carousel' => false,
             'title' => 'Laissez-vous guider',
             'picturesUrl' => $this->getParameter('pictures_directory'),
             'calendar' => $calendar,

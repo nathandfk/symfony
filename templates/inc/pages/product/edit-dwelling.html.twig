@@ -1,0 +1,290 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+
+
+<div class="atypikhouse-container my-6">
+    <div class="page-title">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">
+            {{ message }}
+        </div>
+    {% endfor %}
+<div class="dashboard-wrapper">
+    <div class="host-wrapper" data-selected="add" >
+    
+        {{ form_start(form) }}
+        <div class="img-uploaded"></div>
+
+        <div class="my-2">
+            <h2>Anciennes images</h2>
+            <div class="d-flex gap-1">
+                {% for picture in dwelling.pictures %}
+                <div class="w-10r">
+                    <img src="{{ ath_link }}/uploads/dwellings/{{ picture }}">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <h3>Essentiels</h3>
+            <div class="form-group">
+                {{ form_label(form.type) }}
+                {{ form_widget(form.type, {'value': dwelling.type.id }) }}
+                {{ form_errors(form.type) }}
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title, {'value': dwelling.title }) }}
+                    {{ form_errors(form.title) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.abstract) }}
+                    {{ form_widget(form.abstract, {'value': dwelling.abstract }) }}
+                    {{ form_errors(form.abstract) }}
+                </div>
+            </div>
+            <div>
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'value': dwelling.description }) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.price) }}
+                    {{ form_widget(form.price, {'value': dwelling.price }) }}
+                    {{ form_errors(form.price) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.pictures) }}
+                    {{ form_widget(form.pictures) }}
+                    {{ form_errors(form.pictures) }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.address) }}
+                    {{ form_widget(form.address, {'value': dwelling.address }) }}
+                    {{ form_errors(form.address) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.complAddress) }}
+                    {{ form_widget(form.complAddress, {'value': dwelling.complAddress }) }}
+                    {{ form_errors(form.complAddress) }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.country) }}
+                    {{ form_widget(form.country, {'value': dwelling.country.id }) }}
+                    {{ form_errors(form.country) }}
+                </div>
+
+                <div class="location-inner form-group bloc-lg-6">
+                    <label>Emplacement (Important de sélectionner le pays avant)*</label>
+                    <input type="text" data-link="{{ path('location') }}" class="seach-location" autocomplete="off" name="seach_location" placeholder="Rechercher la ville de votre habitation" required>
+                    <div class="location-content search-place"></div>
+                    <input type="hidden" name="value_location">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.city) }}
+                    {{ form_widget(form.city, {'value': dwelling.city }) }}
+                    {{ form_errors(form.city) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_label(form.state) }}
+                    {{ form_widget(form.state, {'value': dwelling.state }) }}
+                    {{ form_errors(form.state) }}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.equipments) }}
+                {{ form_widget(form.equipments, {'value': dwelling.equipments }) }}
+                {{ form_errors(form.equipments) }}
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    {{ form_widget(form.longitude, {'value': dwelling.longitude }) }}
+                </div>
+                <div class="form-group bloc-lg-6">
+                    {{ form_widget(form.latitude, {'value': dwelling.latitude }) }}
+                </div>
+            </div>
+
+        <h3>Informations complémentaires</h3>
+        {% for meta in dwellingMeta %}
+        {% endfor %}
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        {% for meta in dwellingMeta %}
+                        {% if meta.field == "_animals" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="animals">Animaux *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="animals_accepted" class="w-max-content" name="animals" value="TRUE" {% if meta.value == "TRUE" %}checked{% endif %}> <label for="animals_accepted">Acceptés</label></div>
+                            <div><input type="radio" id="animals_not_accepted" class="w-max-content" name="animals" value="FALSE" {% if meta.value == "FALSE" %}checked{% endif %}> <label for="animals_not_accepted">Pas acceptés</label></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if meta.field == "_breakfast" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="breakfast">Petit déjeuner *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="breakfast_accepted" class="w-max-content" name="breakfast" value="TRUE" {% if meta.value == "TRUE" %}checked{% endif %}> <label for="breakfast_accepted">Compris</label></div>
+                            <div><input type="radio" id="breakfast_not_accepted" class="w-max-content" name="breakfast" value="FALSE" {% if meta.value == "FALSE" %}checked{% endif %}> <label for="breakfast_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        {% for meta in dwellingMeta %}
+                        {% if meta.field == "_water" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="water">Eau *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="water_accepted" class="w-max-content" name="water" value="TRUE" {% if meta.value == "TRUE" %}checked{% endif %}> <label for="water_accepted">Compris</label></div>
+                            <div><input type="radio" id="water_not_accepted" class="w-max-content" name="water" value="FALSE" {% if meta.value == "FALSE" %}checked{% endif %}> <label for="water_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if meta.field == "_eletricity" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="eletricity">Électricité *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="eletricity_accepted" class="w-max-content" name="eletricity" value="TRUE" {% if meta.value == "TRUE" %}checked{% endif %}> <label for="eletricity_accepted">Compris</label></div>
+                            <div><input type="radio" id="eletricity_not_accepted" class="w-max-content" name="eletricity" value="FALSE" {% if meta.value == "FALSE" %}checked{% endif %}> <label for="eletricity_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        {% for meta in dwellingMeta %}
+                        {% if meta.field == "_parking" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="parking">Parking *</label>
+                            <div class="d-flex gap-1">
+                            <div><input type="radio" id="parking_accepted" class="w-max-content" name="parking" value="TRUE" {% if meta.value == "TRUE" %}checked{% endif %}> <label for="parking_accepted">Compris</label></div>
+                            <div><input type="radio" id="parking_not_accepted" class="w-max-content" name="parking" value="FALSE" {% if meta.value == "FALSE" %}checked{% endif %}> <label for="parking_not_accepted">Pas compris</label></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if meta.field == "_minimum_age" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="minimum_age">Âge minimum *</label>
+                            <select name="minimum_age">
+                                <option value="0" {% if meta.value == "0" %}selected{% endif %}>0</option>
+                                <option value="3" {% if meta.value == "3" %}selected{% endif %}>3</option>
+                                <option value="10" {% if meta.value == "10" %}selected{% endif %}>10</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        {% for meta in dwellingMeta %}
+                        {% if meta.field == "_surface" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="surface">Surface habitable *</label>
+                            <input type="number" name="surface" id="surface" value="{{ meta.value }}" min="10" required>
+                        </div>
+                        {% endif %}
+                        {% if meta.field == "_piece" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="piece">Nombre de pièce *</label>
+                            <input type="number" name="piece" id="piece" min="1" value="{{ meta.value }}" required value="1">
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="form-row">
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        {% for meta in dwellingMeta %}
+                        {% if meta.field == "_arrival_from" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="arrival_from">Arrivée à partir de *</label>
+                            <select name="arrival_from" id="arrival_from">
+                                <option value="12h00" {% if meta.value == "12h00" %}selected{% endif %}>12h00</option>
+                                <option value="13h00" {% if meta.value == "13h00" %}selected{% endif %}>13h00</option>
+                                <option value="14h00" {% if meta.value == "14h00" %}selected{% endif %}>14h00</option>
+                                <option value="15h00" {% if meta.value == "15h00" %}selected{% endif %}>15h00</option>
+                                <option value="16h00" {% if meta.value == "16h00" %}selected{% endif %}>16h00</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if meta.field == "_arrival_until" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="arrival_until">Arrivée jusqu'à *</label>
+                            <select name="arrival_until" id="arrival_until">
+                                <option value="20h00">20h00</option>
+                                <option value="21h00">21h00</option>
+                                <option value="22h00">22h00</option>
+                                <option value="23h00">23h00</option>
+                                <option value="23h59">23h59</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group bloc-lg-6">
+                    <div class="form-row">
+                        {% for meta in dwellingMeta %}
+                        {% if meta.field == "_departure_before" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="departure_before">Départ avant *</label>
+                            <select class="required" name="departure_before">
+                                <option value="12h00" {% if meta.value == "12h00" %}selected{% endif %}>12h00</option>
+                                <option value="13h00" {% if meta.value == "13h00" %}selected{% endif %}>13h00</option>
+                                <option value="14h00" {% if meta.value == "14h00" %}selected{% endif %}>14h00</option>
+                                <option value="15h00" {% if meta.value == "15h00" %}selected{% endif %}>15h00</option>
+                                <option value="16h00" {% if meta.value == "16h00" %}selected{% endif %}>16h00</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if meta.field == "_max_people" %}
+                        <div class="form-group bloc-lg-6">
+                            <label for="max_people">Maximum de personnes *</label>
+                            <input type="number" name="max_people" id="max_people" min="1" required value="{{ meta.value }}">
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex w-max-content gap-1 ml-auto">
+            <a href="{{ path('host') }}" class="click click-brown" name="add_dwelling">Annuler la modification</a>
+            <button type="submit" class="click click-success" name="edit_dwelling">Modifier ce logement</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}
