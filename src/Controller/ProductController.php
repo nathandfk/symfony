@@ -117,16 +117,30 @@ class ProductController extends AbstractController
             $user = $userTable->findOneBy(['email' => $auth->getUserIdentifier()]);
 
             $reservationTable = $doctrine->getRepository(Reservation::class);
-            $reservation = $reservationTable->findBy(['user' => $user->getId(), 'dwelling' => $id], ['id' => 'DESC'], 1);
+            $reservation = $reservationTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'statut' => 'RESERVED', 'statut' => 'CONFIRMED'], ['id' => 'DESC'], 1);
 
             foreach ($reservation as $data) {
                 if ($data->getReservedAt()) {
                     $old = strtotime($data->getReservedAt()->format('Y-m-d'));
                     $new = new DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
-                    if ((strtotime($new->format('Y-m-d')) - $old) >= 0) {
+
+                    $postTable = $doctrine->getRepository(Posts::class);
+                    $postsLike = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'LIKES', 'number' => $data->getId()]);
+                    $postsComments = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'COMMENTS', 'number' => $data->getId()]);
+
+                    if ((strtotime($new->format('Y-m-d')) - $old) >= 0 && (strtotime($new->format('Y-m-d')) - $old) <= 30) {
                         $likes = true;
                         $comments = true;
+                    } else {
+                        $likes = false;
+                        $comments = false;
                     }
+                    if ($postsLike) {
+                        $likes = false;
+                    }
+                    if($postsComments){
+                        $comments = false;
+                    } 
                 }
             }
         }
@@ -174,8 +188,8 @@ class ProductController extends AbstractController
             foreach ($showDateBetwween as $value) {
                 $startDate = "start_date = '$value'";
                 $endDate =  "end_date = '$value'";
-                $startDate = $reservation->showReservation("*", 'WHERE dwelling_id='.$dwellingId.' AND statut="RESERVED" AND '.$startDate.'');
-                $endDate = $reservation->showReservation("*", 'WHERE dwelling_id='.$dwellingId.' AND statut="RESERVED" AND '.$endDate.'');
+                $startDate = $reservation->showReservation("*", 'WHERE dwelling_id='.$dwellingId.' AND statut IN ("RESERVED", "UNAVAILABLE", "CONFIRMED") AND '.$startDate.'');
+                $endDate = $reservation->showReservation("*", 'WHERE dwelling_id='.$dwellingId.' AND statut IN ("RESERVED", "UNAVAILABLE", "CONFIRMED") AND '.$endDate.'');
                 if ($startDate || $endDate) {
                     $dateCheck = [true];
                 }

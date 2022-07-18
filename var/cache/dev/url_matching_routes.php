@@ -16,6 +16,7 @@ return [
         '/mon-compte/historical/client' => [[['_route' => 'compte_historical_client', '_controller' => 'App\\Controller\\HistoricalController::client'], null, null, null, false, false, null]],
         '/mon-compte/historical/admin' => [[['_route' => 'compte_historical_admin', '_controller' => 'App\\Controller\\HistoricalController::admin'], null, null, null, false, false, null]],
         '/mon-compte/hote' => [[['_route' => 'host', '_controller' => 'App\\Controller\\HostController::host'], null, null, null, false, false, null]],
+        '/habition/not-disponible' => [[['_route' => 'unavailable', '_controller' => 'App\\Controller\\HostController::unavailable'], null, null, null, false, false, null]],
         '/' => [
             [['_route' => 'app_index', '_controller' => 'App\\Controller\\IndexController::index'], null, null, null, false, false, null],
             [['_route' => 'index', '_controller' => 'App\\Controller\\IndexController::index'], null, null, null, false, false, null],

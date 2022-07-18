@@ -36,8 +36,10 @@ class LikesCommentsController extends AbstractController
 
             $dwelRep = $doctrine->getRepository(Dwelling::class);
             $dwelData = $dwelRep->find($dwellingId);
-
+            $postsRep = $doctrine->getRepository(Posts::class);
             if ($reservation && $dwelData) {
+                $postsData = $postsRep->findBy(['user' => $userId, 'dwelling' => $dwellingId, 'number' => $reservation[0]['id'], 'type' => 'COMMENTS'], [], 1);
+                if (!$postsData) {
                 $datas = [
                     '_cleanliness' => $data['_cleanliness'],
                     '_precision' => $data['_precision'],
@@ -60,6 +62,7 @@ class LikesCommentsController extends AbstractController
                 $posts->setDwelling($dwelData);
                 $posts->setType('LIKES');
                 $posts->setDescription('');
+                $posts->setNumber($reservation[0]['id']);
                 $posts->setTitle('Notes clients après ou pendant le séjour');
                 $em->persist($posts);
                 $em->flush();
@@ -79,6 +82,9 @@ class LikesCommentsController extends AbstractController
                     $em->flush();
                 }
                 $output = '{"response":"success", "message":"Vos notes ont bien été envoyé", "icon":"fas fa-check"}';
+                } else {
+                    $output = '{"response":"error", "message":"Un commentaire avec la même réservation que vous avez déjà faite existe déjà.", "icon":"fas fa-exclamation"}';
+                }
             } else {
                 $output = '{"response":"error", "message":"Un problème est survenu, il est possible que vous n\'ayez jamais réservé cet habitat avec ce compte.", "icon":"fas fa-exclamation"}';
             }
@@ -112,20 +118,28 @@ class LikesCommentsController extends AbstractController
             $dwelRep = $doctrine->getRepository(Dwelling::class);
             $dwelData = $dwelRep->find($dwellingId);
 
-            if ($reservation && $dwelData) {
-                if (empty($data['comments_text'])) {
-                    return new JsonResponse('{"response":"error", "message":"Le champ de saisi est vide.", "icon":"fas fa-exclamation"}');
-                }
-                $posts = new Posts();
-                $posts->setUser($userData);
-                $posts->setDwelling($dwelData);
-                $posts->setType('COMMENTS');
-                $posts->setDescription($data['comments_text']);
-                $posts->setTitle('Commentaires clients après ou pendant le séjour');
-                $em->persist($posts);
-                $em->flush();
+            $postsRep = $doctrine->getRepository(Posts::class);
 
-                $output = '{"response":"success", "message":"Votre commentaire a bien été ajouté", "icon":"fas fa-check"}';
+            if ($reservation && $dwelData) {
+                $postsData = $postsRep->findBy(['user' => $userId, 'dwelling' => $dwellingId, 'number' => $reservation[0]['id'], 'type' => 'COMMENTS'], [], 1);
+                if (!$postsData) {
+                    if (empty($data['comments_text'])) {
+                        return new JsonResponse('{"response":"error", "message":"Le champ de saisi est vide.", "icon":"fas fa-exclamation"}');
+                    }
+                    $posts = new Posts();
+                    $posts->setUser($userData);
+                    $posts->setDwelling($dwelData);
+                    $posts->setType('COMMENTS');
+                    $posts->setNumber($reservation[0]['id']);
+                    $posts->setDescription($data['comments_text']);
+                    $posts->setTitle('Commentaires clients après ou pendant le séjour');
+                    $em->persist($posts);
+                    $em->flush();
+
+                    $output = '{"response":"success", "message":"Votre commentaire a bien été ajouté", "icon":"fas fa-check"}';
+                } else {
+                    $output = '{"response":"error", "message":"Un commentaire avec la même réservation que vous avez déjà faite existe déjà.", "icon":"fas fa-exclamation"}';
+                }
             } else {
                 $output = '{"response":"error", "message":"Un problème est survenu, il est possible que vous n\'ayez jamais réservé cet habitat avec ce compte.", "icon":"fas fa-exclamation"}';
             }

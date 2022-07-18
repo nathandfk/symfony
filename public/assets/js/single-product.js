@@ -234,8 +234,34 @@ dom("html, body").addEventListener('click', event => {
                 span.children[i].classList.add("c1")
             } 
         }       
-    } else if (event.target.name == "btn-comment"){
-        
+    } else if (event.target.name == "note-unavailable"){
+        let closest = event.target.closest('.product-form-check')
+            $arrival = closest.querySelector('.single-product-arrival').dataset.period
+            $departure = closest.querySelector('.single-product-departure').dataset.period
+
+        if (!$arrival || !$departure ) {
+            notification('Veuillez renseigner les dates', "fas fa-exclamation")
+        } else {
+            if ($arrival == "" && $departure == "") {
+                notification('Veuillez renseigner les dates', "fas fa-exclamation")
+            } else {
+                let path = closest.dataset.path
+                fetch(path, 
+                {headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                }, method: 'POST', body: JSON.stringify({arrival:$arrival, departure:$departure, dwelling:closest.dataset.dwelling}) })
+                .then(res => res.json())
+                .then(response => {
+                    const obj = JSON.parse(response);
+                    if(obj.response == "success") { 
+                        notification(obj.message, obj.icon)
+                    } else if (obj.response == "error") {
+                        notification(obj.message, obj.icon)
+                    }
+                })
+                .catch(error => console.log('error'));
+            }
+        }
     }
 })
 

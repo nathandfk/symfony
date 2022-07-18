@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Country;
 use App\Entity\Dwelling;
 use App\Entity\Posts;
+use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -135,12 +136,15 @@ class DwellingRepository extends ServiceEntityRepository
 
             $id = $dwelling['id'];
             $user_id = $dwelRep->getUser()->getId();
-            $users = $this->users->showUsers("first_name, last_name, email, roles, statut, host, deleted_at", "WHERE id= $user_id");
+
+            $usersRep = $this->doctrine->getRepository(Users::class);
+            $users = $usersRep->findOneBy(['id'=>$user_id]);
+
 
             !empty($date) ? $checkReservation = $this->reservation->showReservation("*", 'WHERE dwelling_id='.$id.' AND '.$date) : $checkReservation = false;
             if ($checkReservation) {
                 continue;
-            } else if ($users[0]['host'] == "PRIVATE" || $users[0]['host'] == "CLOSED" || $users[0]['deleted_at'] != null) {
+            } else if ($users->getHost() == "PRIVATE" || $users->getHost() == "CLOSED" || $users->getDeletedAt() != null|| $users->getStatut() == false || (!in_array('ROLE_HOST', $users->getRoles()) && !in_array('ROLE_ADMIN', $users->getRoles()) && !in_array('ROLE_MODERATOR', $users->getRoles())) ) {
                 continue;
             }
             $resultDwellingMeta = $this->dwelling_meta->showDwellingMeta($id);
@@ -232,7 +236,7 @@ class DwellingRepository extends ServiceEntityRepository
 
 
             /* Reservation Date */
-            $reservationDate =  $id != 0 ? $this->reservation->showReservation("*", "WHERE dwelling_id = $id AND statut='RESERVED' OR statut='CONFIRMED'") : [];
+            $reservationDate =  $id != 0 ? $this->reservation->showReservation("*", "WHERE dwelling_id = $id AND statut IN('RESERVED', 'CONFIRMED', 'UNAVAILABLE')") : [];
 
             /*End Reservation Date */
             $totalLikes = round((intval($cleanLiness)+intval($precision)+intval($communication)

@@ -168,10 +168,12 @@ class UsersController extends AbstractController
         $userMeta = new UserMeta();
         $form = $this->createForm(UserMetaType::class, $userMeta);
         $form->handleRequest($request);
-
+        $iban = [];
         $repository = $doctrine->getRepository(UserMeta::class);
         $userMetaSearch = $repository->findOneBy(['user' => $user, 'field' => '_host_iban']);
-        // var_dump($userMetaSearch[0]->getId());
+        if ($userMetaSearch) {
+            $iban = $userMetaSearch->getValue();
+        }
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $doctrine->getManager();
             if ($userMetaSearch) {
@@ -200,7 +202,7 @@ class UsersController extends AbstractController
         return $this->render('inc/pages/users/payment.html.twig', [
             'title' => 'Mes paiements',
             'form' => $form->createView(),
-            'iban' => $userMetaSearch->getValue()
+            'iban' => $iban
         ]);
     }
 

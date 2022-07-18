@@ -6657,6 +6657,14 @@
         <argument key="user" type="service_closure" id=".errored..service_locator.ZoBtvSE.Symfony\Component\Security\Core\User\UserInterface"/>
       </argument>
     </service>
+    <service id=".service_locator.Vk4F2QA" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+        <argument key="reservation" type="service_closure" id="App\Repository\ReservationRepository"/>
+        <argument key="security" type="service_closure" id="security.helper"/>
+      </argument>
+    </service>
     <service id=".service_locator.EEj43cZ" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6774,7 +6782,7 @@
         <argument key="security" type="service_closure" id="security.helper"/>
       </argument>
     </service>
-    <service id=".service_locator.mvK.3MY" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.g5oEuR5" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\AdminController::list" type="service_closure" id=".service_locator.dY.5ozk"/>
@@ -6786,6 +6794,7 @@
         <argument key="App\Controller\HistoricalController::client" type="service_closure" id=".service_locator.bKfN.CF"/>
         <argument key="App\Controller\HistoricalController::host" type="service_closure" id=".service_locator.bKfN.CF"/>
         <argument key="App\Controller\HostController::host" type="service_closure" id=".service_locator.ZoBtvSE"/>
+        <argument key="App\Controller\HostController::unavailable" type="service_closure" id=".service_locator.Vk4F2QA"/>
         <argument key="App\Controller\LikesCommentsController::comments" type="service_closure" id=".service_locator.EEj43cZ"/>
         <argument key="App\Controller\LikesCommentsController::likes" type="service_closure" id=".service_locator.EEj43cZ"/>
         <argument key="App\Controller\LocationController::location" type="service_closure" id=".service_locator.vrNJZlt"/>
@@ -6823,6 +6832,7 @@
         <argument key="App\Controller\HistoricalController:client" type="service_closure" id=".service_locator.bKfN.CF"/>
         <argument key="App\Controller\HistoricalController:host" type="service_closure" id=".service_locator.bKfN.CF"/>
         <argument key="App\Controller\HostController:host" type="service_closure" id=".service_locator.ZoBtvSE"/>
+        <argument key="App\Controller\HostController:unavailable" type="service_closure" id=".service_locator.Vk4F2QA"/>
         <argument key="App\Controller\LikesCommentsController:comments" type="service_closure" id=".service_locator.EEj43cZ"/>
         <argument key="App\Controller\LikesCommentsController:likes" type="service_closure" id=".service_locator.EEj43cZ"/>
         <argument key="App\Controller\LocationController:location" type="service_closure" id=".service_locator.vrNJZlt"/>
@@ -7273,12 +7283,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.mvK.3MY"/>
+      <argument type="service" id=".service_locator.g5oEuR5"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.mvK.3MY"/>
+      <argument type="service" id=".service_locator.g5oEuR5"/>
     </service>
     <service id=".doctrine.orm.default_metadata_driver.inner" class="Doctrine\Persistence\Mapping\Driver\MappingDriverChain">
       <call method="addDriver">
@@ -8132,7 +8142,7 @@
     <service id="Knp\Component\Pager\PaginatorInterface" alias="knp_paginator"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.mvK.3MY"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.g5oEuR5"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.KLVvNIq"/>
     <service id="api_platform.doctrine.listener.mercure.publish" alias="api_platform.doctrine.orm.listener.mercure.publish">
@@ -8147,6 +8157,7 @@
     <service id=".service_locator.UDJng8_" alias=".service_locator.tntwamC"/>
     <service id=".service_locator.Zs72pkj" alias=".service_locator.bKfN.CF"/>
     <service id=".service_locator.ahN0atE" alias=".service_locator.ZoBtvSE"/>
+    <service id=".service_locator.oONN2N4" alias=".service_locator.Vk4F2QA"/>
     <service id=".service_locator.xvEQZDa" alias=".service_locator.EEj43cZ"/>
     <service id=".service_locator.cUM3IUc" alias=".service_locator.YRn1ihK"/>
     <service id=".service_locator.HBGcjZl" alias=".service_locator.q5QT0m4"/>
@@ -8155,7 +8166,7 @@
     <service id=".service_locator.uT.3u6s" alias=".service_locator.bWoOX6L"/>
     <service id=".service_locator..yZ1uSL" alias=".service_locator.a4BSXtv"/>
     <service id=".service_locator.F25n8Ur" alias=".service_locator.KEMuaGy"/>
-    <service id=".service_locator.QbGNF7G" alias=".service_locator.mvK.3MY"/>
+    <service id=".service_locator.jwulruo" alias=".service_locator.g5oEuR5"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.l6ELYLY"/>
     <service id=".service_locator.k0boNwa" alias=".service_locator.C_JgT_k"/>
     <service id=".service_locator.qBCHs1a" alias=".service_locator.QXcJQkF"/>
@@ -8224,6 +8235,7 @@
     <service id=".service_locator.ieD5itz" alias=".service_locator.tntwamC"/>
     <service id=".service_locator.Ie0os.m" alias=".service_locator.bKfN.CF"/>
     <service id=".service_locator.yk7Quuh" alias=".service_locator.ZoBtvSE"/>
+    <service id=".service_locator.5r1PSVW" alias=".service_locator.Vk4F2QA"/>
     <service id=".service_locator.0Yt5mr2" alias=".service_locator.EEj43cZ"/>
     <service id=".service_locator.BQdmiwy" alias=".service_locator.vrNJZlt"/>
     <service id=".service_locator.kFyL65y" alias=".service_locator.YRn1ihK"/>

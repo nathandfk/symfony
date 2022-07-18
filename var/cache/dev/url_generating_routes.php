@@ -76,6 +76,7 @@ return [
     'compte_historical_client' => [[], ['_controller' => 'App\\Controller\\HistoricalController::client'], [], [['text', '/mon-compte/historical/client']], [], [], []],
     'compte_historical_admin' => [[], ['_controller' => 'App\\Controller\\HistoricalController::admin'], [], [['text', '/mon-compte/historical/admin']], [], [], []],
     'host' => [[], ['_controller' => 'App\\Controller\\HostController::host'], [], [['text', '/mon-compte/hote']], [], [], []],
+    'unavailable' => [[], ['_controller' => 'App\\Controller\\HostController::unavailable'], [], [['text', '/habition/not-disponible']], [], [], []],
     'app_index' => [[], ['_controller' => 'App\\Controller\\IndexController::index'], [], [['text', '/']], [], [], []],
     'likes' => [[], ['_controller' => 'App\\Controller\\LikesCommentsController::likes'], [], [['text', '/product/likes']], [], [], []],
     'comments' => [[], ['_controller' => 'App\\Controller\\LikesCommentsController::comments'], [], [['text', '/product/comments']], [], [], []],

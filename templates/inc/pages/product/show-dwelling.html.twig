@@ -51,9 +51,10 @@
                             <div class="d-flex gap-1 ai-center my-2">
                                 <span>Partager sur</span><span class="fab fa-facebook-f"></span><span class="fab fa-linkedin-in"></span><span class="fab fa-whatsapp"></span>
                             </div>
-                            <a><i class="fas fa-heart size18"></i> Ajouter une mention j'aime</a>
+                            {# <a><i class="fas fa-heart size18"></i> Ajouter une mention j'aime</a> #}
                             <div><a>Signaler ce logement</a></div>
                         </div>
+                        {% if dwelling[0].user_id != app.user.id %}
                         <div class="product-col-2">
                             <div class="product-form-check">
                                 <div class="form-row product-calendar atypikhouse-search-dispo">
@@ -106,6 +107,23 @@
                             </div>
                             <div class="product-form-checkout"></div>
                         </div>
+                        {% else %}
+                            <div class="product-form-check" data-dwelling="{{ dwelling[0].id }}" data-path="{{ path('unavailable') }}">
+                                <div class="form-row product-calendar atypikhouse-search-dispo">
+                                    <div class="form-group col-lg-6 p-relative search-arrival-date target-data cp">
+                                        Date d'arrivée
+                                        <label class="form-input cp my-1 c1 single-product-arrival">_ _ /_ _ /_ _ _ _</label>
+                                        <div class="superpose d-none calendar general-calendar calendar-reset">{{ calendarReset | raw }}</div>
+                                    </div>
+                                    <div class="form-group col-lg-6 p-relative search-departure-date target-data cp">
+                                        Date de départ
+                                        <label class="form-input cp my-1 c1 single-product-departure">_ _ /_ _ /_ _ _ _</label>
+                                        <div class="superpose d-none calendar general-calendar calendar-reset"></div>
+                                    </div>
+                                </div>
+                                <input type="submit" name="note-unavailable" class="click click-success w-100" value="Noter indisponible">
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="product-page-ndline my-4">
                         {% for limit in dwelling[1] %}

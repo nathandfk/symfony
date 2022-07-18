@@ -7,11 +7,14 @@ use App\Entity\Country;
 use App\Entity\Dwelling;
 use App\Entity\DwellingMeta;
 use App\Entity\Posts;
+use App\Entity\Reservation;
 use App\Entity\Users;
 use App\Form\DwellingType;
+use App\Repository\ReservationRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -135,6 +138,92 @@ class HostController extends AbstractController
             'title' => 'Mode hôte',
             'form' => $form->createView()
         ]);
+    }
+
+    #[Route('/habition/not-disponible', name: 'unavailable')]
+    public function unavailable( ManagerRegistry $doctrine, Security $security, ReservationRepository $reservation)
+    {
+        
+        $auth = $security->getUser();
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            return $this->redirectToRoute('app_index');
+        }
+        if ($auth) {
+            $arrival = $data['arrival'];
+            $departure = $data['departure'];
+            $dwelling = $data['dwelling'];
+            if ($this->isValidDate($arrival) && $this->isValidDate($departure) && !empty($dwelling)) {
+            
+                $dwelRep = $doctrine->getRepository(Dwelling::class);
+                $dwel = $dwelRep->findOneBy(['id'=>$dwelling]);
+
+                $repository = $doctrine->getRepository(Users::class);
+                $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
+                if ($dwel) {
+                    $arrayDate = $this->date_range($arrival, $departure);
+                    foreach ($arrayDate as $value) {
+                        $startDate = "start_date = '$value'";
+                        $endDate =  "end_date = '$value'";
+                        $startDate = $reservation->showReservation("*", 'WHERE dwelling_id='.$dwelling.' AND statut IN ("RESERVED", "UNAVAILABLE", "CONFIRMED") AND '.$startDate.'');
+                        $endDate = $reservation->showReservation("*", 'WHERE dwelling_id='.$dwelling.' AND statut IN ("RESERVED", "UNAVAILABLE", "CONFIRMED") AND '.$endDate.'');
+                        if ($startDate || $endDate) {
+                            return new JsonResponse('{"response":"error", "message":"Les dates sélectionnées sont occupées", "icon":"fas fa-exclamation", "redirect":""}');
+                        }
+                    }
+                    $reservation = new Reservation();
+                    $em = $doctrine->getManager();
+
+                    $reservation->setUser($user);
+                    $reservation->setDwelling($dwel);
+                    $reservation->setStatut('UNAVAILABLE');
+                    $reservation->setStartDate(\DateTime::createFromFormat('Y-m-d', $arrival));
+                    $reservation->setEndDate(\DateTime::createFromFormat('Y-m-d', $departure));
+
+                    $em->persist($reservation);
+                    $em->flush();
+
+                    $output = '{"response":"success", "message":"Les dates sélectionnées ont bien été notées indisponibles, aucune réservation ne pourra être effectuer dans cette période.", "icon":"fas fa-check", "redirect":"true"}';
+                } else {
+                    $output = '{"response":"error", "message":"Une erreur inattendue est survenue, veuillez recommencer.", "icon":"fas fa-exclamation", "redirect":"/logout"}';
+                }
+            } else {
+                $output = '{"response":"error", "message":"Nous rencontrons une erreure, veuillez vérifier vos dates !", "icon":"fas fa-exclamation", "redirect":"/logout"}';
+            }
+        } else {
+            $output = '{"response":"error", "message":"Vous ne vous êtes pas authentifié", "icon":"fas fa-exclamation", "redirect":""}';
+        }
+        return new JsonResponse($output);
+    }
+
+    function isValidDate($dateString){
+        $regEx = "/^\d{4}-\d{2}-\d{2}$/";
+        if (!preg_match($regEx, $dateString)) {
+            return false;
+        }
+        $date = strtotime($dateString);
+        $date = date('Y-m-d', $date);
+        $d = date("Y-m-d");
+        if ($d > $date) {
+            return false;
+        }
+        return true;
+    }
+
+
+    function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' ) {
+
+        $dates = array();
+        $current = strtotime($first);
+        $last = strtotime($last);
+    
+        while( $current <= $last ) {
+    
+            $dates[] = date($output_format, $current);
+            $current = strtotime($step, $current);
+        }
+    
+        return $dates;
     }
 
 }
