@@ -211,10 +211,6 @@ dom("html, body").addEventListener('mouseup', event => {
     });
     text = adultsText + childrensText + babiesText + animalsText
     innerClosest.querySelector(".nb-traverlers").innerHTML = text
-    } else if (event.target.className == 'criteria') {
-        let closest = event.target.closest('.criteria')
-            count = closest.querySelector('span').childElementCount
-            console.log(count)
     }
 })
 dom("html, body").addEventListener('click', event => {
@@ -243,7 +239,7 @@ dom("html, body").addEventListener('click', event => {
     }
 })
 
-let data = {_cleanliness:"", _precision: "",
+let data = {_dwelling: "", _cleanliness:"", _precision: "",
 _communication:"", _location:"", 
 _arrival:"", _value_for_money:""}
 dom("html, body").addEventListener('submit', event => {
@@ -262,8 +258,9 @@ dom("html, body").addEventListener('submit', event => {
             data._location = check._location ? check._location : data._location
             data._arrival = check._arrival ? check._arrival : data._arrival
             data._value_for_money = check._value_for_money ? check._value_for_money : data._value_for_money
+            data._dwelling = check.btn_like ? event.target.dataset.dwelling : data._dwelling;
             
-            if (event.target.name == "btn-like") {
+            if (check.btn_like) {
                 fetch("/product/likes", 
                     {headers: {
                     'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
@@ -272,7 +269,10 @@ dom("html, body").addEventListener('submit', event => {
                     .then(response => {
                         const obj = JSON.parse(response);
                         if(obj.response == "success") {
-
+                            notification(obj.message, obj.icon)
+                            event.target.closest('form').remove()
+                        } else {
+                            notification(obj.message, obj.icon)
                         }
                     })
             }
@@ -280,6 +280,26 @@ dom("html, body").addEventListener('submit', event => {
             
         } else if (event.target.id == "user-comment"){
             event.preventDefault()
+            var formData = new FormData(event.target);
+            var object = {};
+                formData.forEach((value, key) => object[key] = value);
+            var json = JSON.stringify(object);
+            console.log(json)
+                fetch("/product/comments", 
+                    {headers: {
+                    'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                    }, method: 'POST', body: json })
+                    .then(res => res.json())
+                    .then(response => {
+                        const obj = JSON.parse(response);
+                        if(obj.response == "success") {
+                            notification(obj.message, obj.icon)
+                            event.target.closest('form').remove()
+                        } else {
+                            notification(obj.message, obj.icon)
+                        }
+                })
+            
         }
     }
 })

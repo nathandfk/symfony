@@ -71,6 +71,7 @@ class Posts
         $this->postMetas = new ArrayCollection();
         $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
         $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->deletedAt = null;
         $this->dwellings = new ArrayCollection();
     }
 

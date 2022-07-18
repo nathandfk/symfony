@@ -11,6 +11,7 @@ use App\Entity\ReservationMeta;
 use App\Entity\Users;
 use App\Repository\DwellingRepository;
 use App\Repository\ReservationRepository;
+use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Error;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -108,11 +109,34 @@ class ProductController extends AbstractController
         }
         $calendar = $calendarDate->calendar();
         $calendarReset = !empty($finalDateNotDisponible) ? $calendarDate->calendar($finalDateNotDisponible, true) : $calendarDate->calendar();
+        $likes = false;
+        $comments = false;
+        $auth = $security->getUser();
+        if ($auth) {
+            $userTable = $doctrine->getRepository(Users::class);
+            $user = $userTable->findOneBy(['email' => $auth->getUserIdentifier()]);
+
+            $reservationTable = $doctrine->getRepository(Reservation::class);
+            $reservation = $reservationTable->findBy(['user' => $user->getId(), 'dwelling' => $id], ['id' => 'DESC'], 1);
+
+            foreach ($reservation as $data) {
+                if ($data->getReservedAt()) {
+                    $old = strtotime($data->getReservedAt()->format('Y-m-d'));
+                    $new = new DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+                    if ((strtotime($new->format('Y-m-d')) - $old) >= 0) {
+                        $likes = true;
+                        $comments = true;
+                    }
+                }
+            }
+        }
         return $this->render('inc/pages/product/show-dwelling.html.twig', [
             'controller_name' => 'ProductController',
             'dwellings' => $dwellings,
             'calendar' => $calendar,
             'calendarReset' => $calendarReset,
+            'likes' => $likes,
+            'comments' => $comments,
         ]);
     }
 

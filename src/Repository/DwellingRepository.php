@@ -221,12 +221,12 @@ class DwellingRepository extends ServiceEntityRepository
                     }
                 }
             }
-            !empty($cleanLiness) ? $cleanLiness = array_sum($cleanLiness) / count($cleanLiness) : $cleanLiness = [];
-            !empty($precision) ? $precision = array_sum($precision) / count($precision) : $precision = [];
-            !empty($communication) ? $communication = array_sum($communication) / count($communication) : $communication = [];
-            !empty($_location) ? $_location = array_sum($_location) / count($_location) : $_location = [];
-            !empty($arrival) ? $arrival = array_sum($arrival) / count($arrival) : $arrival = [];
-            !empty($value_for_money) ? $value_for_money = array_sum($value_for_money) / count($value_for_money) : $value_for_money = [];
+            $cleanLiness = !empty($cleanLiness) ? round(array_sum($cleanLiness) / count($cleanLiness), 2) : [];
+            $precision = !empty($precision) ? round(array_sum($precision) / count($precision), 2) : [];
+            $communication = !empty($communication) ? round(array_sum($communication) / count($communication), 2) : [];
+            $_location = !empty($_location) ? round(array_sum($_location) / count($_location), 2) : [];
+            $arrival = !empty($arrival) ? round(array_sum($arrival) / count($arrival), 2) : [];
+            $value_for_money = !empty($value_for_money) ? round(array_sum($value_for_money) / count($value_for_money), 2) : [];
 
             // End Notes
 
@@ -235,16 +235,14 @@ class DwellingRepository extends ServiceEntityRepository
             $reservationDate =  $id != 0 ? $this->reservation->showReservation("*", "WHERE dwelling_id = $id AND statut='RESERVED' OR statut='CONFIRMED'") : [];
 
             /*End Reservation Date */
-
-
-            !empty($countLikes) && !empty($sumLikes) && $countLikes[0]["count"] != 0 ? $totalLikes = intval($sumLikes[0]["note"])/intval($countLikes[0]["count"]) : $totalLikes = "";
-
+            $totalLikes = round((intval($cleanLiness)+intval($precision)+intval($communication)
+            +intval($_location)+intval($arrival)+intval($value_for_money))/6, 2);
 
             !empty($resultDwellingMeta) ? $dwellingMeta = $resultDwellingMeta : $dwellingMeta = "";
             !empty($location) ? $country = $location->getNameFr() : $country = "";
             !empty($countComments) ? $nbComments = $countComments[0] : $nbComments = "";
             !empty($comments) ? $comments = $comments : $comments = "";
-            !empty($totalLikes) ? $nbLikes = $totalLikes : $nbLikes = "";
+            $nbLikes = !empty($totalLikes) ? $totalLikes : "";
             !empty($users) ? $users = $users : $users = "";
 
             $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate, $type->getDescription(), $equipmentsValue]; //15
@@ -254,85 +252,6 @@ class DwellingRepository extends ServiceEntityRepository
         return $finalResult;
     }
 
-    // public function showDwellings(string $id=null, string $start_date=null, string $end_date=null, $count = false)
-    // {
-    //     !is_null($id) ? $id = "id = '$id'" : $id = null;
-    //     !is_null($start_date) && !is_null($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = null;
-    //     !is_null($id) ? $where = "WHERE" : $where = null;
-        
-    //     $conn = $this->getEntityManager()->getConnection();
-    //     $sql1 = "SELECT * FROM dwelling d $where $id";
-        
-    //     $prepare1 = $conn->prepare($sql1);
-    //     $execute1 = $prepare1->executeQuery();
-    //     $place = $this->city;
-    //     $posts = $this->posts;
-    //     $sql2 = 'SELECT * FROM dwelling_meta';
-    //     $prepare2 = $conn->prepare($sql2);
-    //     $execute2 = $prepare2->executeQuery();
-
-    //     if (!is_null($start_date) && !is_null($end_date) ) {
-    //         $range = $this->date_range("$start_date", "$end_date");
-    //         $date = "";
-    //         foreach ($range as $value) {
-    //             $date .= "start_date = '$value' OR end_date = '$value' OR ";
-    //         }
-    //         $date = substr($date, 0, -4);
-    //     } else {
-    //         $date = "";
-    //     }
-    //     $sql3 = "SELECT * FROM reservation WHERE $date";
-        
-    //     $prepare3 = $conn->prepare($sql3);
-    //     $execute3 = $prepare3->executeQuery();
-
-    //     $result1 = $execute1->fetchAllAssociative();
-    //     $result2 = $execute2->fetchAllAssociative();
-    //     $result3 = $execute3->fetchAllAssociative();
-
-    //     $finalResult = [];
-    //     foreach ($result1 as $value1) {
-    //         $id = $value1['id'];
-    //         if ($result3) {
-    //         }
-    //         $city_id = $value1['city_id'];
-    //         foreach ($result2 as $value2) {
-    //             if ($value2['dwelling_id'] ==  $id) {
-    //                 $clear = "";
-    //                 foreach ($result3 as $clearId) {
-    //                     if($clearId['dwelling_id'] == $id) {
-    //                         $clear = $id;
-    //                     }
-    //                 }
-    //                 if ($clear == $id) {
-    //                     continue;
-    //                 } else {
-    //                     $cities = $place->showAllPlace($city_id);
-    //                     $likes = $posts->showPosts(false, false, "WHERE type='LIKES' AND dwelling_id=$id");
-    //                     var_dump($likes);
-    //                     $countLikes = $posts->showPosts(false, true, "WHERE type='LIKES' AND dwelling_id=$id");
-    //                     count($likes) > 0 ? $likes = $likes[0]["number"] : $likes = 0;
-    //                     count($countLikes) > 0 ? $countLikes = $countLikes[0]['count'] : $countLikes = 0;
-                        
-    //                     $likes != 0 ? $totalLikes = $likes/$countLikes : $totalLikes = '';
-                        
-    //                     $comments = $posts->showPosts(false, false, "WHERE type='COMMENTS' AND dwelling_id=$id");
-    //                     $countComments = $posts->showPosts(false, true, "WHERE type='COMMENTS' AND dwelling_id=$id");
-    //                     $wrapperValue = [$value1, $value2];
-    //                     foreach ($cities as $city) {
-    //                         array_push($wrapperValue, $city);
-    //                     }
-    //                     array_push($wrapperValue, $comments);
-    //                     array_push($wrapperValue, $countComments[0]);
-    //                     array_push($wrapperValue, $totalLikes);
-    //                     array_push($finalResult, $wrapperValue);
-
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return $finalResult;
-    // }
     function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' ) {
 
         $dates = array();

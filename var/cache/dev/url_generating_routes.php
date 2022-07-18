@@ -78,6 +78,7 @@ return [
     'host' => [[], ['_controller' => 'App\\Controller\\HostController::host'], [], [['text', '/mon-compte/hote']], [], [], []],
     'app_index' => [[], ['_controller' => 'App\\Controller\\IndexController::index'], [], [['text', '/']], [], [], []],
     'likes' => [[], ['_controller' => 'App\\Controller\\LikesCommentsController::likes'], [], [['text', '/product/likes']], [], [], []],
+    'comments' => [[], ['_controller' => 'App\\Controller\\LikesCommentsController::comments'], [], [['text', '/product/comments']], [], [], []],
     'location' => [[], ['_controller' => 'App\\Controller\\LocationController::location'], [], [['text', '/search/location']], [], [], []],
     'message_selected' => [[], ['_controller' => 'App\\Controller\\MessageController::selected'], [], [['text', '/mon-compte/message/selected']], [], [], []],
     'message_details' => [[], ['_controller' => 'App\\Controller\\MessageController::details'], [], [['text', '/mon-compte/message/details']], [], [], []],

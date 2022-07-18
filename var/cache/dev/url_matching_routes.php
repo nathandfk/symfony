@@ -21,6 +21,7 @@ return [
             [['_route' => 'index', '_controller' => 'App\\Controller\\IndexController::index'], null, null, null, false, false, null],
         ],
         '/product/likes' => [[['_route' => 'likes', '_controller' => 'App\\Controller\\LikesCommentsController::likes'], null, null, null, false, false, null]],
+        '/product/comments' => [[['_route' => 'comments', '_controller' => 'App\\Controller\\LikesCommentsController::comments'], null, null, null, false, false, null]],
         '/search/location' => [[['_route' => 'location', '_controller' => 'App\\Controller\\LocationController::location'], null, null, null, false, false, null]],
         '/mon-compte/message/selected' => [[['_route' => 'message_selected', '_controller' => 'App\\Controller\\MessageController::selected'], null, null, null, false, false, null]],
         '/mon-compte/message/details' => [[['_route' => 'message_details', '_controller' => 'App\\Controller\\MessageController::details'], null, null, null, false, false, null]],
