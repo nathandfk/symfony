@@ -13,14 +13,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
             if (options == "show") {
                 const obj = JSON.parse(response)
                 if (obj.response == "success") {
-                    if (dom('#message_setting')) {
-                        dom('#message_setting').innerHTML = obj.welcome
-                        dom('#tax_setting').value = obj.tax
-                        dom('#home_title_setting').value = obj.title
-                        dom('#email_admin_setting').value = obj.email
-                        dom('#about_title_setting').value = obj.abouttitle
-                        dom('#abstract_title_setting').value = obj.abstract
-                        dom('#about_description_setting').value = obj.description
+                    for (var key in obj){
+                        if (dom('#'+key)) {
+                            dom('#'+key).value = obj[key]
+                        }
                     }
                 }
             } else if(options == "search") {
@@ -56,7 +52,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 if (dom('.settings-signal-historical')) {
                     dom('.settings-signal-historical').innerHTML = response
                 }
-            } else if (options == "newsletter") {
+            } else if (options == "all") {
                 const obj = JSON.parse(response)
                 if (obj.response == "success" || obj.response == "error") {
                     notification(obj.message, obj.icon)
@@ -84,41 +80,22 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     homePic = form.querySelector("#home_picture_setting")
                     aboutPic = form.querySelector("#about_picture_setting")
                 event.preventDefault()
-                var formData = new FormData(event.target);
-                var object = {};
-                formData.forEach((value, key) => object[key] = value);
-                
-                if (window.FileList && window.File && window.FileReader) {
-                    const files1 = new FileReader()
-                    const files2 = new FileReader()
-                    files1.addEventListener('load', event => {
-                        object['pic_home_page'] = event.target.result;
-                    });
-                    if (homePic.files[0]) {files1.readAsDataURL(homePic.files[0])}
-                    files2.addEventListener('load', event => {
-                        object['pic_about_page'] = event.target.result;
-                    });
-                    if (aboutPic.files[0]) {files2.readAsDataURL(aboutPic.files[0])}
-                }
-                console.log(object)
-                var json = JSON.stringify(object);
-                    check = JSON.parse(json)
-                if (check.message_setting == "" || check.tax_setting == "" 
-                || check.message_setting == " " || check.tax_setting == " " 
-                || check.home_title_setting == "" || check.home_title_setting == " "
-                || check.email_admin_setting == "" || check.email_admin_setting == " " 
-                || check.about_title_setting == "" || check.about_title_setting == " "
-                || check.abstract_title_setting == "" || check.abstract_title_setting == " "
-                || check.about_description_setting == "" || check.about_description_setting == " ") {
-                    notification('Un ou plusieurs champs obligatoires sont vides', 'fas fa-exclamation')
-                } else {
-                    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(check.email_admin_setting))
-                    {
-                        request("/account/settings", json, true, "settings")
-                        request("/account/settings/search", JSON.stringify({value:""}), false, "search")  
-                    } else {
-                        notification("L'adresse mail saisie est incorrect", 'fas fa-exclamation')
-                    }              
+                if (!window.fetch || !window.FormData) {
+                    alert("R u fucking kidding me ??? Use another browser right now !")
+                    return
+                  }
+                  const formData = new FormData(event.target);
+                   console.log(formData)
+                  try {
+                 fetch("/account/settings", {
+                    method: "POST",
+                    body: formData,
+                  }).then(tt => tt.json())
+                  .then(response => {
+                      console.log(response)
+                  })
+                } catch {
+                    
                 }
             } else if (event.target.id = "newsletter-form"){
                 event.preventDefault()
@@ -128,7 +105,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 var json = JSON.stringify(object);
                     check = JSON.parse(json)
                 if (check.newsletter && check.newsletter != "") {
-                    request("/newsletter", json, true, "newsletter")
+                    request("/newsletter", json, true, "all")
                 } else {
                     notification('Un ou plusieurs champs obligatoires sont vides', 'fas fa-exclamation')
                 }
