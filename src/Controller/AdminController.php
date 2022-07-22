@@ -28,7 +28,7 @@ class AdminController extends AbstractController
         if ($security) {
             $roles = $security->getRoles();
             $response = ['users' => '', 'errors' => "Aucune donnée chargéee"];
-            if (!in_array('ROLE_ADMIN', $roles) || !in_array('ROLE_MODERATOR', $roles)) {
+            if (!in_array('ROLE_ADMIN', $roles) && !in_array('ROLE_MODERATOR', $roles)) {
                 $response = ['users' => '', 'errors' => "Vous n'avez pas les droits nécessaire pour accéder à ce bloc" ];
             } else {
                 $value = $data['value'];
@@ -78,6 +78,7 @@ class AdminController extends AbstractController
             $unlocked = $account ? 'checked' : '';
             $locked = $account ? '' : 'checked';
             $adminRole = in_array("ROLE_ADMIN", $roles) ? "checked" : "";
+            $adminDisplay = !in_array("ROLE_ADMIN", $roles) ? "d-none" : "";
             $hostRole = in_array("ROLE_HOST", $roles) ? "checked" : "";
             $moderatorRole = in_array("ROLE_MODERATOR", $roles) ? "checked" : "";
 
@@ -91,7 +92,7 @@ class AdminController extends AbstractController
             "host":"'.$hostRole.'","moderator_role":"'.$moderatorRole.'",
             "private_host":"'.$privateHost.'", "public_host":"'.$publicHost.'", 
             "blocked_host":"'.$blockedHost.'", "user_id":"'.$userId.'",
-            "account_locked":"'.$locked.'", "account_unlocked":"'.$unlocked.'"}';
+            "account_locked":"'.$locked.'", "account_unlocked":"'.$unlocked.'", "display":"'.$adminDisplay.'"}';
         } else {
             $output = '{"response":"error"}';
         }
@@ -100,39 +101,44 @@ class AdminController extends AbstractController
 
 
     #[Route('/admin/user-edit', name: 'admin_user_update')]
-    public function update(ManagerRegistry $doctrine): Response
+    public function update(ManagerRegistry $doctrine, Security $security): Response
     {
-        // $security = $security->getUser();
+        $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
-        $roles = ["ROLE_USER"];
+        if ($auth) {
+            if (in_array("ROLE_ADMIN", $auth->getRoles()) || in_array("ROLE_MODERATOR", $auth->getRoles())) {
+                $roles = ["ROLE_USER"];
 
-        $allHostStatus = ["PUBLIC", "PRIVATE", "BLOCKED"];
-        (isset($data['admin_role']) && !empty($data['admin_role'])) ? array_push($roles, "ROLE_ADMIN") : "";
-        (isset($data['host_role']) && !empty($data['host_role'])) ? array_push($roles, "ROLE_HOST") : "";
-        (isset($data['moderator_role']) && !empty($data['moderator_role'])) ? array_push($roles, "ROLE_MODERATOR") : "";
-        $accountStatus = (isset($data['account_status']) && !empty($data['account_status']) && $data['account_status']=='locked') ? false : true;
-         
-        
-        $userId = $data['user_id'];
+                $allHostStatus = ["PUBLIC", "PRIVATE", "BLOCKED"];
+
+                (in_array("ROLE_ADMIN", $auth->getRoles()) && isset($data['admin_role']) && !empty($data['admin_role'])) ? array_push($roles, "ROLE_ADMIN") : "";
+                (isset($data['host_role']) && !empty($data['host_role'])) ? array_push($roles, "ROLE_HOST") : "";
+                (isset($data['moderator_role']) && !empty($data['moderator_role'])) ? array_push($roles, "ROLE_MODERATOR") : "";
+                $accountStatus = (isset($data['account_status']) && !empty($data['account_status']) && $data['account_status']=='locked') ? false : true;
+                
+                
+                $userId = $data['user_id'];
 
 
-        // $user = isset($data['host_level']) && !empty($data['host_level']) ? $data['user_role'] : "";
-        $getUser = "";
-        $repository = $doctrine->getRepository(Users::class);
-        $getUser = $repository->find($userId);
-        if ($getUser) {
-            $em = $doctrine->getManager();
-            $lastHost = $getUser->getHost();
-            $hostStatut = in_array($data['host_statut'], $allHostStatus) ? $data['host_statut'] : $lastHost;
-            $getUser->setRoles($roles);
-            $getUser->setHost($hostStatut);
-            $getUser->setAccount($accountStatus);
-            $getUser->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-            $em->persist($getUser);
-            $em->flush();
-            $output = '{"response":"success", "message":"Modification réussie", "icon":"fas fa-thumbs-up"}';
-        } else {
-            $output = '{"response":"error"}';
+                // $user = isset($data['host_level']) && !empty($data['host_level']) ? $data['user_role'] : "";
+                $getUser = "";
+                $repository = $doctrine->getRepository(Users::class);
+                $getUser = $repository->find($userId);
+                if ($getUser) {
+                    $em = $doctrine->getManager();
+                    $lastHost = $getUser->getHost();
+                    $hostStatut = in_array($data['host_statut'], $allHostStatus) ? $data['host_statut'] : $lastHost;
+                    $getUser->setRoles($roles);
+                    $getUser->setHost($hostStatut);
+                    $getUser->setAccount($accountStatus);
+                    $getUser->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
+                    $em->persist($getUser);
+                    $em->flush();
+                    $output = '{"response":"success", "message":"Modification réussie", "icon":"fas fa-thumbs-up"}';
+                } else {
+                    $output = '{"response":"error"}';
+                }
+            }
         }
         return new JsonResponse($output);
     }

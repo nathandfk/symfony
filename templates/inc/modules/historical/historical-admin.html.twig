@@ -1,18 +1,24 @@
 {% if historical %}
+<p>Veuillez renseigner votre IBAN dans <a href="{{ path('payment') }}" class="text-link-success">la page paiement</a> pour recevoir vos paiement</p>
+<p>Une fois votre paiement est effectué par l'administration, une mention "Versement effectué" apparaitra sur la colonne paiement de votre historique</p>
+<p>Etant hôte vous percevez des sous totaux, le total comprend les frais de service taxé directement aux clients</p>
+<p>Une fois le versement effectué, votre argent apparaitra dans votre compte bancaire sous un délai de 10 jours</p>
 <table id="historical-table" class="text-center ath-table-form">
     <thead>
         <tr>
-            <th></th>
-            <th colspan="3">Client</th>
+            <th colspan="3">Hôte</th>
             <th>Habitation</th>
             <th>Période de la réservation</th>
-            <th>Prix</th>
+            <th>Prix total</th>
+            <th>Sous total</th>
+            <th>Frais de service</th>
             <th>Statut</th>
+            <th>Paiement</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td></td>
             <td class="bg-c5">Prénom</td>
             <td class="bg-c5">Nom</td>
             <td class="bg-c5">E-mail</td>
@@ -20,35 +26,37 @@
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
+            <td></td>
         </tr>
         {% for histo in historical %}
-        <tr>
-            <td><input type="checkbox" value="{{ histo[8] }}" class="historical-checked"></td>
+        <tr data-id='{{ histo[8] }}'>
             <td>{{ histo[0] }}</td>
             <td>{{ histo[1] }}</td>
             <td>{{ histo[2] }}</td>
             {% set productUrl = histo[4] | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
             <td><a href="{{ path('app_habitation', {'slug': productUrl, 'id': histo[3] }) | lower }}">{{ histo[4] }}</a></td>
             <td>{{ histo[5]|date("d-m-Y") }} - {{ histo[6]|date("d-m-Y") }}</td>
-            <td class="c1 ff-m">{{ histo[9] }} €</td>
+            <td class="c1 ff-m">{% if histo[9] %}{{ histo[9] }} €{% endif %}</td>
+            <td class="c1 ff-m">{% if histo[10] %}{{ histo[10] }} €{% endif %}</td>
+            <td class="c1 ff-m">{% if histo[11] %}{{ histo[11] }} €{% endif %}</td>
             <td>{{ histo[7] }}</td>
+            <td>{% if histo[7] == "CONFIRMED" %}{% if histo[17] == 'PAYMENT' %}Versement effectué{% endif %}{% endif %}</td>
+            <td class="d-flex gap-1 w-max-content">
+            {% if (histo[7] == "RESERVED" or histo[7] == "UNAVAILABLE") and histo[15] %}
+            <input type="submit" class="click click-brown" value="Annuler" name="annuled_by_host">
+            {% if histo[9] %}   
+            <input type="submit" class="click click-success" value="Confirmer" name="confirmed">
+            {% endif %}
+            {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
-    <tfoot>
-        <tr>
-            <td><input type="checkbox" class="historical-checked-all"></td>
-            <td>Action</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="d-flex gap-1 m-auto w-max-content">
-            <input type="submit" class="click click-brown" value="Annuler" name="btn-refuse">
-            <input type="submit" class="click click-success" value="Valider" name="btn-valid">
-            </td>
-        </tr>
-    </tfoot> 
 </table>
+<div class="btn-navigate paginate-historical-host d-flex jc-center gap-2 my-3">
+{{ knp_pagination_render(historical) }}
+</div>
 {% endif %}
 
 {% if message %}

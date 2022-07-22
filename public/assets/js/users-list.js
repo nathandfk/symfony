@@ -31,10 +31,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
                         <input type="checkbox" name="moderator_role" id="moderator_role" class="w-max-content" {{moderator_role}}> <label for="moderator_role">Rôle modérateur</label>
                     </div>
                     <div class="d-flex gap-1 ai-center">
-                        <input type="checkbox" name="host_role" id="host_role" class="w-max-content" {{host_role}}> <label id="host_role">Rôle hôte</label>
+                        <input type="checkbox" name="host_role" id="host_role" class="w-max-content" {{host_role}}> <label id="host_role" for="host_role">Rôle hôte</label>
                     </div>
-                    <div class="d-flex gap-1 ai-center">
-                        <input type="checkbox" name="admin_role" id="admin_role" class="w-max-content" {{admin_role}}> <label id="admin_role">Rôle admin</label>
+                    <div class="d-flex gap-1 ai-center" id="admin_role_wrapper">
+                        <input type="checkbox" name="admin_role" id="admin_role" class="w-max-content" {{admin_role}}> <label id="admin_role" for="admin_role">Rôle admin</label>
                     </div>
                     <input type="hidden" value="{{user-id}}" id="user_id" name="user_id">
                 </div>
@@ -128,9 +128,18 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     .replace('{{user-id}}', obj.user_id)
                     .replace('{{account_locked}}', obj.account_locked)
                     .replace('{{account_unlocked}}', obj.account_unlocked)
-                    
+
+
                     dashBoardClosest.appendChild(createElement)
                     createElement.innerHTML = result
+                                        
+                    if (dom("#admin_role_wrapper")) {
+                        if (obj.display == "d-none") {
+                            dom("#admin_role_wrapper").classList.remove("d-flex")
+                            dom("#admin_role_wrapper").classList.add(obj.display)
+                        }
+                    }
+
                     dashBoardClosest.querySelector('.user-view-cover').classList.add('cover-not-dismiss')
                     setTimeout(() => {
                         dashBoardClosest.querySelector('.form-user-view').classList.add('user-view-not-dismiss')

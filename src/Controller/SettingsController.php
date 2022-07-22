@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Data\Calendar;
+use App\Entity\Dwelling;
 use App\Entity\Posts;
 use App\Entity\Users;
 use App\Repository\DwellingRepository;
@@ -16,6 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraints\Json;
 
 class SettingsController extends AbstractController
 {
@@ -34,13 +36,23 @@ class SettingsController extends AbstractController
                 $email = $data['email_admin_setting'];
                 $tax = $data['tax_setting'];
                 $title = $data['home_title_setting'];
-                $type = $data['type_setting'];
+                $aboutTitle = $data['about_title_setting'];
+                $abstract = $data['abstract_title_setting'];
+                $description = $data['about_description_setting'];
+                $homepic = isset($data['pic_home_page']) ? $data['pic_home_page'] : "";
+                $aboutpic = isset($data['pic_about_page']) ? $data['pic_about_page'] : "";
                 $equipment = $data['equipment_setting'];
-                if (!empty($message) && !empty($tax) && !empty($title) && !empty($email)) {
+                $type = $data['type_setting'];
+                if (!empty($message) && !empty($tax) && !empty($title) && !empty($email) && !empty($aboutTitle) && !empty($abstract) && !empty($description)) {
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $data = [
                         'welcome' => ["Message de bienvenue lors d'une réservation", $message, true],
                         'hometitle' => ["Grand titre de la page d'accueil", $title, true],
+                        'homepic' => ["Image page d'accueil", $homepic, true],
+                        'abouttitle' => ["Grand titre de la page à propos", $aboutTitle, true],
+                        'aboutabstract' => ["Résumé de la page à propos", $abstract, true],
+                        'aboutdescription' => ["Description de la page à propos", $description, true],
+                        'aboutpic' => ["Image page à propos", $aboutpic, true],
                         'admin_email' => ["Utilisé pour les mails du site", $email, true],
                         'tax' => ["Frais de service", $tax, true],
                         'type' => ["Type d'habitation, exemple: Yourte", $type, false],
@@ -138,6 +150,61 @@ class SettingsController extends AbstractController
     }
 
 
+
+    #[Route('/account/settings/signal', name: 'account_settings_signal')]
+    public function signal(ManagerRegistry $doctrine, Security $security, PostsRepository $postRep, PaginatorInterface $paginator, Request $request): Response
+    {
+        $auth = $security->getUser();
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            return $this->redirectToRoute('app_index');
+        }
+        $value = $data['value'];
+        if ($auth) {
+            $roles = $auth->getRoles();
+            $em = $doctrine->getManager();
+
+            $userRep = $doctrine->getRepository(Users::class);
+            $user = $userRep->findOneBy(['email' => $auth->getUserIdentifier()]);
+
+            $postRep = $doctrine->getRepository(Posts::class);
+            
+            $posts = in_array('ROLE_ADMIN', $roles) || in_array('ROLE_MODERATOR', $roles) 
+            ? $postRep->findBy(['type' => 'SIGNAL'], ['id' => 'DESC'])
+            : $postRep->findBy(['user' => $user->getId(),'type' => 'SIGNAL'], ['id' => 'DESC']);
+            
+            $final = [];
+
+            foreach ($posts as $post) {
+                $dwelRep = $doctrine->getRepository(Dwelling::class);
+                $dwel = $dwelRep->findOneBy(['id' => $post->getDwelling()->getId()]);
+
+                $userRep = $doctrine->getRepository(Users::class);
+                $user = $userRep->findOneBy(['id' => $post->getUser()->getId()]);
+                $data = [$user->getFirstName(), $user->getLastName(), $user->getEmail(), $dwel->getId(), $dwel->getTitle(), $post->getAddedAt(),  $post->getStatut(), $post->getId()];
+                array_push($final, $data);
+            }
+            $final = $paginator->paginate(
+                $final,
+                $request->query->getInt('page', 1),
+                5);
+            $response = [
+                'response' => 'success', 
+                'message' => "",
+                'datas' => $final,
+            ];
+
+        } else {
+            $response = [
+                'response' => 'success', 
+                'message' => "Vous ne vous êtes pas authentifié",
+                'datas' => '',
+            ];
+        }
+        return $this->render('inc/modules/settings/signal.html.twig', $response);
+    }
+
+
     #[Route('/account/settings/show', name: 'account_settings_show')]
     public function show(ManagerRegistry $doctrine, Security $security)
     {
@@ -153,13 +220,29 @@ class SettingsController extends AbstractController
                 $postRep = $doctrine->getRepository(Posts::class);
                 $welcome = $postRep->findOneBy(['type' => strtoupper("welcome")]);
                 $tax = $postRep->findOneBy(['type' => strtoupper("tax")]);
+
                 $homeTitle = $postRep->findOneBy(['type' => strtoupper("hometitle")]);
+                $aboutTitle = $postRep->findOneBy(['type' => strtoupper("abouttitle")]);
+                $abstract = $postRep->findOneBy(['type' => strtoupper("aboutabstract")]);
+                $description = $postRep->findOneBy(['type' => strtoupper("aboutdescription")]);
+                
                 $adminEmail = $postRep->findOneBy(['type' => strtoupper("admin_email")]);
+
                 $valueWel = $welcome ? str_replace("\n", '', $welcome->getDescription()) : '';
                 $valueTax = $tax ? $tax->getDescription() : '';
                 $title = $homeTitle ? $homeTitle->getDescription() : '';
+                $aboutTitle = $aboutTitle ? $aboutTitle->getDescription() : '';
+                $abstract = $abstract ? $abstract->getDescription() : '';
+                $description = $description ? $description->getDescription() : '';
+
+
                 $email = $adminEmail ? $adminEmail->getDescription() : '';
-                $output = '{"response":"success", "message":"Vous n\'avez pas les droits nécessaires", "icon":"fas fa-exclamation", "welcome":"'.$valueWel.'", "tax":"'.$valueTax.'", "title":"'.$title.'", "email":"'.$email.'"}';
+                
+                $output = '{"response":"success", "message":"Vous n\'avez pas les droits nécessaires", "icon":"fas fa-exclamation", 
+                    "welcome":"'.$valueWel.'", "tax":"'.$valueTax.'", 
+                    "title":"'.$title.'", "email":"'.$email.'", 
+                    "abouttitle":"'.$aboutTitle.'", "abstract":"'.$abstract.'",
+                    "description":"'.$description.'"}';
 
             } else {
                 $output = '{"response":"error", "message":"Vous n\'avez pas les droits nécessaires", "icon":"fas fa-exclamation"}';
@@ -170,6 +253,50 @@ class SettingsController extends AbstractController
         }
         return new JsonResponse($output);
     }
+
+
+    #[Route('/newsletter', name: 'register_newsletter')]
+    public function newsletter(ManagerRegistry $doctrine, Security $security)
+    {
+        $auth = $security->getUser();
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            return $this->redirectToRoute('app_index');
+        }
+        $email = $data['newsletter'];
+        $output = '{"response":"error", "message":"Une erreur est survenue, veuillez recommencer", "icon":"fas fa-exclamation"}';
+        if (!empty($email)) {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+                $postsRep = $doctrine->getRepository(Posts::class);
+                $posts = $postsRep->findBy(['description' => $email, 'type' => 'NEWSLETTER']);
+                foreach ($posts as $post) {
+                    if ($post) {
+                        $output = '{"response":"error", "message":"Cette adresse mail est déjà inscrite dans notre liste", "icon":"fas fa-exclamation"}';
+                        return new JsonResponse($output);
+                    }
+                }
+                $em = $doctrine->getManager();
+                $post = new Posts();
+                if ($auth) {
+                    $userRep = $doctrine->getRepository(Users::class);
+                    $user = $userRep->findOneBy(['email' => $auth->getUserIdentifier()]);
+                    $post->setUser($user);
+                }
+                $post->setDescription($email);
+                $post->setAbstract('');
+                $post->setTitle('Inscription à la newsletter');
+                $post->setType('NEWSLETTER');
+                $em->persist($post);
+                $em->flush();
+                $output = '{"response":"success", "message":"Vous vous êtes bien inscrit à notre newsletter", "icon":"fas fa-check"}';
+            } else {
+                $output = '{"response":"error", "message":"Votre email est incorrect", "icon":"fas fa-exclamation"}';
+            }
+        }
+        return new JsonResponse($output);
+    }
+
 
     #[Route('/account/settings/update', name: 'account_settings_update')]
     public function update(ManagerRegistry $doctrine, Security $security)
@@ -216,7 +343,7 @@ class SettingsController extends AbstractController
 
 
     #[Route('/account/settings/delete', name: 'account_delete')]
-    public function delete(ManagerRegistry $doctrine, Request $request, Security $security, UsersRepository $dataUsers, DwellingRepository $dwelRep, PaginatorInterface $paginator)
+    public function delete(ManagerRegistry $doctrine, Security $security)
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -248,7 +375,7 @@ class SettingsController extends AbstractController
 
 
     #[Route('/account/delete', name: 'delete')]
-    public function deleteAccount(ManagerRegistry $doctrine, Request $request, Security $security, UsersRepository $dataUsers, DwellingRepository $dwelRep, PaginatorInterface $paginator)
+    public function deleteAccount(ManagerRegistry $doctrine, Request $request, Security $security)
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);

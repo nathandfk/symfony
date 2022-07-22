@@ -382,7 +382,7 @@ class ProductController extends AbstractController
     public function insertReservation($doctrine, $dwelling_id, $statut, $arrival, $departure, $paymentIntent, $clientSecret, $adults, $childrens, $babies, $animals, $totalPrice, $countDay, $subTotalPrice, $taxService, $dataDwelling)
     {
         $dataPayment = ["_payment_intent" => $paymentIntent, "_client_secret" => $clientSecret, "_adults" => $adults, "_childrens" => $childrens, "_babies" => $babies, "_animals" => $animals, "_price_of_reservation" => $totalPrice,
-        "_nb_day" => $countDay, "_sub_total_price" => $subTotalPrice, "_tax_service" => $taxService, "_data_dwelling" => $dataDwelling];
+        "_nb_day" => $countDay, "_sub_total_price" => $subTotalPrice, "_tax_service" => $taxService, "_data_dwelling" => $dataDwelling, "_payment_iban" => "",  "_payment_date" => "", "_payment_statut" => ""];
         $em = $doctrine->getManager();
         $insertReservation = new Reservation();
         $repository = $doctrine->getRepository(Dwelling::class);

@@ -2,31 +2,22 @@
 {% include 'inc/parts/nav.html.twig' %}
 <div class="atypikhouse-container">
     <div class="dashboard-wrapper my-4">
+        <h1 class="c1 size24">HISTORIQUE</h1>
         <div class="navigation-link d-flex gap-1">
             <a data-checked="client" class="click click-success">Client</a>
             {% if is_granted('ROLE_HOST') %}
             <a data-checked="host" class="click click-c5">Hôte</a>
-            {% elseif is_granted('ROLE_ADMIN') %}
-            <a data-checked="admin" class="click click-c5">Administrateur ou modérateur</a>
             {% endif %}
         </div>
         
         <div data-selected="client">
-            <h3>Historique de mes réservations</h3>
-            <input type="text" id="search-historical-client" data-link="" placeholder="Recherche un historique">
+            <h2 class="size18">Historique de mes réservations</h2>
             <div class="table-wrapper historical-client-wrapper historical-wrapper"></div>
         </div>
         {% if is_granted('ROLE_HOST') %}
         <div data-selected="host" class="d-none">
-            <h3>Historique de réservation de mes clients</h3>
-            <input type="text" id="search-historical-host" data-link="" placeholder="Recherche un historique">
+            <h2 class="size18">Historique de réservation de mes clients</h2>
             <div class="table-wrapper historical-host-wrapper historical-wrapper"></div>
-        </div>
-        {% elseif is_granted('ROLE_ADMIN') %}
-        <div data-selected="admin" class="d-none">
-            <h3>Historique de réservation de mes clients</h3>
-            <input type="text" id="search-historical-admin" data-link="" placeholder="Recherche un historique">
-            <div class="table-wrapper historical-admin-wrapper historical-wrapper"></div>
         </div>
         {% endif %}
     </div>

@@ -231,3 +231,9 @@ a, a:active, a:hover{
 .card{
     background-color: var(--c4);
 }
+.text-link-success:hover{
+    color: var(--c1);
+}
+.text-link-brown:hover{
+    color: var(--c2);
+}

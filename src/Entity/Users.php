@@ -145,24 +145,24 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFirstName(): ?string
     {
-        return ucwords($this->firstName);
+        return $this->firstName;
     }
 
     public function setFirstName(string $firstName): self
     {
-        $this->firstName = $firstName;
+        $this->firstName = ucwords($firstName);
 
         return $this;
     }
 
     public function getLastName(): ?string
     {
-        return strtoupper($this->lastName);
+        return $this->lastName;
     }
 
     public function setLastName(string $lastName): self
     {
-        $this->lastName = $lastName;
+        $this->lastName = strtoupper($lastName);
 
         return $this;
     }

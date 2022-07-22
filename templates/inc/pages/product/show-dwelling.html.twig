@@ -47,12 +47,16 @@
                             <div>{{ dwelling[0].city }}, {{ dwelling[0].state }}, {{ dwelling[2] }}</div>
                             <div>A partir de <span class="c1 ff-m size24">{{ dwelling[0].price }}€</span></div>
                             <p>{{ dwelling[0].abstract }}</p>
-                            <p><a><i class="fas fa-star size18"></i> Ajouter au favoris</a></p>
+                            {% if app.user %}
+                            <p><a class="text-link-success cp" id='add-favorite' data-link="{{ path('dwelling_add_favorite') }}" data-id='{{ dwelling[0].id }}'><i class="fas fa-star size18"></i> Ajouter au favoris</a></p>
+                            {% endif %}
                             <div class="d-flex gap-1 ai-center my-2">
                                 <span>Partager sur</span><span class="fab fa-facebook-f"></span><span class="fab fa-linkedin-in"></span><span class="fab fa-whatsapp"></span>
                             </div>
                             {# <a><i class="fas fa-heart size18"></i> Ajouter une mention j'aime</a> #}
-                            <div><a>Signaler ce logement</a></div>
+                            {% if app.user %}
+                            <div><a class="text-link-success cp" id='add-signal' data-id='{{ dwelling[0].id }}' data-link="{{ path('dwelling_add_signal') }}">Signaler ce logement</a></div>
+                            {% endif %}
                         </div>
                         {% if app.user %}
                         {% if dwelling[0].user_id != app.user.id %}
@@ -125,6 +129,59 @@
                                 <input type="submit" name="note-unavailable" class="click click-success w-100" value="Noter indisponible">
                             </div>
                         {% endif %}
+                        {% else %}
+                        <div class="product-col-2">
+                            <div class="product-form-check">
+                                <div class="form-row product-calendar atypikhouse-search-dispo">
+                                    <div class="form-group col-lg-6 p-relative search-arrival-date target-data cp">
+                                        Date d'arrivée
+                                        <label class="form-input cp my-1 c1 single-product-arrival">_ _ /_ _ /_ _ _ _</label>
+                                        <div class="superpose d-none calendar general-calendar calendar-reset">{{ calendarReset | raw }}</div>
+                                    </div>
+                                    <div class="form-group col-lg-6 p-relative search-departure-date target-data cp">
+                                        Date de départ
+                                        <label class="form-input cp my-1 c1 single-product-departure">_ _ /_ _ /_ _ _ _</label>
+                                        <div class="superpose d-none calendar general-calendar calendar-reset"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Qui sont les voyageurs ?</label>
+                                    <div class="my-1 single-product-travelers">
+                                        {% for limit in dwelling[1] %}
+                                        {% if limit.field == "_max_people" %}
+                                        <div class="form-input cp nb-traverlers" data-adults="1">{{ limit.value }} voyageurs maximums</div>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <ul class="choice-travelers">
+                                            
+                                            {% for limit in dwelling[1] %}
+                                                {% if limit.field == "_max_people" %}
+                                                <input type="hidden" class="people-limit" value="{{ limit.value }}">
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for limit in dwelling[1] %}
+                                                {% if limit.field == "_minimum_age" %}
+                                                {% if limit.value >= 0 %}<li>Adulte (11 ans et au delà) <input type="number" min="1" value="1" id="product-traveler-adult"></li>{% endif %}
+                                                {% endif %}
+                                                {% if limit.field == "_minimum_age" %}
+                                                {% if limit.value < 11 %}<li>Enfant (3 ans à 10 ans)  <input type="number" min="0" value="0" id="product-traveler-children"></li>{% endif %}
+                                                {% endif %}
+                                                {% if limit.field == "_minimum_age" %}
+                                                {% if limit.value < 3 %}<li>Bébé (0 à 2 ans) <input type="number" min="0" value="0" id="product-traveler-baby"></li>{% endif %}
+                                                {% endif %}
+                                                {% if limit.field == "_animals" %}
+                                                {% if limit.value == "TRUE" %}
+                                                <li>Animaux <input type="number" min="0" value="0" id="product-traveler-animal"></li>
+                                                {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <input type="submit" name="checking-dispo" class="click click-success w-100" value="Vérifier les disponibilités">
+                            </div>
+                            <div class="product-form-checkout"></div>
+                        </div>
                         {% endif %}
                     </div>
                     <div class="product-page-ndline my-4">

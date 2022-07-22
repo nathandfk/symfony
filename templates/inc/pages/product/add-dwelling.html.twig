@@ -20,8 +20,10 @@
 <div class="dashboard-wrapper">
     <div class="navigation-link d-flex gap-1 my-2">
         <a data-checked="add" class="click click-success">Ajouter une habitation</a>
+        {% if app.user %}
         {% if (is_granted("ROLE_HOST") or is_granted("ROLE_MODERATOR") or is_granted("ROLE_ADMIN")) %}
         <a data-checked="show" class="click click-c5">Habitations</a>
+        {% endif %}
         {% endif %}
     </div>
     <div class="host-wrapper" data-selected="add" >
@@ -232,9 +234,13 @@
             <button type="submit" class="click click-success ml-auto" name="add_dwelling">Ajouter ce logement</button>
         {{ form_end(form) }}
     </div>
+    {% if app.user %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_HOST') or is_granted('ROLE_MODERATOR') %}
     <div class="host-wrapper d-none" data-selected="show" >
         {% include 'inc/pages/product/list-dwelling.html.twig' %}
     </div>
+    {% endif %}
+    {% endif %}
 </div>
 </div>
 

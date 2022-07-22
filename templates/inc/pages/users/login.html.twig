@@ -4,12 +4,6 @@
 {% if carousel == true %}
 {% include 'inc/parts/carousel.html.twig' %}
 {% endif %}
-{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <p>Email: {{ app.user.email }}</p>
-{% endif %}
-{% if app.user %}
-    <p>Email: {{ app.user.email }}</p>
-{% endif %}
 {% for message in app.flashes('success') %}
     <div class="alert alert-success">
         {{ message }}
@@ -36,7 +30,7 @@
                     <label for="password">Mot de passe</label>
                     <input type="password" name="password" id="password" placeholder="Mot de passe" required/>
                 </div>
-                <a href="">Mot de passe oublié ?</a>
+                <a href="{{ path('forgot') }}">Mot de passe oublié ?</a>
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}

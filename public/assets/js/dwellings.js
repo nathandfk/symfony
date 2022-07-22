@@ -11,23 +11,18 @@ window.addEventListener("DOMContentLoaded", (event) => {
         })
         .then(response => {
             if (options == "show") {
-                console.log(response)
                 if (dom('.habitation-list')) {
                     dom('.habitation-list').innerHTML = response
                 }
-            } else if(options == "search") {
-                dom('.settings-result').innerHTML = response
-            } else if (options == "settings"){
-
+            } else if (options == "action") {
                 const obj = JSON.parse(response)
-                if (obj.response == "success") {
-                    dom('.reset-value', true)
-                    .forEach(element => {
-                        element.value = ""
-                    });
+                if (obj.response == "success" || obj.response == "error") {
                     notification(obj.message, obj.icon)
-                    request("/account/settings/search", JSON.stringify({value:""}), false, "search")
-                } else {
+                    request("/dwelling/list", JSON.stringify({value:""}), false, "show")
+                }
+            } else if (options == "delete") {
+                const obj = JSON.parse(response)
+                if (obj.response == "success" || obj.response == "error") {
                     notification(obj.message, obj.icon)
                 }
             }
@@ -43,6 +38,35 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     } else {
                         request("/dwelling/list", JSON.stringify({value:""}), false, "show")
                     }
+            }
+        }
+    })
+
+    dom('html, body').addEventListener("click", (event) => {
+        if (event.target) {
+            if (event.target.id == "dwelling-activate") {
+                let closest = event.target.closest('tr')
+                    request("/dwelling/activate", JSON.stringify({id:closest.dataset.id}), true, "action")
+                
+            } else if (event.target.id == "dwelling-delete"){
+                let closest = event.target.closest('tr')
+                    request("/dwelling/delete", JSON.stringify({id:closest.dataset.id}), true, "action")
+
+            } else if (event.target.closest('.paginate-dwelling-list')) {
+                if (event.target.href && event.target.nodeName == "A") {
+                    event.preventDefault()
+                    request(event.target.href, JSON.stringify({value:''}), false, 'show')
+                }
+            } else if (event.target.id == 'add-favorite') {
+                let id = event.target.dataset.id
+                let link = event.target.dataset.link
+                    event.preventDefault()
+                    request(link, JSON.stringify({id:id}), true, 'action')
+            } else if (event.target.id == 'add-signal') {
+                let id = event.target.dataset.id
+                let link = event.target.dataset.link
+                    event.preventDefault()
+                    request(link, JSON.stringify({id:id}), true, 'action')
             }
         }
     })

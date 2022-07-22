@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Dwelling;
 use App\Entity\Reservation;
+use App\Entity\UserMeta;
+use App\Entity\Users;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -76,13 +79,18 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
 
-    public function historical(bool $client = true, int $client_id = 0, bool $host = false, int $host_id = 0, int $searchByDwelling = 0, $progressing = false, int $limit = 10, $search= "")
+    public function historical(bool $client = true, int $client_id = null, bool $host = false, int $host_id = null, int $searchByDwelling = null, $unavailable = false, $admin = false)
     {
+        try {
+        
         $finalDataHistorical = [];
-        $whereClient = $client_id > 0 ? "AND user_id=$client_id" : "";
+        $whereClient = $client_id != null ? "AND user_id=$client_id" : "";
         $whereDwelling = $searchByDwelling > 0 ? "AND id=$searchByDwelling" : "";
-        $progressing = $progressing == true ? "'IN_PROGRESS'," : "";
-        $reservations = $this->showReservation("*", "WHERE statut IN ('RESERVED', 'ANNULED', 'ANNULED_BY_HOST', $progressing 'CONFIRMED') $whereClient $whereDwelling ORDER BY id DESC LIMIT $limit");
+        $unavailable = $unavailable == true ? "'UNAVAILABLE', 'DISPONIBLE'," : "";
+        $reservations = ($admin == true) ?
+        $this->showReservation("*", "WHERE statut='CONFIRMED' ORDER BY id DESC")
+        : $this->showReservation("*", "WHERE statut IN ('RESERVED', 'ANNULED', 'ANNULED_BY_HOST', $unavailable 'CONFIRMED') $whereClient $whereDwelling ORDER BY id DESC");
+
         foreach ($reservations as $reservation) {
             $dwellingId = $reservation['dwelling_id'];
             $reservationId = $reservation['id'];
@@ -93,17 +101,33 @@ class ReservationRepository extends ServiceEntityRepository
             $endDate = $reservation['end_date']; 
             
             $repository = $this->registry->getRepository(Dwelling::class);
-            $dwellings = $repository->findBy(["id"=>$dwellingId]);
-            foreach ($dwellings as $dwelling) {
+            $dwellings = $repository->findOneBy(["id"=>$dwellingId]);
                 if ($host) {
-                    if ($dwelling->getUser()->getId() != $host_id) {
+                    if ($dwellings->getUser()->getId() != $host_id) {
                         continue;
                     }
                 }
-                $id = $dwelling->getId();
-                $title = $dwelling->getTitle();
-                $userDwellingId = $dwelling->getUser()->getId();
-                $city = $dwelling->getCity();
+                $id = $dwellings->getId();
+                $title = $dwellings->getTitle();
+                $userDwellingId = $dwellings->getUser()->getId();
+
+                $userRep = $this->registry->getRepository(Users::class);
+                $user = $userRep->findOneBy(["id"=>$userDwellingId]);
+
+                $userDwellingFirstName = $user->getFirstName();
+                $userDwellingLastName = $user->getLastName();
+                $userDwellingEmail = $user->getEmail();
+                
+                $userDwellingIban = "";
+                
+                $userMetaRep = $this->registry->getRepository(UserMeta::class);
+                $userMeta = $userMetaRep->findAll();
+                foreach ($userMeta as $meta) {
+                    if ($meta->getUser()->getId() == $userDwellingId && $meta->getField()=="_host_iban" ) {
+                        $userDwellingIban = $meta->getValue();
+                    }
+                }
+                $city = $dwellings->getCity();
                 $usersData = $this->users->showUsers("*", "WHERE id=$userClientId");
                 foreach ($usersData as $element) {
                     $firstName = $element['first_name'];
@@ -113,6 +137,9 @@ class ReservationRepository extends ServiceEntityRepository
                     $total = "";
                     $subTotal = "";
                     $tax = "";
+                    $paymentIban = "";
+                    $paymentDate = "";
+                    $paymentStatut = "";
                     if ($dwellingMeta) {
                         foreach ($dwellingMeta as $meta) {
                             switch ($meta['field']) {
@@ -125,41 +152,33 @@ class ReservationRepository extends ServiceEntityRepository
                                 case '_tax_service':
                                     $tax = $meta['value'];
                                     break;
+                                case '_payment_iban':
+                                    $paymentIban = $meta['value'];
+                                    break;
+                                case '_payment_date':
+                                    $paymentDate = $meta['value'];
+                                    break;
+                                case '_payment_statut':
+                                    $paymentStatut = $meta['value'];
+                                    break;
                             }
                         }
                     }
-                    $userData = [$firstName, $lastName, $email, $id, $title, $startDate, $endDate, $statut, $reservationId, $total, $subTotal, $tax, $city, $userDwellingId, $userClientId];
+                        $zone = new \DateTimeZone('Europe/Paris');
+                        $toDay = new DateTimeImmutable('now', $zone);
+                        $time = strtotime($toDay->format('Y-m-d')) - strtotime($startDate);
+                        $btn = false;
+                        if ($time<0) {
+                            $btn = true;
+                        }
+                    $userData = [$firstName, $lastName, $email, $id, $title, $startDate, $endDate, $statut, $reservationId, $total, $subTotal, $tax, $city, $userDwellingId, $userClientId, $btn, $paymentIban, $paymentStatut, $paymentDate, $userDwellingFirstName, $userDwellingLastName, $userDwellingEmail, $userDwellingIban];
                     array_push($finalDataHistorical, $userData);
                 }
-            }
+            
         }
         return $finalDataHistorical;
-        // $userHost = $this->showUsers("*", "WHERE roles LIKE '%ROLE_HOST%'");
-        // $user = $this->showUsers("*", "WHERE roles LIKE '%ROLE_HOST%'");
-        // $finalData = [];
-        // if ($userHost) {
-        //     foreach ($userHost as $data) {
-                
-        //     }
-        // }
-        // $users = $this->showUsers("*", "");
-        // if ($dwelling_host_id > 0) {
-        //     $reservation = $this->showReservation("*", "WHERE dwelling_id='".$dwelling_host_id."' LIMIT $limit");
-        // } else if ($client_id > 0 && $dwelling_host_id > 0){
-        //     $reservation = $this->showReservation("*", "WHERE user_id='".$client_id."' OR dwelling_id='".$dwelling_host_id."' LIMIT $limit");
-        // }
-        // $finalDataReservation = [];
-        // foreach ($reservation as $key) {
-        //     $metaData = [];
-        //     $reservation_id = $key["id"];
-        //     $reservMeta = $this->reservationMeta->showReservationMeta($reservation_id, "*");
-        //     foreach ($reservMeta as $meta) {
-        //         $data = [$meta['field'], $meta['value']];
-        //         array_push($metaData, $data);
-        //     }
-        //     array_push($finalDataReservation, [$key, $metaData]);
-        // }
-        // return $finalDataReservation;
+        } catch (\Throwable $th) {
+        }
     }
 
 //    /**

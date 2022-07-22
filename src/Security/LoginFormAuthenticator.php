@@ -41,12 +41,28 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         if ($email) {
             $repository = $this->doctrine->getRepository(Users::class);
             $user = $repository->findOneBy(["email" => $email]);
+            $em = $this->doctrine->getManager();
             if ($user->getStatut() == FALSE) {
                 $request->getSession()->set(Security::AUTHENTICATION_ERROR, "Votre compte");
                 $password = '';
-                throw new CustomUserMessageAuthenticationException(
-                    "Vous n'avez toujours pas confirmé votre compte"
-                );
+                $toDay = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+                $time =  strtotime($toDay->format('Y-m-d H:i:s')) - strtotime($user->getUpdatedAt()->format('Y-m-d H:i:s'));
+                if ($time > 86380) {
+                    $activate = $this->generator(24);
+                    $user->setActivationKey($activate);
+                    $user->setUpdatedAt($toDay);
+                    $em->persist($user);
+                    $em->flush();
+                    throw new CustomUserMessageAuthenticationException(
+                        "Nous venons de vous envoyer un lien par mail, merci de nous confirmer qu'il s'agit bien de vous en cliquant sur le lien. Ce lien expire sous 24 heures !"
+                    );
+
+                } else {
+                    throw new CustomUserMessageAuthenticationException(
+                        "Votre compte n'est toujours pas activé. Vous n'avez toujours pas confirmé votre email. Un email vous a été envoyé à votre adresse mail, il expire sous 24 heures"
+                    );
+                }
+
             } else if (!$user->isAccount()) {
                 $request->getSession()->set(Security::AUTHENTICATION_ERROR, "Votre compte");
                 $password = '';
@@ -55,9 +71,12 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 );
             } else if (!is_null($user->getDeletedAt())) {
                 $request->getSession()->set(Security::AUTHENTICATION_ERROR, "Votre compte");
-                $password = '';
+                $user->setDeletedAt(null);
+                $em->persist($user);
+                $em->flush();
                 throw new CustomUserMessageAuthenticationException(
-                    "Ce compte a été supprimé"
+                    "Votre compte a été supprimé ! Nous avons remarqué que vous tentez de vous connecter sur votre compte. 
+                    Nous venons de le restaurer."
                 );
             } 
         }
@@ -86,5 +105,15 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    public function generator(int $limit = 8, $remove = []){
+        $character = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'A', 'b', 'B', 'c', 'C', '?', '^', '-', '_','d', 'D', 'e', 'E', 'f', 'F', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        $tableSize = count($character);
+        $element = "";
+        for ($i=0; $i < $limit; $i++) { 
+            $element .= $character[rand(0, $tableSize - 1)];
+        }
+        return $element;
     }
 }

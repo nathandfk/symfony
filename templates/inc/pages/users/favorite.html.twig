@@ -1,0 +1,48 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-error">
+        {{ message }}
+    </div>
+{% endfor %}
+<div class="atypikhouse-container">
+{% if datas %}
+<table id="favorite-table" class="text-center ath-table-form">
+    <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Prix</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for favorite in datas %}
+        <tr data-id='{{ favorite.id }}'>
+            <td>{{ favorite.title }}</td>
+            <td class="ff-m c1">{{ favorite.price }} €</td>
+            <td>
+            <form method="POST">
+            <input type="submit" class="click click-brown m-auto" name="favorite_delete" value="Supprimer">
+            <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+            </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="btn-navigate paginate-datas-client d-flex jc-center gap-2 my-3">
+{{ knp_pagination_render(datas) }}
+</div>
+{% endif %}
+
+{% if message %}
+<p class="size18 ff-m c2 text-center">{{ message }}</p>
+{% endif %}
+</div>
+{% include 'inc/parts/footer.html.twig' %}

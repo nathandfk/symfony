@@ -4,6 +4,7 @@
 <div class="dashboard-wrapper my-4">
     <div class="navigation-link d-flex gap-1">
         <a data-checked="profil" class="click click-success">Mon profil</a>
+        <a data-checked="signal" class="click click-c5">Habitations signalés</a>
         {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
         <a data-checked="users" class="click click-c5">Utilisateurs</a>
         {% endif %}
@@ -118,16 +119,12 @@
             <h3>Paramètres</h3>
             <form id="settings-wrapper" method="POST">
                 <div class="my-1">
-                    <label>Titre de la page d'accueil *</label>
-                    <input type="text" name="home_title_setting" id="home_title_setting">
-                </div>
-                <div class="my-1">
                     <label>Email de l'administration *</label>
-                    <input type="email" placeholder="gestion@atypikhouse.com" name="email_admin_setting" id="email_admin_setting">
+                    <input type="email" required placeholder="gestion@atypikhouse.com" name="email_admin_setting" id="email_admin_setting">
                 </div>
                 <div class="my-1">
                     <label>Message de réservation *</label>
-                    <textarea name="message_setting" id="message_setting"></textarea>
+                    <textarea name="message_setting" required id="message_setting"></textarea>
                     <div>Insérer dans votre message</div>
                     <ul>
                         <li>_firstname_ pour le prénom</li>
@@ -142,6 +139,40 @@
                     <label>Frais de service (En pourcentage) *</label>
                     <input type="number" min="0" max="100" name="tax_setting" id="tax_setting">
                 </div>
+                <section class="my-3">
+                    <h3>Page d'accueil</h3>
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label>Titre de la page d'accueil *</label>
+                            <input type="text" required name="home_title_setting" id="home_title_setting">
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label>Image de la page d'accueil</label>
+                            <input type="file" name="home_picture_setting" id="home_picture_setting">
+                        </div>
+                    </div>
+                </section>
+                <section class="my-3">
+                    <h3>Page à propos</h3>
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label>Titre</label>
+                            <input type="text" name="about_title_setting" name="about_title_setting" id="about_title_setting" class="reset-value" placeholder="Pourquoi choisir AtypikHouse ?">
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label>Résumé</label>
+                            <input type="text" name="abstract_title_setting" id="abstract_title_setting" class="reset-value" placeholder="Atypikhouse vous aide à...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Desciption</label>
+                        <textarea type="text" row="10" name="about_description_setting" id="about_description_setting" class="reset-value" placeholder="Des habitats spacieux, répondant à tous vos besoins"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Image de couverture</label>
+                        <input type="file" name="about_picture_setting" id="about_picture_setting" class="reset-value">
+                    </div>
+                </section>
                 <div class="form-row">
                     <div class="form-group bloc-lg-6">
                         <label>Ajouter un type d'habitation</label>
@@ -152,6 +183,7 @@
                         <input type="text" name="equipment_setting" id="equipment_setting" class="reset-value" placeholder="exp: Wifi, Eau">
                     </div>
                 </div>
+
 
                 <button type="submit" class="click click-success">Appliquer</button>
 
@@ -173,6 +205,10 @@
             </div>
             <input type="submit" value="Supprimer mon compte" id='btn-delete-account' class="click click-brown">
         </div>
+    </div>
+
+    <div data-selected="signal" class="d-none">
+        <div class="settings-signal-historical"></div>
     </div>
 </div>
 </div>
