@@ -14,7 +14,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[UniqueEntity("email", message: "L'utilisateur existe déjà")]
-#[ApiResource]
+#[ApiResource(
+    itemOperations: [
+        "get"
+    ],
+    collectionOperations: [
+        "post"
+    ]
+)]
+// #[ApiResource(
+//     attributes: ["security" => "is_granted('ROLE_USER')"],
+//     collectionOperations: [
+//         "get",
+//         "post" => ["security" => "is_granted('ROLE_ADMIN')"],
+//     ],
+//     itemOperations: [
+//         "get",
+//     ],
+// )]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -25,13 +42,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\Length(max: 100)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[a-zA-Z]{2,100}$/")]
+    #[Assert\Regex("/^[a-zA-Z \p{L}-]{2,100}+$/")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[a-zA-Z]{2,50}$/")]
+    #[Assert\Regex("/^[a-zA-Z \p{L}-]{2,50}+$/")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
@@ -268,12 +285,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCountry(): ?Country
+    public function getCountry()
     {
         return $this->Country;
     }
 
-    public function setCountry(?Country $Country): self
+    public function setCountry($Country): self
     {
         $this->Country = $Country;
 

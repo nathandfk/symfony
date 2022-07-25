@@ -59,8 +59,8 @@
                     {{ form_errors(form.price) }}
                 </div>
                 <div class="form-group bloc-lg-6">
-                    {{ form_label(form.pictures) }}
-                    {{ form_widget(form.pictures) }}
+                    {{ form_label(form.pictures, 'Images (Taille totale maximale 15MB, 4 fichiers min et 10 fichiers max) *') }}
+                    {{ form_widget(form.pictures, {required:'required'}, ) }}
                     {{ form_errors(form.pictures) }}
                 </div>
             </div>

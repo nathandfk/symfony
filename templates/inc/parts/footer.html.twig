@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <div>
-                        <h4 class="ff-m">Membres</h4>
+                        <h2 class="ff-m">Membres</h2>
                         {% if not app.user %}
                         <p><a href="{{ path('register') }}">S'inscrire</a></p>
                         <p><a href="{{ path('register') }}">Mode hôte</a></p>
@@ -21,16 +21,14 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h4 class="ff-m">Assistance</h4>
+                        <h2 class="ff-m">Assistance</h2>
                         <p><a href="{{ path('contact') }}">Contact</a></p>
                         <p><a href="">Annuler une réservation</a></p>
-                        <p><a href="javascript:void(0);" data-popup = 'covid'>Nos mésures face au Covid-19</a></p>
                         <p><a href="{{ path('contact', {'object': 'problème'}) }}">Signaler un problème</a></p>
                     </div>
                     <div>
-                        <h4 class="ff-m">Autres</h4>
+                        <h2 class="ff-m">Autres</h2>
                         <p><a href="">A propos</a></p>
-                        <p><a href="">Actualité</a></p>
                         <p><a href="">Réservation</a></p>
                     </div>
                 </div>
@@ -43,7 +41,10 @@
                 </div>
                 <hr class="my-3">
                 <div class="d-flex jc-space-between">
-                    <div>© 2022 AtypikHouse</div>
+                    <div>© 2022 AtypikHouse
+                    <div>Projet étudiant fictif pour lequel aucun réel achat</div>
+                    <div>ou aucune réservation ne pourrait être effectué.</div>
+                    </div>
                     <div class="d-flex gap-1">
                         <a href="{{ path('legalnotice') }}">Mentions légales</a>
                         <a href="{{ path('cgv') }}">CGV</a>

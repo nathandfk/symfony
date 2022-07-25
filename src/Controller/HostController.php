@@ -94,42 +94,47 @@ class HostController extends AbstractController
                         array_push($finalPictures, $newFilename);
                         }
                     }
-                    $em = $doctrine->getManager();
-                    $dwelling->setUser($dataSite);
-                    $dwelling->setPictures($finalPictures);
-                    $em->persist($dwelling);
-                    $em->flush();
+                    if (count($finalPictures) >= 4 && count($finalPictures) <= 10)  {
 
-
-                    foreach ($dataDwellingMeta as $key => $value) {
-                        $dwellingMeta = new DwellingMeta();
-                        $repository = $doctrine->getRepository(Dwelling::class);
-                        $dwellingId = $repository->findBy([], ['id' => 'DESC'], 1);
-                        $dwellingData = $repository->findOneBy(['id' => $dwellingId]);
-                        $dwellingMeta->setDwelling($dwellingData);
-                        $dwellingMeta->setField($key);
-                        $dwellingMeta->setValue($value);
-                        $em->persist($dwellingMeta);
-                        $em->flush();
-                    }
-                    $flash='';
-                    $roles = [];
-                    if (!in_array('ROLE_HOST', $auth->getRoles())) {
                         $em = $doctrine->getManager();
-                        $repository = $doctrine->getRepository(Users::class);
-                        $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
-                        foreach ($auth->getRoles() as $key) {
-                            array_push($roles, $key);
-                        }
-                        array_push($roles, 'ROLE_HOST');
-                        $user->setRoles($roles);
-                        $em->persist($user);
+                        $dwelling->setUser($dataSite);
+                        $dwelling->setPictures($finalPictures);
+                        $em->persist($dwelling);
                         $em->flush();
-                        $flash = 'Un nouveau rôle a été ajouté à votre compte. Vous allez être déconnecté';
+
+
+                        foreach ($dataDwellingMeta as $key => $value) {
+                            $dwellingMeta = new DwellingMeta();
+                            $repository = $doctrine->getRepository(Dwelling::class);
+                            $dwellingId = $repository->findBy([], ['id' => 'DESC'], 1);
+                            $dwellingData = $repository->findOneBy(['id' => $dwellingId]);
+                            $dwellingMeta->setDwelling($dwellingData);
+                            $dwellingMeta->setField($key);
+                            $dwellingMeta->setValue($value);
+                            $em->persist($dwellingMeta);
+                            $em->flush();
+                        }
+                        $flash='';
+                        $roles = [];
+                        if (!in_array('ROLE_HOST', $auth->getRoles())) {
+                            $em = $doctrine->getManager();
+                            $repository = $doctrine->getRepository(Users::class);
+                            $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
+                            foreach ($auth->getRoles() as $key) {
+                                array_push($roles, $key);
+                            }
+                            array_push($roles, 'ROLE_HOST');
+                            $user->setRoles($roles);
+                            $em->persist($user);
+                            $em->flush();
+                            $flash = 'Un nouveau rôle a été ajouté à votre compte. Vous allez être déconnecté';
+                        }
+                        $this->addFlash("success", "Insertion réussie ! $flash");
+                        return $this->redirectToRoute('host');
+                    } else {
+                        $this->addFlash("error", "Le total de vos images est inférieur à 4 ou supérieur à 10");
                     }
-                    $this->addFlash("success", "Insertion réussie ! $flash");
                 }
-                return $this->redirectToRoute('host');
             } else if($form->isSubmitted() && !$form->isValid()) {
                 $this->addFlash("error", "Une ou plusieurs erreurs se sont produites, il pourrait s'agir des champs mal renseignés");
             }

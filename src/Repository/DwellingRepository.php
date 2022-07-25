@@ -69,7 +69,7 @@ class DwellingRepository extends ServiceEntityRepository
         }
     }
 
-    public function showDataDwellings(int $id = null, string $start_date = null, string $end_date = null, string $place = null, int $maxPeople = null, $limitPrice = null, int $filterType = null, bool $orderTitle = null)
+    public function showDataDwellings(int $id = null, string $start_date = null, string $end_date = null, string $place = null, int $maxPeople = null, $limitPrice = null, int $filterType = null, bool $orderTitle = null, $orderId = null)
     {
         if (!is_null($place)) {
             $ex = explode(", ", $place);
@@ -101,6 +101,9 @@ class DwellingRepository extends ServiceEntityRepository
         $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) && !is_null($filterType) ? " AND `type_id`=".$filterType." " : "";
         $element .= is_null($id) && is_null($place) && is_null($limitPrice) && !is_null($filterType) ? " `type_id`=".$filterType : "";
         $element .= (is_null($id) || is_null($place) || is_null($limitPrice)) && !is_null($filterType) ? " AND `type_id`=".$filterType." " : "";
+
+        $orderId = $orderId ? "ASC" : "DESC";
+        $element .= !is_null($orderId) ? " ORDER BY id $orderId " : "";
 
         if (!is_null($orderTitle) && is_bool($orderTitle)) {
         $order = $orderTitle ? "ASC" : "DESC";

@@ -76,40 +76,22 @@ window.addEventListener("DOMContentLoaded", (event) => {
     dom('html, body').addEventListener('submit', event => {
         if (event.target) {
             if (event.target.id == "settings-wrapper") {
-                let form = event.target.closest("form")
-                    homePic = form.querySelector("#home_picture_setting")
-                    aboutPic = form.querySelector("#about_picture_setting")
                 event.preventDefault()
-                if (!window.fetch || !window.FormData) {
-                    alert("R u fucking kidding me ??? Use another browser right now !")
-                    return
-                  }
                   const formData = new FormData(event.target);
-                   console.log(formData)
                   try {
-                 fetch("/account/settings", {
-                    method: "POST",
-                    body: formData,
-                  }).then(tt => tt.json())
-                  .then(response => {
-                      console.log(response)
-                  })
+                    fetch("/account/settings", {
+                        method: "POST",
+                        body: formData,
+                    }).then(json => json.json())
+                    .then(response => {
+                        const obj = JSON.parse(response)
+                        if (obj.response == "success" || obj.response == "error") {
+                            notification(obj.message, obj.icon)
+                        }
+                    })
                 } catch {
                     
                 }
-            } else if (event.target.id = "newsletter-form"){
-                event.preventDefault()
-                var formData = new FormData(event.target);
-                var object = {};
-                formData.forEach((value, key) => object[key] = value);
-                var json = JSON.stringify(object);
-                    check = JSON.parse(json)
-                if (check.newsletter && check.newsletter != "") {
-                    request("/newsletter", json, true, "all")
-                } else {
-                    notification('Un ou plusieurs champs obligatoires sont vides', 'fas fa-exclamation')
-                }
-
             }
         }
     })

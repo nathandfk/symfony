@@ -37,7 +37,8 @@ class ListDwellingController extends AbstractController
                 $dwellings = empty($value) ?
                 $dwellingRepository->showDwellings("*", "WHERE user_id = $userId ORDER BY id DESC")
                 : $dwellingRepository->showDwellings("*", "WHERE user_id = $userId AND (title LIKE '%$value%' OR city LIKE '%$value%') ORDER BY id DESC"); 
-                
+
+
                 if (in_array('ROLE_ADMIN', $userRoles) || in_array('ROLE_MODERATOR', $userRoles)) {
                     $dwellings = empty($value) ?
                     $dwellingRepository->showDwellings("*", "ORDER BY id DESC")

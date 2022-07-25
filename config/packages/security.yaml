@@ -2,7 +2,7 @@ security:
     enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        # Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
         App\Entity\Users:
             algorithm: bcrypt
             cost: 12
@@ -16,6 +16,11 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            pattern: ^/api/
+            stateless: true
+            provider: from_database
+            jwt: ~
         main:
             lazy: true
             provider: from_database
@@ -25,7 +30,14 @@ security:
                 # check_path: users.login
                 # login_path: users.login
                 # enable_csrf: true
+
             custom_authenticator: App\Security\LoginFormAuthenticator
+            json_login:
+                check_path: /api/users/authentication
+                username_path: email
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -37,10 +49,14 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users/authentication, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users, roles: PUBLIC_ACCESS }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mon-compte, roles: ROLE_USER }
         - { path: ^/mon-compte/paiement, roles: ROLE_HOST }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/profile, roles: ROLE_USER }
 
 # when@test:

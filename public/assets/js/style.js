@@ -40,8 +40,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     let pictures = event.target
                     if (pictures.value != "") {
                         for (var i = 0; i < pictures.files.length; i++) {
-
-                            dom('.img').src=pictures.files[i]
+                            if (dom('.img')) {
+                                dom('.img').src=pictures.files[i]
+                            }
                         }
                         clearInterval()
                     }

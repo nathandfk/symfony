@@ -31,7 +31,7 @@ use Symfony\Component\Mailer\MailerInterface;
 class UsersController extends AbstractController
 {
     #[Route('/users/register', name: 'register')]
-    public function register(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security): Response
+    public function register(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security, MailerInterface $mailer): Response
     {
         // MailerInterface $mailer
         $security = $security->getUser();
@@ -51,20 +51,21 @@ class UsersController extends AbstractController
                 $em = $doctrine->getManager();
                 $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
                 $user->setActivationKey($activate);
+                $user->setCountry($country);
                 $em->persist($user);
                 $em->flush();
-                // $email = (new Email())
-                //     ->from('hello@example.com')
-                //     ->to('you@example.com')
-                //     //->cc('cc@example.com')
-                //     //->bcc('bcc@example.com')
-                //     //->replyTo('fabien@example.com')
-                //     //->priority(Email::PRIORITY_HIGH)
-                //     ->subject('Time for Symfony Mailer!')
-                //     ->text('Sending emails is fun again!')
-                //     ->html('<p>See Twig integration for better HTML integration!</p>');
+                $email = (new Email())
+                    ->from("diafoukanathan@gmail.com")
+                    ->to($user->getEmail())
+                    //->cc('cc@example.com')
+                    //->bcc('bcc@example.com')
+                    //->replyTo('fabien@example.com')
+                    //->priority(Email::PRIORITY_HIGH)
+                    ->subject('Inscription réussie')
+                    ->text('Inscription utilisateur sur le site de AtypikHouse')
+                    ->html('<p>Vous êtes bien inscrit sur notre site internet</p>');
 
-                // $mailer->send($email);
+                $mailer->send($email);
                 $this->addFlash("success", "Inscription réussie");
                 return $this->redirectToRoute('app_index');
             }
@@ -168,21 +169,24 @@ class UsersController extends AbstractController
                 && $form->get('country')->isValid()
                 && $form->get('password')->isEmpty()
                 ) {
-
-                    $em = $doctrine->getManager();
-                    $getUser->setLastName($user->getLastName());
-                    $getUser->setFirstName($user->getFirstName());
-                    $getUser->setPhoneNumber($user->getPhoneNumber());
-                    $getUser->setAddress($user->getAddress());
-                    $getUser->setComplAddress($user->getComplAddress());
-                    $getUser->setCity($user->getCity());
-                    $getUser->setSociety($user->getSociety());
-                    $getUser->setBirthday($user->getBirthday());
-                    $getUser->setCountry($user->getCountry());
-                    $getUser->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-                    $em->persist($getUser);
-                    $em->flush();
-                    $this->addFlash("success", "Mise à jour de votre profil réussie");
+                    $countriesRep = $doctrine->getRepository(Country::class);
+                    $countries = $countriesRep->find($user->getCountry());
+                    if ($countries) {
+                        $em = $doctrine->getManager();
+                        $getUser->setLastName($user->getLastName());
+                        $getUser->setFirstName($user->getFirstName());
+                        $getUser->setPhoneNumber($user->getPhoneNumber());
+                        $getUser->setAddress($user->getAddress());
+                        $getUser->setComplAddress($user->getComplAddress());
+                        $getUser->setCity($user->getCity());
+                        $getUser->setSociety($user->getSociety());
+                        $getUser->setBirthday($user->getBirthday());
+                        $getUser->setCountry($countries);
+                        $getUser->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
+                        $em->persist($getUser);
+                        $em->flush();
+                        $this->addFlash("success", "Mise à jour de votre profil réussie");
+                    }
                     return $this->redirectToRoute('dashboard');
         
         } else if ($form->isSubmitted()

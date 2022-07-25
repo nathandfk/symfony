@@ -537,3 +537,19 @@
 }
 
 /*End Admin*/
+
+
+.delete-pic-dwelling{
+    border-radius: 50% !important;
+    width: 30px;
+    height: 30px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+}
+.card-pic-dwelling{
+    position: relative;
+}

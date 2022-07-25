@@ -8,7 +8,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReservationMetaRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    itemOperations: [
+        "get"
+    ],
+    collectionOperations: [
+        "post",
+        "get"
+    ]
+)]
 class ReservationMeta
 {
     #[ORM\Id]

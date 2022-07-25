@@ -10,6 +10,10 @@ index:
     path: /
     controller: App\Controller\IndexController::index
     
+# authentication_token:
+#     path: /authentication_token
+#     methods: ['POST']
+    
 auth:
     path: /api/users/authentication
     methods: ["POST"]

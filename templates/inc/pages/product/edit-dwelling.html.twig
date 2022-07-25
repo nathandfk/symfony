@@ -20,17 +20,19 @@
 <div class="dashboard-wrapper">
     <div class="host-wrapper" data-selected="add" >
     
-        {{ form_start(form) }}
+        {{ form_start(form, {'attr': {'id': 'form_edit_dwelling'}}) }}
         <div class="img-uploaded"></div>
 
         <div class="my-2">
             <h2>Anciennes images</h2>
-            <div class="d-flex gap-1">
+            <div class="d-flex gap-1 my-2 inner-pic">
                 {% for picture in dwelling.pictures %}
-                <div class="w-10r">
-                    <img src="{{ ath_link }}/uploads/dwellings/{{ picture }}">
+                <div class="w-10r card-pic-dwelling">
+                    <span class="fas fa-times size16 delete-pic-dwelling click-brown cp" id="delete-pic-dwelling"></span>
+                    <img src="{{ ath_link }}/uploads/dwellings/{{ picture }}" data-pic-name="{{ picture }}">
                 </div>
                 {% endfor %}
+                <input type="hidden" name="stock_pic">
             </div>
         </div>
         <h3>Essentiels</h3>
@@ -88,8 +90,8 @@
                 </div>
 
                 <div class="location-inner form-group bloc-lg-6">
-                    <label>Emplacement (Important de sélectionner le pays avant)*</label>
-                    <input type="text" data-link="{{ path('location') }}" class="seach-location" autocomplete="off" name="seach_location" placeholder="Rechercher la ville de votre habitation" required>
+                    <label>Emplacement (Important de sélectionner le pays avant)</label>
+                    <input type="text" data-link="{{ path('location') }}" class="seach-location" autocomplete="off" name="seach_location" placeholder="Rechercher la ville de votre habitation">
                     <div class="location-content search-place"></div>
                     <input type="hidden" name="value_location">
                 </div>
@@ -279,7 +281,7 @@
             </div>
             <div class="d-flex w-max-content gap-1 ml-auto">
             <a href="{{ path('host') }}" class="click click-brown" name="add_dwelling">Annuler la modification</a>
-            <button type="submit" class="click click-success" name="edit_dwelling">Modifier ce logement</button>
+            <button type="submit" class="click click-success">Modifier ce logement</button>
             </div>
         {{ form_end(form) }}
     </div>

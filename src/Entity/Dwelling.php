@@ -10,7 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DwellingRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    itemOperations: [
+        "get"
+    ],
+    collectionOperations: [
+        "post",
+        "get"
+    ]
+)]
 class Dwelling
 {
     #[ORM\Id]
@@ -26,7 +34,6 @@ class Dwelling
     private $type;
 
     #[ORM\Column(type: 'json')]
-    #[Assert\NotBlank()]
     private $pictures = [];
 
     #[ORM\Column(type: 'string', length: 100)]
@@ -129,12 +136,12 @@ class Dwelling
         return $this;
     }
 
-    public function getType(): ?Posts
+    public function getType()
     {
         return $this->type;
     }
 
-    public function setType(?Posts $type): self
+    public function setType($type): self
     {
         $this->type = $type;
 
@@ -146,7 +153,7 @@ class Dwelling
         return $this->pictures;
     }
 
-    public function setPictures(array $pictures): self
+    public function setPictures(?array $pictures): self
     {
         $this->pictures = $pictures;
 
@@ -237,12 +244,12 @@ class Dwelling
         return $this;
     }
 
-    public function getCountry(): ?Country
+    public function getCountry()
     {
         return $this->country;
     }
 
-    public function setCountry(?Country $country): self
+    public function setCountry($country): self
     {
         $this->country = $country;
 
