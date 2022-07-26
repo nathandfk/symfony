@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Data\Calendar;
 use App\Entity\Country;
 use App\Entity\Dwelling;
 use App\Entity\DwellingMeta;
@@ -24,6 +25,9 @@ class EditDwellingController extends AbstractController
         $dwelling = new Dwelling();
         $form = $this->createForm(DwellingType::class, $dwelling);
         $form->handleRequest($request);
+
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
 
         $dwelRep = $doctrine->getRepository(Dwelling::class);
         $dwel = $dwelRep->find($id);
@@ -115,14 +119,9 @@ class EditDwellingController extends AbstractController
                         array_push($finalPictures, $newFilename);
                         }
                     }
-                    $countryRep = $doctrine->getRepository(Country::class);
-                    $country = $countryRep->find($dwelling->getCountry());
-                    var_dump(count($finalPictures));
                     if (count($finalPictures) >= 4 && count($finalPictures) <= 10)  {
                         $em = $doctrine->getManager();
                         $dwel->setUser($userData);
-                        // $dwel->setCountry($country);
-                        // $dwel->setType($posts);
                         $dwel->setPictures($finalPictures);
                         $em->persist($dwel);
                         $em->flush();
@@ -139,7 +138,7 @@ class EditDwellingController extends AbstractController
                                 }
                             }
                         }
-                        $this->addFlash("success", "Insertion réussie !");
+                        $this->addFlash("success", "Modification réussie !");
                         return $this->redirectToRoute('host');
                     } else {
                         $this->addFlash("error", "Le total de vos images est inférieur à 4 ou supérieur à 10");
@@ -167,22 +166,8 @@ class EditDwellingController extends AbstractController
             'title' => "Modification de l'habitation",
             'dwelling' => $dwel,
             'dwellingMeta' => $dwelMeta,
+            'calendar' => $calendar,
         ]);
     }
-
-    #[Route('/dwelling/edit', name: 'dwelling_edit')]
-    public function editDwel(Request $request, int $id, ManagerRegistry $doctrine, Security $security)
-    {
-        $auth = $security->getUser();
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!$data) {
-            return $this->redirectToRoute('app_index');
-        }
-        $value = $data['value'];
-        if ($auth) { 
-        
-        }   
-    }
-
 
 }

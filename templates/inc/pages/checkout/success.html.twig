@@ -3,6 +3,7 @@
 <div class="atypikhouse-container my-3">
 <h1 class="size24 c1 my-3">Détails de votre réservation</h1>
 {% if reservation %}
+<div class="responsive-table">
 <table id="reservation-table" class="text-center ath-table-form">
     <thead>
         <tr>
@@ -43,6 +44,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endif %}
 
 </div>

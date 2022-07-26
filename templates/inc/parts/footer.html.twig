@@ -6,7 +6,7 @@
                         <p><i class="fas fa-credit-card"></i> Paiement sécurisé</p>
                         <p><i class="fas fa-clock"></i> Réservation 24H/24 - 7J/7</p>
                         <p><i class="fas fa-headset"></i> Service client</p>
-                        <p><i class="fas fa-credit-card"></i> Traveller’s Choice 2022</p>
+                        <p>Traveller’s Choice 2022</p>
                         <div class="w-7r">
                             <img src="{{ ath_link }}/assets/pictures/logo-ath1.png" alt="AtypikHouse Logo">
                         </div>
@@ -23,13 +23,13 @@
                     <div>
                         <h2 class="ff-m">Assistance</h2>
                         <p><a href="{{ path('contact') }}">Contact</a></p>
-                        <p><a href="">Annuler une réservation</a></p>
+                        <p><a href="{{ path('historical') }}">Annuler une réservation</a></p>
                         <p><a href="{{ path('contact', {'object': 'problème'}) }}">Signaler un problème</a></p>
                     </div>
                     <div>
                         <h2 class="ff-m">Autres</h2>
-                        <p><a href="">A propos</a></p>
-                        <p><a href="">Réservation</a></p>
+                        <p><a href="{{ path('about') }}">A propos</a></p>
+                        <p><a href="{{ path('app_habitations') }}">Réservation</a></p>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                     <i class="fab fa-cc-mastercard size28"></i>
                 </div>
                 <hr class="my-3">
-                <div class="d-flex jc-space-between">
+                <div class="d-flex jc-space-between subfooter">
                     <div>© 2022 AtypikHouse
                     <div>Projet étudiant fictif pour lequel aucun réel achat</div>
                     <div>ou aucune réservation ne pourrait être effectué.</div>
@@ -61,5 +61,6 @@
         </div>
     </footer>
     <div class="append-script"></div>
+
     </body>
 </html>

@@ -1,4 +1,5 @@
 {% if datas %}
+<div class="responsive-table">
 <table id="historical-table" class="text-center ath-table-form">
     <thead>
         <tr>
@@ -49,7 +50,7 @@
         {% endfor %}
     </tbody>
 </table>
-
+</div>
 <div class="btn-navigate paginate-historical-signal d-flex jc-center gap-2 my-3">
 {{ knp_pagination_render(datas) }}
 </div>

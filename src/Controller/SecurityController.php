@@ -18,36 +18,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    // #[Route(path: '/login', name: 'app_login')]
-    // public function index(Request $request, ManagerRegistry $doctrine, AuthenticationUtils $authenticationUtils, Session $session): Response
-    // {
-    //     // if ($this->getUser()) {
-    //     //     return $this->redirectToRoute('target_path');
-    //     // }
-    //     $user = new Users();
-    //     $form = $this->createForm(UsersType::class, $user);
-    //     $form->handleRequest($request);
-    //     // get the login error if there is one
-    //     $error = $authenticationUtils->getLastAuthenticationError();
-    //     // last username entered by the user 
-    //     $lastUsername = $authenticationUtils->getLastUsername();
-
-    //     $return = ['last_username' => $lastUsername,
-    //     'carousel' => true,
-    //     'title' => 'Mon compte',
-    //     'form' => $form->createView(), 
-    //     'error' => $error];
-
-    //     // if($session->has('message'))
-    //     // {
-    //     //         $message = $session->get('message');
-    //     //         $session->remove('message'); //on vide la variable message dans la session
-    //     //         $return['message'] = $message; //on ajoute à l'array de paramètres notre message
-    //     // }
-
-    //     return $this->render('inc/pages/users/index.html.twig', $return);
-    // }
-
     #[Route(path: '/logout', name: 'logout')]
     public function logout()
     {
@@ -55,12 +25,11 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    #[Route(path: '/users/login', name: 'login')]
+    #[Route(path: '/connexion', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils, ManagerRegistry $doctrine, Security $security): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
         $user = $security->getUser();
         if ($user) {
             $email = $user->getUserIdentifier();
@@ -82,6 +51,7 @@ class SecurityController extends AbstractController
             'title' => 'Mon compte',
             'last_username' => $lastUsername,
             'error' => $error,
+            'calendar' => $calendar,
         ]);
     }
 

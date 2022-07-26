@@ -294,12 +294,11 @@ class SettingsController extends AbstractController
     public function newsletter(ManagerRegistry $doctrine, Security $security)
     {
         $auth = $security->getUser();
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!$data) {
-            return $this->redirectToRoute('app_index');
+        if (empty($_POST['newsletter'])) {
+            return $this->redirectToRoute("app_index");
         }
-        $email = $data['newsletter'];
         $output = '{"response":"error", "message":"Une erreur est survenue, veuillez recommencer", "icon":"fas fa-exclamation"}';
+        $email = $_POST['newsletter'];
         if (!empty($email)) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 

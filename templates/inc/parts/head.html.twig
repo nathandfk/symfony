@@ -4,14 +4,8 @@
         <meta charset="UTF-8">
         <title>{% block title %}AtypikHouse{% endblock %}</title>
         <link rel="icon" href="{{ ath_link }}/assets/pictures/logo-ath1.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script src="https://js.stripe.com/v3/"></script>
-
-        {% if app.request.get('_route') == 'app_checkout' %}
-
-
-
-        {% endif %}
-
         {% block stylesheets %}
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
             integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
@@ -35,17 +29,32 @@
             <script type='text/javascript' src='{{ ath_link }}/assets/js/search.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/historical.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/users-list.js'></script>
+            {% if app.request.get('_route') == 'message_selected' or app.request.get('_route') == 'message_details' or app.request.get('_route') == 'message_send' %}
             <script type='text/javascript' src='{{ ath_link }}/assets/js/message.js'></script>
+            {% endif %}
             <script type='text/javascript' src='{{ ath_link }}/assets/js/settings.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/category.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/dwellings.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/edit-dwelling.js'></script>
+            {% if app.request.get('_route') == 'app_index' %}
+            <script type='text/javascript' src='{{ ath_link }}/assets/js/home.js'></script>
+            {% endif %}
             <script src="https://kit.fontawesome.com/06fe12cea6.js"></script>
             <script src='{{ ath_link }}/assets/js/single-product.js' defer></script>
             <script src="{{ ath_link }}/assets/js/checkout.js" defer></script>
         {% endblock %}
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3V1MB9V9Z"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-Z3V1MB9V9Z');
+        </script>
     </head>
 <body>
+{% include 'inc/modules/search/popupsearch.html.twig' %}
 <div class="notification-card">
     <span class="notification-icon size28"></span>
     <p class="notification-msg"></p>

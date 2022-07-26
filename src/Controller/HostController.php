@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Data\Calendar;
 use App\Data\DataSite;
 use App\Entity\Country;
 use App\Entity\Dwelling;
@@ -30,6 +31,9 @@ class HostController extends AbstractController
         if (!$auth) {
             return $this->redirectToRoute('app_index');
         }
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
+
         $dwelling = new Dwelling();
         $form = $this->createForm(DwellingType::class, $dwelling);
         $form->handleRequest($request);
@@ -141,7 +145,8 @@ class HostController extends AbstractController
         return $this->render('inc/pages/product/add-dwelling.html.twig', [
             'carousel' => true,
             'title' => 'Mode hôte',
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'calendar' => $calendar,
         ]);
     }
 

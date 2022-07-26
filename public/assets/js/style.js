@@ -59,6 +59,20 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     targetInner.querySelector('[name=value_location]').value = event.target.dataset.checkedLocation
                     targetInner.querySelector('.location-content').innerHTML = ""
                 }
+            } else if(event.target.classList.contains("open-responsive-menu")){
+                let navbar = event.target.closest('#navbar')
+                    navbar.querySelector(".responsive-menu-cover").classList.remove('d-none')
+                    setTimeout(() => {
+                        navbar.querySelector(".responsive-menu-cover").classList.remove('menu-cover-dismiss')
+                        navbar.querySelector(".responsive-menu").classList.remove('responsive-menu-dismiss')
+                    }, 200);
+            } else if(event.target.classList.contains("close-responsive-menu")){
+                let navbar = event.target.closest('#navbar')
+                    navbar.querySelector(".responsive-menu-cover").classList.add('menu-cover-dismiss')
+                    navbar.querySelector(".responsive-menu").classList.add('responsive-menu-dismiss')
+                    setTimeout(() => {
+                        navbar.querySelector(".responsive-menu-cover").classList.add('d-none')
+                    }, 500);
             }
         }
     })

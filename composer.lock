@@ -189,7 +189,7 @@
             },
             "require-dev": {
                 "doctrine/cache": "^1.11 || ^2.0",
-                "doctrine/coding-standard": "^6.0 || ^8.1",
+                "doctrine/coding-standard": "^6.0 || ^8.0",
                 "phpstan/phpstan": "^0.12.20",
                 "phpunit/phpunit": "^7.5 || ^8.0 || ^9.1.5",
                 "symfony/cache": "^4.4 || ^5.2"
@@ -3105,7 +3105,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1",
+                "php": ">=8.0",
                 "psr/cache": "^3.0"
             },
             "suggest": {
@@ -3445,7 +3445,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1"
+                "php": ">=8.0"
             },
             "type": "library",
             "extra": {
@@ -3851,7 +3851,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1",
+                "php": ">=8.0",
                 "psr/event-dispatcher": "^1"
             },
             "suggest": {
@@ -5496,7 +5496,7 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
+            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
             "homepage": "https://symfony.com",
             "keywords": [
                 "compatibility",
@@ -6447,7 +6447,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1",
+                "php": ">=8.0",
                 "psr/container": "^2.0"
             },
             "conflict": {
@@ -6774,7 +6774,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1"
+                "php": ">=8.0"
             },
             "suggest": {
                 "symfony/translation-implementation": ""

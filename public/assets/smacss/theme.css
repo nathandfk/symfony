@@ -6,6 +6,7 @@
     --c3: #000000;
     --c4: #ffffff;
     --c5: #F5F5F5;
+    --hover-c5: #dfdfdf;
 
     --black5: rgba(0 0 0 / 5%);
     --black10: rgba(0 0 0 / 10%);
@@ -193,6 +194,10 @@ a, a:active, a:hover{
     background-color: var(--c5);
     color: var(--c3);
 }
+.click-c5:hover{
+    background-color: var(--hover-c5);
+    color: var(--c3);
+}
 .choice-discussion:hover{
     background-color: var(--c1);
     color: var(--c4);
@@ -236,4 +241,11 @@ a, a:active, a:hover{
 }
 .text-link-brown:hover{
     color: var(--c2);
+}
+
+.responsive-menu{
+    background-color: var(--c4);
+}
+.responsive-menu-cover{
+    background: var(--black20);
 }

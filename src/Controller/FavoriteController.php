@@ -29,6 +29,9 @@ class FavoriteController extends AbstractController
         if (!$auth) {
             return $this->redirectToRoute('app_index');
         }
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
+
         if (isset($_POST['favorite_delete'])) {
             $id = $_POST['favorite_id'];
             $userRep = $doctrine->getRepository(Users::class);
@@ -83,7 +86,8 @@ class FavoriteController extends AbstractController
 
         return $this->render('inc/pages/users/favorite.html.twig', [
             'datas' => $final,
-            'message' => $message
+            'message' => $message,
+            'calendar' => $calendar
         ]);
     }
 
@@ -95,6 +99,9 @@ class FavoriteController extends AbstractController
         if (!$auth) {
             return $this->redirectToRoute('app_index');
         }
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
+
         $userRep = $doctrine->getRepository(Users::class);
         $user = $userRep->findOneBy(['email' => $auth->getUserIdentifier()]);
 
@@ -122,7 +129,8 @@ class FavoriteController extends AbstractController
 
         return $this->render('inc/pages/users/favorite.html.twig', [
             'datas' => $final,
-            'message' => $message
+            'message' => $message,
+            'calendar' => $calendar,
         ]);
     }
 

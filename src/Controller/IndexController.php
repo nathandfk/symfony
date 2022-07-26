@@ -28,22 +28,25 @@ class IndexController extends AbstractController
     
         $userRep = $doctrine->getRepository(Users::class);
         $users = $userRep->findAll();
-        foreach ($users as $user) {
-            if (!is_null($user->getDeletedAt())) {
-                $date = new DateTimeImmutable('now', new DateTimeZone("Europe/Paris"));
-                $calcul = strtotime($date->format("Y-m-d H:i:s")) - strtotime($user->getDeletedAt()->format("Y-m-d H:i:s"));
-                if ( $calcul >= 86400*365) {
-                    $em = $doctrine->getManager();
-                    $userRepDel = $doctrine->getRepository(Users::class);
-                    $userDelete = $userRepDel->find($user);
-                    $em->remove($userDelete);
-                    $em->flush();
+        if ($users) {
+            foreach ($users as $user) {
+                if (!is_null($user->getDeletedAt())) {
+                    $date = new DateTimeImmutable('now', new DateTimeZone("Europe/Paris"));
+                    $calcul = strtotime($date->format("Y-m-d H:i:s")) - strtotime($user->getDeletedAt()->format("Y-m-d H:i:s"));
+                    if ( $calcul >= 86400*365) {
+                        $em = $doctrine->getManager();
+                        $userRepDel = $doctrine->getRepository(Users::class);
+                        $userDelete = $userRepDel->find($user);
+                        $em->remove($userDelete);
+                        $em->flush();
+                    }
                 }
             }
         }
 
         $dwellingRep = $doctrine->getRepository(Dwelling::class);
         $dwellings = $dwellingRep->findAll();
+        if ($dwellings) {
         foreach ($dwellings as $dwel) {
             if (!is_null($dwel->getDeletedAt())) {
                 $date = new DateTimeImmutable('now', new DateTimeZone("Europe/Paris"));
@@ -56,6 +59,7 @@ class IndexController extends AbstractController
                     $em->flush();
                 }
             }
+        }
         }
 
         $response = [

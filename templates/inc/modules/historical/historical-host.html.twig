@@ -1,8 +1,10 @@
 {% if historical %}
+
 <p>Veuillez renseigner votre IBAN dans <a href="{{ path('payment') }}" class="text-link-success">la page paiement</a> pour recevoir vos paiement</p>
 <p>Une fois votre paiement est effectué par l'administration, une mention "Versement effectué" apparaitra sur la colonne paiement de votre historique</p>
 <p>Etant hôte vous percevez des sous totaux, le total comprend les frais de service taxé directement aux clients</p>
 <p>Une fois le versement effectué, votre argent apparaitra dans votre compte bancaire sous un délai de 10 jours</p>
+<div class="responsive-table">
 <table id="historical-table" class="text-center ath-table-form">
     <thead>
         <tr>
@@ -54,6 +56,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 <div class="btn-navigate paginate-historical-host d-flex jc-center gap-2 my-3">
 {{ knp_pagination_render(historical) }}
 </div>

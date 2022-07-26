@@ -20,7 +20,7 @@
             <div id="additional-questions-content" class="c4 as-start my-3 px-4">
                 <h2 class="size42 ff-sb">Newsletter</h2>
                 <p class="size20">Abonnez-vous pour suivre toute l'Actualité de AtypikHouse</p>
-                <form class="d-flex px-1 br-5" id="newsletter-form">
+                <form action="{{ path('register_newsletter') }}" class="d-flex px-1 br-5" id="newsletter-form" method="POST">
                     <input type="email" class="size22 ff-r" placeholder="Entrez votre adresse e-mail" name="newsletter" required>
                     <button class="c1 size22 p-1 ff-sb">OK</button>
                 </form>

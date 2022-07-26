@@ -7,6 +7,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -26,11 +28,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     private UrlGeneratorInterface $urlGenerator;
     private $doctrine;
+    private $mailer;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, ManagerRegistry $doctrine)
+    public function __construct(UrlGeneratorInterface $urlGenerator, ManagerRegistry $doctrine, MailerInterface $mailer)
     {
         $this->urlGenerator = $urlGenerator;
         $this->doctrine = $doctrine;
+        $this->mailer = $mailer;
     }
 
     public function authenticate(Request $request): Passport
@@ -53,6 +57,37 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                     $user->setUpdatedAt($toDay);
                     $em->persist($user);
                     $em->flush();
+
+                $postsRep = $this->doctrine->getRepository(Posts::class);
+                $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                $firstName = $user->getFirstName();
+                $emailUser = $user->getEmail();
+                $link = "https://f2i-dev14-nd.nathandfk.fr/membre/compte?key=".$activate."&email=".$user->getEmail();
+                if ($posts) {
+                    foreach ($posts as $post) {
+                        $email = (new Email())
+                            ->from($post->getDescription())
+                            ->to($emailUser)
+                            ->subject('Activation de votre compte')
+                            ->text('Activez votre compte')
+                            ->html("
+                            <div>
+                            <p>Bonjour <b>$firstName</b></p>
+                            <p>Vous êtes bien inscrit sur notre site internet</p>
+                            <p>Veuillez cliquer sur le lien suivant pour confirmer qu'il s'agit bien de vous</p>
+                            <p><a href='$link'>$link</a></p>
+                            <p>Ce lien expirera sous une période de 24 heures.</p>
+                            <p>Nous sommes très ravis de vous compter parmi nous, sans plus attendre faites vos réservations partout en Europe.</p>
+                            <p>Profitez pleinement de notre site internet et de tout ce qu'il vous offre.</p>
+                            <p>L'équipe AtypikHouse.</p>
+                            <div style='text-align: center;'>
+                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            </div>
+                            ");
+
+                        $this->mailer->send($email);
+                    }
+                }
                     throw new CustomUserMessageAuthenticationException(
                         "Nous venons de vous envoyer un lien par mail, merci de nous confirmer qu'il s'agit bien de vous en cliquant sur le lien. Ce lien expire sous 24 heures !"
                     );

@@ -125,6 +125,7 @@ class DwellingRepository extends ServiceEntityRepository
         }
 
         $finalResult = [];
+        if ($resultDwellings) {
         foreach ($resultDwellings as $dwelling) {
             $dwelRep = $this->find($dwelling['id']);
 
@@ -258,7 +259,7 @@ class DwellingRepository extends ServiceEntityRepository
             $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate, $type->getDescription(), $equipmentsValue]; //15
             array_push($finalResult, $dwellings);
         }
-
+        }
         return $finalResult;
     }
 

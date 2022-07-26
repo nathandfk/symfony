@@ -12,6 +12,7 @@
 {% endfor %}
 <div class="atypikhouse-container">
 {% if datas %}
+<div class="responsive-table">
 <table id="favorite-table" class="text-center ath-table-form">
     <thead>
         <tr>
@@ -35,7 +36,7 @@
         {% endfor %}
     </tbody>
 </table>
-
+</div>
 <div class="btn-navigate paginate-datas-client d-flex jc-center gap-2 my-3">
 {{ knp_pagination_render(datas) }}
 </div>
