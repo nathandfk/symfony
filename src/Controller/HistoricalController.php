@@ -19,6 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Security;
 
 class HistoricalController extends AbstractController
@@ -89,7 +91,7 @@ class HistoricalController extends AbstractController
 
 
     #[Route('/mon-compte/historical/action', name: 'historical.action')]
-    public function historicalAction(ManagerRegistry $doctrine, Security $security)
+    public function historicalAction(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $btn = $data['btn'];
@@ -125,6 +127,32 @@ class HistoricalController extends AbstractController
                                     $reservation->setStatut('ANNULED');
                                     $em->persist($reservation);
                                     $em->flush();
+
+                                    $postsRep = $doctrine->getRepository(Posts::class);
+                                    $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                                    $firstName = $user->getFirstName();
+                                    if ($posts) {
+                                        foreach ($posts as $post) {
+                                            $email = (new Email())
+                                                ->from($post->getDescription())
+                                                ->to($user->getEmail())
+                                                ->subject('Réservation annulée')
+                                                ->text('Réservation annulée')
+                                                ->html("
+                                                <div>
+                                                <p>Bonjour $firstName,</p>
+                                                <p>Votre réservation a bien été annuler.</p>
+                                                <p>Votre remboursement apparaître sur votre compte sous un délai de 10 jours, dépasser ce délai vous pouvez nous faire recours via la page d'accueil.</p>
+                                                <p>Merci pour l'intérêt que vous nous accordez.</p>
+                                                <p>L'équipe AtypikHouse.</p>
+                                                <div style='text-align: center;'>
+                                                <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                                </div>
+                                                ");
+
+                                            $mailer->send($email);
+                                        }
+                                    }
                                     $output = '{"response":"success", "message":"Les modifications ont bien été appliquées", "icon":"fas fa-check"}';
                                 } else {
                                     $output = '{"response":"error", "message":"Une erreur est survenue, veuillez recommencer ou contactez l\'administrateur", "icon":"fas fa-exclamation"}';
@@ -151,6 +179,35 @@ class HistoricalController extends AbstractController
                                         $reservation->setStatut('ANNULED_BY_HOST');
                                         $em->persist($reservation);
                                         $em->flush();
+                                        $userClient = $userRep->find($reservation->getUser()->getId());
+
+                                        $postsRep = $doctrine->getRepository(Posts::class);
+                                        $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                                        $firstName = $userClient->getFirstName();
+                                        $mail = $userClient->getEmail();
+                                        if ($posts) {
+                                            foreach ($posts as $post) {
+                                                $email = (new Email())
+                                                    ->from($post->getDescription())
+                                                    ->to($mail)
+                                                    ->subject('Réservation annulée')
+                                                    ->text('Réservation annulée')
+                                                    ->html("
+                                                    <div>
+                                                    <p>Bonjour $firstName,</p>
+                                                    <p>Votre réservation a été annuler par l'hôte.</p>
+                                                    <p>Vous pouvez toujours prendre un autre habitat parmis ceux que nous vous proposons.</p>
+                                                    <p>Votre remboursement apparaître sur votre compte sous un délai de 10 jours, dépasser ce délai vous pouvez nous faire recours via la page d'accueil.</p>
+                                                    <p>Merci pour l'intérêt que vous nous accordez.</p>
+                                                    <p>L'équipe AtypikHouse.</p>
+                                                    <div style='text-align: center;'>
+                                                    <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                                    </div>
+                                                    ");
+
+                                                $mailer->send($email);
+                                            }
+                                        }
                                         $output = '{"response":"success", "message":"Les modifications ont bien été appliquées", "icon":"fas fa-check"}';
                                     } else {
                                         $output = '{"response":"error", "message":"Une erreur est survenue, veuillez recommencer ou contactez l\'administrateur", "icon":"fas fa-exclamation"}';

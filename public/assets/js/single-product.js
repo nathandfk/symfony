@@ -310,7 +310,6 @@ dom("html, body").addEventListener('submit', event => {
             var object = {};
                 formData.forEach((value, key) => object[key] = value);
             var json = JSON.stringify(object);
-            console.log(json)
                 fetch("/product/comments", 
                     {headers: {
                     'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'

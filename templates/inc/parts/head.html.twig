@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}AtypikHouse{% endblock %}</title>
         <link rel="icon" href="{{ ath_link }}/assets/pictures/logo-ath1.png">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script src="https://js.stripe.com/v3/"></script>
         {% block stylesheets %}
@@ -27,8 +28,12 @@
             <script type='text/javascript' src='{{ ath_link }}/assets/js/functions.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/style.js'></script>
             <script type='text/javascript' src='{{ ath_link }}/assets/js/search.js'></script>
+            {% if app.request.get('_route') == 'historical' %}
             <script type='text/javascript' src='{{ ath_link }}/assets/js/historical.js'></script>
+            {% endif %}
+            {% if app.request.get('_route') == 'dashboard' %}
             <script type='text/javascript' src='{{ ath_link }}/assets/js/users-list.js'></script>
+            {% endif %}
             {% if app.request.get('_route') == 'message_selected' or app.request.get('_route') == 'message_details' or app.request.get('_route') == 'message_send' %}
             <script type='text/javascript' src='{{ ath_link }}/assets/js/message.js'></script>
             {% endif %}

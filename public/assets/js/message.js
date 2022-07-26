@@ -41,9 +41,4 @@ window.addEventListener("DOMContentLoaded", (event) => {
             message('/mon-compte/message/details', {id: recipientId}, true, false)
         }
     })
-    dom('html, body').addEventListener('scroll', event => {
-        if (event.target.classList.contains('message-col2-body')) {
-            console.log(event)
-        }
-    })
 })

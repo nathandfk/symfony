@@ -115,6 +115,12 @@
     .responsive-table table {
         width: max-content;
     }
+    .calendar-inner {
+        width: 320px
+    }
+    .contact-form.grid-lg-2 {
+        grid-template: 15rem auto/1fr;
+    }
 }
 @media screen and (max-height: 600px) {
     .responsive-menu > ul {

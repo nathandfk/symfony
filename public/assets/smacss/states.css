@@ -476,7 +476,7 @@
 }
 .module-search-wrapper{
     display: grid;
-    grid-template: auto/95% 5%;
+    grid-template: auto/auto .1fr;
     align-items: center;
     align-content: center;
     border: .5px solid;

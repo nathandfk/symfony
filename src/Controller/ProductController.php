@@ -18,13 +18,15 @@ use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 class ProductController extends AbstractController
 {
     #[Route('/habitation/{slug}/{id}', name: 'app_habitation')]
-    public function habitation(string $slug, int $id, DwellingRepository $dwelRep, ReservationRepository $reservRep, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
+    public function habitation(string $slug, int $id, DwellingRepository $dwelRep, ReservationRepository $reservRep, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security, MailerInterface $mailer): Response
     {
         if (isset($_REQUEST['payment_intent']) && $_REQUEST['redirect_status'] === 'succeeded') {
 
@@ -45,19 +47,12 @@ class ProductController extends AbstractController
 
             $repository = $doctrine->getRepository(Posts::class);
             $welcome = $repository->findOneBy(['type' => 'WELCOME']);
-            $historical = $reservRep->historical(true, 0, false, 0, $reservationMetaId->getId());
-            $firstname = "";
-            $lastname = "";
-            $product_title = "";
-            $insertTotalPrice = "";
-            $arrival = "";
-            $departure = "";
-            $userDwellingId = "";
-            $userClientId = "";
-            $city = "";
+            $historical = $reservRep->historical(true, null, false, null, $reservationMetaId->getId());
+
             foreach ($historical as $element) {
                 $firstname = $element[0];
                 $lastname = $element[1];
+                $email = $element[2];
                 $product_title = $element[4];
                 $insertTotalPrice = $element[9];
                 $arrival = $element[5];
@@ -65,27 +60,56 @@ class ProductController extends AbstractController
                 $userDwellingId = $element[13];
                 $userClientId = $element[14];
                 $city = $element[12];
-            }
-            $message = $welcome->getDescription();
-            $message = str_replace("_firstname_", $firstname, $message);
-            $message = str_replace("_lastname_", $lastname, $message);
-            $message = str_replace("_title_", $product_title, $message);
-            $message = str_replace("_totalprice_", $insertTotalPrice, $message);
-            $message = str_replace("_arrival_", $arrival, $message);
-            $message = str_replace("_departure_", $departure, $message);
-            $message = str_replace("_city_", $city, $message);
-            $em = $doctrine->getManager();
-            $insertMessage = new Message();
-            $repository = $doctrine->getRepository(Users::class);
-            $sender = $repository->find($userDwellingId);
-            $recipient = $repository->find($userClientId);
-            $insertMessage->setSender($sender);
-            $insertMessage->setRecipient($recipient);
-            $insertMessage->setMessage($message);
-            $em->persist($insertMessage);
-            $em->flush();                
-                    
+                
+                $message = $welcome->getDescription();
+                $message = str_replace("_firstname_", $firstname, $message);
+                $message = str_replace("_lastname_", $lastname, $message);
+                $message = str_replace("_title_", $product_title, $message);
+                $message = str_replace("_totalprice_", $insertTotalPrice, $message);
+                $message = str_replace("_arrival_", $arrival, $message);
+                $message = str_replace("_departure_", $departure, $message);
+                $message = str_replace("_city_", $city, $message);
+                $em = $doctrine->getManager();
+                $insertMessage = new Message();
+                $repository = $doctrine->getRepository(Users::class);
+                $sender = $repository->find($userDwellingId);
+                $recipient = $repository->find($userClientId);
+                $insertMessage->setSender($sender);
+                $insertMessage->setRecipient($recipient);
+                $insertMessage->setMessage($message);
+                $em->persist($insertMessage);
+                $em->flush();                
+                
 
+                $postsRep = $doctrine->getRepository(Posts::class);
+                $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                $firstName = $firstname;
+                $emailUser = $email;
+                if ($posts) {
+                    foreach ($posts as $post) {
+                        $email = (new Email())
+                            ->from($post->getDescription())
+                            ->to($emailUser)
+                            ->subject('NOUS VOUS CONFIRMONS VOTRE RÉSERVATION')
+                            ->text('RÉSERVATION CONFIRMÉE')
+                            ->html("
+                            <div>
+                            <p>Bonjour <b>$firstName</b></p>
+                            <p>Votre réservation a bien été enregistré, vous pouvez dès à présent directement échangé avec l'hôte depuis votre espace dans la rubrique message.</p>
+                            <p>L'hôte vous enverra toutes les informations nécessaires.</p>
+                            <p>Vous pouvez annuler votre réservation à tout moment avant votre date d'arrivée.</p>
+                            <p>Un remboursement immédiat est émis vers votre compte lors d'une annulation, vous percevez votre argent dans votre compte bancaire sous un délai de 10 jours.</p>
+                            <p>Nous vous remercions pour la confiance que vous nous accorder.</p>
+                            <p>L'équipe AtypikHouse.</p>
+                            <div style='text-align: center;'>
+                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            </div>
+                            ");
+
+                        $mailer->send($email);
+                    }
+                }
+            }
             return $this->redirectToRoute('checkout_success', [
                 'id' => $reservation->getId()
             ]);

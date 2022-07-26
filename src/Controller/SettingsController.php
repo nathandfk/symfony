@@ -16,13 +16,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\Json;
 
 class SettingsController extends AbstractController
 {
     #[Route('/account/settings', name: 'account_settings')]
-    public function settings(ManagerRegistry $doctrine, Security $security)
+    public function settings(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
         $auth = $security->getUser();
         // $data = json_decode(file_get_contents('php://input'), true);
@@ -125,6 +127,37 @@ class SettingsController extends AbstractController
 
                         $em->persist($post);
                         $em->flush();
+
+                        $userRep = $doctrine->getRepository(Users::class);
+                        $users = $userRep->findBy(["statut" => true, "account" => true]);
+                        foreach ($users as $user) {
+                            if ($user->getDeletedAt() == null && in_array('ROLE_HOST', $user->getRoles())) {
+                                $postsRep = $doctrine->getRepository(Posts::class);
+                                $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                                $mail = $user->getEmail();
+                                $firstName = $user->getFirstName();
+                                if ($posts) {
+                                    foreach ($posts as $post) {
+                                        $email = (new Email())
+                                            ->from($post->getDescription())
+                                            ->to($mail)
+                                            ->subject('Modification interne')
+                                            ->text('Modification interne')
+                                            ->html("
+                                            <div>
+                                            <p>Bonjour $firstName,</p>
+                                            <p>Nous vous informons que des ajouts au niveau du type d'habitation ou équipements ont été fait sur notre site internet AtypikHouse.</p>
+                                            <p>L'équipe AtypikHouse.</p>
+                                            <div style='text-align: center;'>
+                                            <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                            </div>
+                                            ");
+
+                                        $mailer->send($email);
+                                    }
+                                }
+                            }
+                        }
                     }
                     $output = '{"response":"success", "message":"Données insérées avec succès !", "icon":"fas fa-exclamation"}';
                     } else {
@@ -291,7 +324,7 @@ class SettingsController extends AbstractController
 
 
     #[Route('/newsletter', name: 'register_newsletter')]
-    public function newsletter(ManagerRegistry $doctrine, Security $security)
+    public function newsletter(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
         $auth = $security->getUser();
         if (empty($_POST['newsletter'])) {
@@ -323,6 +356,34 @@ class SettingsController extends AbstractController
                 $post->setType('NEWSLETTER');
                 $em->persist($post);
                 $em->flush();
+
+
+                $postsRep = $doctrine->getRepository(Posts::class);
+                $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                if ($posts) {
+                    foreach ($posts as $post) {
+                        $email = (new Email())
+                            ->from($post->getDescription())
+                            ->to($email)
+                            ->subject('Inscription à la newsletter de AtypikHouse')
+                            ->text('Inscription newsletter')
+                            ->html("
+                            <div>
+                            <p>Bonjour,</p>
+                            <p>Vous êtes bien inscrit à notre newsletter</p>
+                            <p>Vous allez désormais recevoir les offres et actualités de AtypikHouse.</p>
+                            <p>Toute fois vous pouvez faire valoir vos droits en nous adressant un mail à <a href='mailto:legales@atypikhouse.com'>legales@atypikhouse.com</a></p>
+                            <p>Profitez pleinement de notre site internet et de tout ce qu'il vous offre.</p>
+                            <p>L'équipe AtypikHouse.</p>
+                            <div style='text-align: center;'>
+                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            </div>
+                            ");
+
+                        $mailer->send($email);
+                    }
+                }
+
                 $output = '{"response":"success", "message":"Vous vous êtes bien inscrit à notre newsletter", "icon":"fas fa-check"}';
             } else {
                 $output = '{"response":"error", "message":"Votre email est incorrect", "icon":"fas fa-exclamation"}';
@@ -333,7 +394,7 @@ class SettingsController extends AbstractController
 
 
     #[Route('/account/settings/update', name: 'account_settings_update')]
-    public function update(ManagerRegistry $doctrine, Security $security)
+    public function update(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -358,6 +419,37 @@ class SettingsController extends AbstractController
                     $findPost->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
                     $em->persist($findPost);
                     $em->flush();
+
+                        $userRep = $doctrine->getRepository(Users::class);
+                        $users = $userRep->findBy(["statut" => true, "account" => true]);
+                        foreach ($users as $user) {
+                            if ($user->getDeletedAt() == null && in_array('ROLE_HOST', $user->getRoles())) {
+                                $postsRep = $doctrine->getRepository(Posts::class);
+                                $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                                $mail = $user->getEmail();
+                                $firstName = $user->getFirstName();
+                                if ($posts) {
+                                    foreach ($posts as $post) {
+                                        $email = (new Email())
+                                            ->from($post->getDescription())
+                                            ->to($mail)
+                                            ->subject('Modification interne')
+                                            ->text('Modification interne')
+                                            ->html("
+                                            <div>
+                                            <p>Bonjour $firstName,</p>
+                                            <p>Nous vous informons que des modifications au niveau du type d'habitation ou équipements ont été appliqué sur notre site internet AtypikHouse.</p>
+                                            <p>L'équipe AtypikHouse.</p>
+                                            <div style='text-align: center;'>
+                                            <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                            </div>
+                                            ");
+
+                                        $mailer->send($email);
+                                    }
+                                }
+                            }
+                        }
                     $output = '{"response":"success", "message":"Les modifications ont été appliqué avec succès", "icon":"fas fa-exclamation"}';
                 } else {
 
@@ -377,7 +469,7 @@ class SettingsController extends AbstractController
 
 
     #[Route('/account/settings/delete', name: 'account_delete')]
-    public function delete(ManagerRegistry $doctrine, Security $security)
+    public function delete(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -400,6 +492,37 @@ class SettingsController extends AbstractController
             $findPost->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
             $em->persist($findPost);
             $em->flush();
+
+            $userRep = $doctrine->getRepository(Users::class);
+            $users = $userRep->findBy(["statut" => true, "account" => true]);
+            foreach ($users as $user) {
+                if ($user->getDeletedAt() == null && in_array('ROLE_HOST', $user->getRoles())) {
+                    $postsRep = $doctrine->getRepository(Posts::class);
+                    $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                    $mail = $user->getEmail();
+                    $firstName = $user->getFirstName();
+                    if ($posts) {
+                        foreach ($posts as $post) {
+                            $email = (new Email())
+                                ->from($post->getDescription())
+                                ->to($mail)
+                                ->subject('Modification interne')
+                                ->text('Modification interne')
+                                ->html("
+                                <div>
+                                <p>Bonjour $firstName,</p>
+                                <p>Nous vous informons que des modifications au niveau du type d'habitation ou équipements ont été appliqué sur notre site internet AtypikHouse.</p>
+                                <p>L'équipe AtypikHouse.</p>
+                                <div style='text-align: center;'>
+                                <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                </div>
+                                ");
+
+                            $mailer->send($email);
+                        }
+                    }
+                }
+            }
             $output = '{"response":"success", "message":"Les modifications ont bien été appliquées", "icon":"fas fa-exclamation", "redirect":"/logout"}';
         } else {
             $output = '{"response":"error", "message":"Vous ne vous êtes pas authentifié", "icon":"fas fa-exclamation", "redirect":""}';
