@@ -339,20 +339,20 @@ class SettingsController extends AbstractController
 
                 $email = $adminEmail ? $adminEmail->getDescription() : '';
                 
-                $output = '{"response":"success", "message":"Vous n\'avez pas les droits nécessaires", "icon":"fas fa-exclamation", 
-                    "message_setting":"'.$valueWel.'", "tax_setting":"'.$valueTax.'", 
-                    "home_title_setting":"'.$title.'", "email_admin_setting":"'.$email.'", 
-                    "about_title_setting":"'.$aboutTitle.'", "abstract_title_setting":"'.$abstract.'",
-                    "about_description_setting":"'.$description.'"}';
+                $output = ["response"=>"success", "message"=>"Vous n\'avez pas les droits nécessaires", "icon"=>"fas fa-exclamation", 
+                    "datas" => ["message_setting"=>$valueWel, "tax_setting"=>$valueTax, 
+                    "home_title_setting"=>$title, "email_admin_setting"=>$email, 
+                    "about_title_setting"=>$aboutTitle, "abstract_title_setting"=>$abstract,
+                    "about_description_setting"=>$description]];
 
             } else {
-                $output = '{"response":"error", "message":"Vous n\'avez pas les droits nécessaires", "icon":"fas fa-exclamation"}';
+                $output = ["response"=>"error", "message"=>"Vous n\'avez pas les droits nécessaires", "icon"=>"fas fa-exclamation", "datas" => ""];
             }
             
         } else {
-            $output = '{"response":"error", "message":"Vous ne vous êtes pas authentifié", "icon":"fas fa-exclamation"}';
+            $output = ["response"=>"error", "message"=>"Vous ne vous êtes pas authentifié", "icon"=>"fas fa-exclamation", "datas" => ""];
         }
-        return new JsonResponse($output);
+        return $this->render('inc/modules/settings/params.html.twig', $output);
     }
 
 

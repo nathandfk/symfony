@@ -59,7 +59,7 @@ class UsersType extends AbstractType
     }
     public function __construct(ManagerRegistry $doctrine){
         $repository = $doctrine->getRepository(Country::class);
-        $countries = $repository->findBy([], []);
+        $countries = $repository->findBy([], ["nameFr" => "ASC"]);
         $this->countries = $countries;
     }
 }

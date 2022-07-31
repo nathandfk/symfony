@@ -449,7 +449,7 @@ class UsersController extends AbstractController
         
         return $this->render('inc/pages/users/reservation.html.twig', [
             'carousel' => true,
-            'title' => 'Mon compte',
+            'title' => 'Historique',
             "calendar" => $calendar,
         ]);
     }

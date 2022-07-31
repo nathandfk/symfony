@@ -11,13 +11,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
         })
         .then(response => {
             if (options == "show") {
-                const obj = JSON.parse(response)
-                if (obj.response == "success") {
-                    for (var key in obj){
-                        if (dom('#'+key)) {
-                            dom('#'+key).value = obj[key]
-                        }
-                    }
+                if (dom("#settings-wrapper")) {
+                    dom("#settings-wrapper").innerHTML = response
                 }
             } else if(options == "search") {
                 if (dom('.settings-result')) {
@@ -60,7 +55,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
             }
         })
     }
-    request("/account/settings/show", JSON.stringify({id:""}), true, "show")
+    request("/account/settings/show", JSON.stringify({id:""}), false, "show")
 
     request("/account/settings/search", JSON.stringify({value:""}), false, "search")
     request("/account/settings/signal", JSON.stringify({value:""}), false, "signal")

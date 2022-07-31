@@ -39,6 +39,9 @@
     .atypikhouse-container {
         width: 90%;
     }
+    .navigation-link{
+        flex-wrap: wrap;
+    }
     .message-wrapper {
         grid-template: auto/1fr;
     }
