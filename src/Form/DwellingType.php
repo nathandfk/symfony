@@ -54,12 +54,6 @@ class DwellingType extends AbstractType
                     ])
                     ],
                 
-                // 'upload_max_size_message' => 'La taille totale de fichiers ne doit pas dépasser 10 MB',
-                // 'attr'     => [
-                //     'accept' => 'image/*',
-                //     'multiple' => 'multiple',
-                //     'required' => 'required',
-                // ], 
                 'attr' => [
                     'accept' => '.jpg, .jpeg, .png'
                 ],

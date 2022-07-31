@@ -5,8 +5,12 @@ namespace App\Controller;
 use App\Data\Calendar;
 use App\Entity\Dwelling;
 use App\Entity\Posts;
+use App\Entity\Reservation;
 use App\Entity\Users;
+use App\Repository\PostsRepository;
 use App\Repository\ReservationRepository;
+use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +22,51 @@ use Symfony\Component\Security\Core\Security;
 
 class DwellingController extends AbstractController
 {
+    #[Route('/api/comment/{id}', name: 'api_comment', methods:['POST'])]
+    public function app_comment(ManagerRegistry $doctrine)
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            return new JsonResponse('{"response" => "error", "message" => "Accès refusé"}');
+        }
+        $id = $data['id'];
+        $email = $data['email'];
+        $comment = $data['comment'];
+        $salt = $data['salt'];
+        $output = "{'response' => 'error', 'message' => 'Aucune clé'}";
+        if ($salt == "_Z34azertNCVI3Y65514-_ddezERTEETAZbn----qse321ghbd_-ghdsrza23436d___") {
+            if (!empty($comment)) {
+                $userRep = $doctrine->getRepository(Users::class);
+                $user = $userRep->findOneBy(['email' => $email]);
+                if ($user) {
+                    $reservRep = $doctrine->getRepository(Reservation::class);
+                    $reservation = $reservRep->find($id);
+                        $date = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
+                        if ((strtotime($date->format('Y-m-d')) - strtotime($reservation->getStartDate()->format('Y-m-d'))) >= 0) {
+                            $postsRep = $doctrine->getRepository(Posts::class);
+                            $posts = $postsRep->findBy(['user' => $user->getId(), 'dwelling' => $reservation->getDwelling()->getId(), 'type' => 'COMMENTS', 'number' => $reservation->getId()]);
+                            
+                            if (!$posts) {
+                                $postAdd = new Posts();
+                                $em = $doctrine->getManager();
+                                $postAdd->setUser($user);
+                                $postAdd->setDwelling($reservation->getDwelling());
+                                $postAdd->setType("COMMENTS");
+                                $postAdd->setTitle("");
+                                $postAdd->setAbstract("");
+                                $postAdd->setDescription($comment);
+                                $postAdd->setNumber($reservation->getId());
+                                $em->persist($postAdd);
+                                $em->flush();
+                                $output = '{"response" => "success", "message" => "Commentaire ajouté avec succès"}';
+                            }
+                    }
+                }
+            }
+        }
+        return new JsonResponse($output);
+    }
+
     #[Route('/dwelling/add-favorite', name: 'dwelling_add_favorite')]
     public function favorite(ReservationRepository $reservations, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
     {

@@ -46,15 +46,12 @@ security:
         - { path: ^/authentication_token, roles: PUBLIC_ACCESS }
         - { path: ^/api/users, roles: PUBLIC_ACCESS }
         - { path: ^/api/notification, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/comment, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/user, roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/docs, roles: PUBLIC_ACCESS }
-        # - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        # - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/docs, roles: ROLE_ADMIN }
         - { path: ^/mon-compte, roles: ROLE_USER }
         - { path: ^/mon-compte/paiement, roles: ROLE_HOST }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/profile, roles: ROLE_USER }
 
 # when@test:
 # security:

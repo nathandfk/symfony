@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Posts;
 use App\Entity\Reservation;
 use App\Entity\Users;
 use DateTimeImmutable;
@@ -89,7 +90,7 @@ class UsersRepository extends ServiceEntityRepository
                                     }
                                     
                                 }
-                                $data = [$userExecute[0], $dwel, $reservation, ['button' => $button, 'statut' => 'annuled_by_host', 'payment_intent' => $paymentIntent, 'price' => $price, 'sub_price' => $subPrice, 'tax' => $tax], $userWhoReserv[0]];
+                                $data = [$userExecute[0], $dwel, $reservation, ['button' => $button, 'statut' => 'annuled_by_host', 'payment_intent' => $paymentIntent, 'price' => $price, 'sub_price' => $subPrice, 'tax' => $tax, 'commentaire' => false], $userWhoReserv[0]];
                                 array_push($final, $data);
                             }
                         }
@@ -102,14 +103,22 @@ class UsersRepository extends ServiceEntityRepository
                         foreach ($dwelExecute as $dwel) {
                             if ($dwel['id'] == $dwelId) {
                                 $button = false;
+                                $commentaire = false;
+                                $userId = $reservation['user_id'];
+                                $reservId = $reservation['id'];
                                 if ($reservation['statut'] == "CONFIRMED" || $reservation['statut'] == "RESERVED") {
                                     $date = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
                                     if ((strtotime($date->format('Y-m-d')) - strtotime($reservation['start_date'])) < 0) {
                                         $button = true;
+                                    } 
+                                    if ((strtotime($date->format('Y-m-d')) - strtotime($reservation['start_date'])) >= 0) {
+                                        $postsRep = $this->registry->getRepository(Posts::class);
+                                        $posts = $postsRep->findOneBy(['user' => $userId, 'dwelling' => $dwelId, 'type' => 'COMMENTS', 'number' => $reservId]);
+                                        if (!$posts) {
+                                            $commentaire = true;
+                                        }
                                     }
                                 }
-                                $userId = $reservation['user_id'];
-                                $reservId = $reservation['id'];
                                 $metas = $this->request("*", "reservation_meta rm", "WHERE reservation_id='$reservId' AND field IN ('_payment_intent', '_price_of_reservation', '_sub_total_price', '_tax_service')");
                                 $paymentIntent = $price = $subPrice = $tax = "";
                                 foreach ($metas as $meta) {
@@ -129,7 +138,7 @@ class UsersRepository extends ServiceEntityRepository
                                     }
                                     
                                 }
-                                $data = [$userExecute[0], $dwel, $reservation, ['button' => $button, 'statut' => 'annuled', 'payment_intent' => $paymentIntent, 'price' => $price, 'sub_price' => $subPrice, 'tax' => $tax], $userExecute[0]];
+                                $data = [$userExecute[0], $dwel, $reservation, ['button' => $button, 'statut' => 'annuled', 'payment_intent' => $paymentIntent, 'price' => $price, 'sub_price' => $subPrice, 'tax' => $tax, 'commentaire' => $commentaire], $userExecute[0]];
                                 array_push($final, $data);
                             }
                         }

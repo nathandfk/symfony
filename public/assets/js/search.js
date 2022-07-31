@@ -245,8 +245,9 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
               if (event.target.className == "search-place-input" || event.target.className == "seach-location") {
                 text = event.target.value
                 let closestHost = event.target.closest(".host-wrapper")
-                if (dom(".search-place > ul")) {
-                    dom(".search-place > ul").remove()
+                let container = event.target.closest('.atypikhouse-container')
+                if (container.querySelector(".search-place > ul")) {
+                    container.querySelector(".search-place > ul").remove()
                 }
                 var requestOptions = {
                     method: 'GET',
@@ -255,10 +256,10 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 fetch("https://api.geoapify.com/v1/geocode/autocomplete?text="+text+"&lang=fr&limit=10&apiKey=a62343cecdbe4c1d8576e33086719fa7", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    if (dom(".search-place>ul")) {
-                        let ul = dom(".search-place>ul")
+                    if (container.querySelector(".search-place>ul")) {
+                        let ul = container.querySelector(".search-place>ul")
                     } else {
-                        let search = dom(".search-place")
+                        let search = container.querySelector(".search-place")
                             ul = document.createElement('ul')
                             ul.setAttribute('class', 'list-location search-location')
                             search.appendChild(ul)

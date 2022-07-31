@@ -96,27 +96,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
         }
     })
     }
-    // dom('html, body').addEventListener("keyup", event => {
-    //     if (event.target.className == "seach-location") {
-    //         let element = event.target
-    //         let targetInner = event.target.closest('.location-inner')
-    //         if (element.value.length >= 3){
-    //             fetch(element.dataset.link, {headers: {
-    //                 'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
-    //                 }, method: 'POST', body: JSON.stringify({location: element.value}) })
-    //             .then(data => data.text())
-    //             .then(response => {
-    //                 if (response != "" && response != " ") {
-    //                     targetInner.querySelector('.location-content').innerHTML = response
-    //                 } else {
-    //                     targetInner.querySelector('.location-content').innerHTML = ""
-    //                 }
-    //             })
-    //         } else {
-    //             targetInner.querySelector('.location-content').innerHTML = ""
-    //         }
-    //     }
-    // })
+
     if (dom('.alert')) {
         setTimeout(() => {
             dom('.alert').classList.add('alert-not-dismiss')

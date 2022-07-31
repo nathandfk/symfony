@@ -123,6 +123,32 @@ class EditDwellingController extends AbstractController
                         $em = $doctrine->getManager();
                         $dwel->setUser($userData);
                         $dwel->setPictures($finalPictures);
+
+                        $dwel->setTitle($dwelling->getTitle());
+                        
+                        $dwel->setAddress($dwelling->getAddress());
+                        $dwel->setLatitude($dwelling->getLatitude());
+                        $dwel->setLongitude($dwelling->getLongitude());
+                        $dwel->setState($dwelling->getState());
+                        $dwel->setEquipments($dwelling->getEquipments());
+                        
+                        $dwel->setAbstract($dwelling->getAbstract());
+                        $dwel->setDescription($dwelling->getDescription());
+                        
+                        $dwel->setComplAddress($dwelling->getComplAddress());
+                        $dwel->setCity($dwelling->getCity());
+
+                        $postsRep = $doctrine->getRepository(Posts::class);
+                        $countryRep = $doctrine->getRepository(Country::class);
+                        $country = $countryRep->find($dwelling->getCountry());
+                        if ($country) {
+                            $dwel->setCountry($country);
+                        }
+                        $type = $postsRep->find($dwelling->getType());
+                        if ($type) {
+                            $dwel->setType($type);
+                        }
+
                         $em->persist($dwel);
                         $em->flush();
 

@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\DwellingController;
 use App\Controller\HostController;
+use App\Controller\LikesCommentsController;
 use App\Repository\PostsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,11 +19,18 @@ use Symfony\Component\Validator\Constraints as Assert;
             "method" => "GET",
             'controller' => HostController::class,
             "path" => "/notification/{id}/{email}/{salt}",
+        ],
+        "comment" => [
+            "method" => "POST",
+            "path" => "/comment",
+            'controller' => DwellingController::class,
         ]
     ], 
     collectionOperations: [
-        "get"
+        "get",
+        "post"
     ] 
+    
 )]
 class Posts
 {
