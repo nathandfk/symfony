@@ -77,6 +77,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 2rem;
 }
 /* End Header */
 
@@ -127,7 +128,7 @@
     /***Additional content*/
 .additional-cover{
     width: 100%;
-    height: 25rem;
+    height: 100%;
 }
 #newsletter-form>input{
     border: none;
@@ -490,6 +491,7 @@
 #dwelling_gps{
     width: 100%;
     height: 50rem;
+    z-index: 0;
 }
 /* Start Admin*/
 .form-user-view{

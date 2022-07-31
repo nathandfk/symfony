@@ -4,6 +4,7 @@ namespace App\OpenApi;
 use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\Core\OpenApi\OpenApi;
 use ApiPlatform\Core\OpenApi\Model;
+use ArrayObject;
 
 final class JwtDecorator implements OpenApiFactoryInterface
 {
@@ -77,7 +78,7 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 security: [],
             ),
         );
-        $openApi->getPaths()->addPath('/api/users/authentication', $pathItem);
+        $openApi->getPaths()->addPath('/authentication_token', $pathItem);
 
         return $openApi;
     }

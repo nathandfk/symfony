@@ -11,6 +11,11 @@
     </div>
 {% endfor %}
 <div class="atypikhouse-container">
+{% if title %}
+<div class="page-title my-3">
+    <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+</div>
+{% endif %}
 {% if datas %}
 <div class="responsive-table">
 <table id="favorite-table" class="text-center ath-table-form">

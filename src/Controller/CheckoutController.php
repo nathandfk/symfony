@@ -23,6 +23,8 @@ class CheckoutController extends AbstractController
         $reservedAt = $reservations->showReservation("reserved_at", "WHERE id=$id");
         $first = strtotime($reservedAt[0]['reserved_at']);
 
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
         $zone = new \DateTimeZone('Europe/Paris');
         $seconDate = new DateTimeImmutable('now', $zone);
 
@@ -37,6 +39,7 @@ class CheckoutController extends AbstractController
         return $this->render('inc/pages/checkout/success.html.twig', [
             'controller_name' => 'ProductController',
             'reservation' => $reservation,
+            'calendar' => $calendar,
         ]);
     }
 

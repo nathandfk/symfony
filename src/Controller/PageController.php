@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Data\Calendar;
+use App\Entity\Dwelling;
 use App\Entity\Posts;
 use App\Entity\Users;
+use App\Repository\PostsRepository;
+use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +22,44 @@ class PageController extends AbstractController
     #[Route('/contact', name: 'contact')]
     public function contact(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer): Response
     {
+
+    
+        $userRep = $doctrine->getRepository(Users::class);
+        $users = $userRep->findAll();
+        if ($users) {
+            foreach ($users as $user) {
+                if (!is_null($user->getDeletedAt())) {
+                    $date = new DateTimeImmutable('now', new DateTimeZone("Europe/Paris"));
+                    $calcul = strtotime($date->format("Y-m-d H:i:s")) - strtotime($user->getDeletedAt()->format("Y-m-d H:i:s"));
+                    if ( $calcul >= 86400*365) {
+                        $em = $doctrine->getManager();
+                        $userRepDel = $doctrine->getRepository(Users::class);
+                        $userDelete = $userRepDel->find($user);
+                        $em->remove($userDelete);
+                        $em->flush();
+                    }
+                }
+            }
+        }
+
+        $dwellingRep = $doctrine->getRepository(Dwelling::class);
+        $dwellings = $dwellingRep->findAll();
+        if ($dwellings) {
+        foreach ($dwellings as $dwel) {
+            if (!is_null($dwel->getDeletedAt())) {
+                $date = new DateTimeImmutable('now', new DateTimeZone("Europe/Paris"));
+                $calcul = strtotime($date->format("Y-m-d H:i:s")) - strtotime($dwel->getDeletedAt()->format("Y-m-d H:i:s"));
+                if ( $calcul >= 86400*365) {
+                    $em = $doctrine->getManager();
+                    $dwelRepDel = $doctrine->getRepository(Dwelling::class);
+                    $dwelDelete = $dwelRepDel->find($dwel);
+                    $em->remove($dwelDelete);
+                    $em->flush();
+                }
+            }
+        }
+        }
+
         if (isset($_POST['btn-contact'])) {
             $em = $doctrine->getManager();
             $auth = $security->getUser();
@@ -164,14 +206,16 @@ class PageController extends AbstractController
     }
 
     #[Route('/a-propos', name: 'about')]
-    public function about(): Response
+    public function about(PostsRepository $postsRep): Response
     {
+        $posts = $postsRep->showPosts("title, type, abstract, description", "WHERE type='ABOUTTITLE' OR type='ABOUTABSTRACT' OR type='ABOUTDESCRIPTION' OR type='ABOUTPIC'");
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
         return $this->render('inc/pages/simple-pages/about.html.twig', [
             'carousel' => true,
             'title' => 'A propos',
             'calendar' => $calendar,
+            'datas' => $posts,
         ]);
     }
     

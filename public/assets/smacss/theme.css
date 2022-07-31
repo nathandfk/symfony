@@ -71,7 +71,7 @@ a, a:active, a:hover{
     color: var(--c4);
 }
 .header-cover, .additional-cover{
-    background-color: var(--black30);
+    background-color: var(--black50);
 }
 .section-why-form>span{
     background-color: var(--black10);
@@ -248,4 +248,12 @@ a, a:active, a:hover{
 }
 .responsive-menu-cover{
     background: var(--black20);
+}
+.wb{
+    background: var(--c4);
+    color: var(--c3);
+}
+.bw{
+    background: var(--c3);
+    color: var(--c4);
 }

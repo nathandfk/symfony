@@ -139,9 +139,9 @@ dom("html, body").addEventListener('click', event => {
             setTimeout(() => {
                 let payment = document.querySelector('#payment-element')
                 if (payment && payment.childElementCount < 1) {
-                    notification("Une erreur inattendue s'est produite, veuillez recommencer", "fas fa-exclamation")
+                    notification("Une erreur inattendue s'est produite, veuillez recommencer !", "fas fa-exclamation")
                 }
-            }, 1000);
+            }, 3000);
         }
     }
 });

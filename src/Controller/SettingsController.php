@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints\Json;
 class SettingsController extends AbstractController
 {
     #[Route('/account/settings', name: 'account_settings')]
-    public function settings(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
+    public function settings(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer, PostsRepository $postsRepExist)
     {
         $auth = $security->getUser();
         // $data = json_decode(file_get_contents('php://input'), true);
@@ -117,7 +117,15 @@ class SettingsController extends AbstractController
                                 continue;
                             }
                         }
-                        
+
+                        $exists = $value[1];
+                        $postsExists = $postsRepExist->showPosts("*", "WHERE (type='EQUIPMENT' AND description = '$exists') OR (type='TYPE' AND description = '$exists')");
+                        foreach ($postsExists as $postExist) {
+                            if ($postExist) {
+                                $output = '{"response":"error", "message":"Le type ou l\'équipement renseigné existe déjà", "icon":"fas fa-exclamation"}';
+                                return new JsonResponse($output);
+                            }
+                        }
                         $post = new Posts();
                         
                         $post->setUser($user);
@@ -127,6 +135,27 @@ class SettingsController extends AbstractController
 
                         $em->persist($post);
                         $em->flush();
+
+
+                        if ($key == "type") {
+                            $notif = new Posts();
+                            $notif->setUser($user);
+                            $notif->setType("NOTIFICATION");
+                            $notif->setTitle("AtypikHouse : Type d'habition");
+                            $notif->setAbstract("Une modification a été appliquée sur les types d'habitations");
+                            $notif->setDescription("");
+                            $em->persist($notif);
+                            $em->flush();
+                        } else if ($key == "equipment"){
+                            $notif = new Posts();
+                            $notif->setUser($user);
+                            $notif->setType("NOTIFICATION");
+                            $notif->setTitle("AtypikHouse : Équipement");
+                            $notif->setAbstract("Une modification a été appliquée sur les équipements");
+                            $notif->setDescription("");
+                            $em->persist($notif);
+                            $em->flush();
+                        }
 
                         $userRep = $doctrine->getRepository(Users::class);
                         $users = $userRep->findBy(["statut" => true, "account" => true]);
@@ -178,7 +207,7 @@ class SettingsController extends AbstractController
 
 
     #[Route('/account/settings/search', name: 'account_settings_search')]
-    public function search(ManagerRegistry $doctrine, Security $security, PostsRepository $postRep): Response
+    public function search(Security $security, PostsRepository $postRep, PaginatorInterface $paginator, Request $request): Response
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -191,9 +220,13 @@ class SettingsController extends AbstractController
             if (in_array('ROLE_ADMIN', $roles) || in_array('ROLE_MODERATOR', $roles)) {
                 
                 $posts = empty($value) ?
-                $postRep->showPosts("id, type, title, description, deleted_at", "WHERE type IN ('EQUIPMENT', 'TYPE') ORDER BY id DESC LIMIT 5")
-                : $postRep->showPosts("id, type, title, description, deleted_at", "WHERE type IN ('EQUIPMENT', 'TYPE') AND (title LIKE '%$value%' OR description LIKE '%$value%') ORDER BY id DESC LIMIT 5");
+                $postRep->showPosts("id, type, title, description, deleted_at", "WHERE type IN ('EQUIPMENT', 'TYPE') ORDER BY id DESC")
+                : $postRep->showPosts("id, type, title, description, deleted_at", "WHERE type IN ('EQUIPMENT', 'TYPE') AND (title LIKE '%$value%' OR description LIKE '%$value%') ORDER BY id DESC");
                 
+                $posts = $paginator->paginate(
+                $posts,
+                $request->query->getInt('page', 1),
+                5);
                 $response = [
                     'response' => 'success', 
                     'message' => "",

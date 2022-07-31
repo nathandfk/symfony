@@ -1,6 +1,11 @@
 {% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
 <div class="atypikhouse-container">
+{% if title %}
+<div class="page-title my-3">
+    <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+</div>
+{% endif %}
 <div class="my-2">
 {{ form_start(form) }}
 {{ form_label(form.value) }}

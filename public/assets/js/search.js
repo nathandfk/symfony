@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                         }
                     }
                 });
-                let search = bodyClosest.querySelector('.search-place > label')
+                let search = bodyClosest.querySelector('.search-place > span')
                 if (search.querySelector('input')) {
                     if (search.querySelector('input').value == "" || search.querySelector('input').value == " ") {
                         search.innerHTML = ''
@@ -52,11 +52,11 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 bodyClosest.querySelector('.popup-search').classList.remove('popup-search-active')
             } else if (event.target.classList.contains('search-place')) {
                 input.type = "text"
-                input.value = event.target.querySelector('label').innerHTML
-                event.target.querySelector('label').innerHTML = ""
+                input.value = event.target.querySelector('span').innerHTML
+                event.target.querySelector('span').innerHTML = ""
                 input.classList.add("search-place-input")
                 input.placeholder = "Où allez-vous"
-                event.target.querySelector('label').appendChild(input)
+                event.target.querySelector('span').appendChild(input)
                 input.focus()
             } else if (event.target.classList.contains('search-place-input')) {
                 event.target.focus()
@@ -65,9 +65,9 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 let target = event.target.closest('.target-data').querySelector('.superpose')
                 
                 if (event.target.closest(".target-data").classList.contains("search-arrival-date")) {
-                    if (dispoClosest.querySelector(".search-arrival-date > label").dataset.period) {
-                        dispoClosest.querySelector(".search-departure-date > label").dataset.period = ""
-                        dispoClosest.querySelector(".search-departure-date > label").classList.contains("single-product-departure") ? dispoClosest.querySelector(".search-departure-date > label").innerHTML = "_ _ / _ _ / _ _ _ _" : dispoClosest.querySelector(".search-departure-date > label").innerHTML = ""
+                    if (dispoClosest.querySelector(".search-arrival-date > span").dataset.period) {
+                        dispoClosest.querySelector(".search-departure-date > span").dataset.period = ""
+                        dispoClosest.querySelector(".search-departure-date > span").classList.contains("single-product-departure") ? dispoClosest.querySelector(".search-departure-date > span").innerHTML = "_ _ / _ _ / _ _ _ _" : dispoClosest.querySelector(".search-departure-date > span").innerHTML = ""
                         dispoClosest.querySelector(".date-departure-selected") ? dispoClosest.querySelector(".date-departure-selected").classList.remove("date-departure-selected") : "";
                         let generalCalendar = dispoClosest.querySelector(".search-departure-date .general-calendar").innerHTML 
                         dispoClosest.querySelector(".search-arrival-date .general-calendar").innerHTML = generalCalendar
@@ -103,7 +103,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 let dispoClosest = event.target.closest('.atypikhouse-search-dispo')
 
                 if (event.target.closest(".search-departure-date")) {
-                    let dateArrival = dispoClosest.querySelector(".search-arrival-date>label").dataset.period
+                    let dateArrival = dispoClosest.querySelector(".search-arrival-date>span").dataset.period
                     let dates = []
                     let $response = []
                     let theDate = new Date(dateArrival)
@@ -142,8 +142,8 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                     dispoClosest.querySelector("."+search+' .calendar').classList.add('d-none')
                 }, 200);
 
-                targetDateClosest.querySelector('label').innerHTML = dateShow
-                targetDateClosest.querySelector('label').dataset.period = date
+                targetDateClosest.querySelector('span').innerHTML = dateShow
+                targetDateClosest.querySelector('span').dataset.period = date
 
                 let generalCalendar = dispoClosest.querySelector("."+search+" .general-calendar").innerHTML 
                 dispoClosest.querySelector("."+reverse+" .general-calendar").innerHTML = generalCalendar
@@ -167,19 +167,19 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 total = parseInt(adult) + parseInt(children) + parseInt(baby) + parseInt(animal)
                 let tr = "voyageurs";
                 (total > 1) ? tr = "voyageurs" : tr = "voyageur";
-                travelers.querySelector('label').innerHTML = total+' '+tr
+                travelers.querySelector('span').innerHTML = total+' '+tr
             } else if(event.target.classList.contains('btn-search')){
                 let form = event.target.closest('.module-search-wrapper')
                     adult = form.querySelector('#traveler-adult').value
                     children = form.querySelector('#traveler-children').value
                     baby = form.querySelector('#traveler-baby').value
                     animal = form.querySelector('#traveler-animal').value
-                    arrival = form.querySelector('.search-arrival-date>label').dataset.period
-                    departure = form.querySelector('.search-departure-date>label').dataset.period
+                    arrival = form.querySelector('.search-arrival-date>span').dataset.period
+                    departure = form.querySelector('.search-departure-date>span').dataset.period
                     arrival ? arrival = arrival : arrival = '';
                     departure ? departure = departure : departure = '';
-                    form.querySelector('.search-place').querySelector('label') != "" ? place = form.querySelector('.search-place').querySelector('label') .innerHTML : place = form.querySelector('.search-place').querySelector('label') .innerHTML;
-                    form.querySelector('.search-place-input') ? place = form.querySelector('.search-place-input').value : place = form.querySelector('.search-place').querySelector('label').innerHTML;
+                    form.querySelector('.search-place').querySelector('span') != "" ? place = form.querySelector('.search-place').querySelector('span') .innerHTML : place = form.querySelector('.search-place').querySelector('span') .innerHTML;
+                    form.querySelector('.search-place-input') ? place = form.querySelector('.search-place-input').value : place = form.querySelector('.search-place').querySelector('span').innerHTML;
                     
                 window.location.href= '/search?place='+place+'&arrival='+arrival+'&departure='+departure+'&adult='+adult+'&children='+children+'&baby='+baby+'&animal='+animal
             } else if(event.target.classList.contains('edit-reservation-date')){
@@ -189,7 +189,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 elClosest.classList.add('d-none')
             } else if(event.target.classList.contains("list-location-item")){
                 let closest = event.target.closest(".search-place")
-                closest.querySelector('label').innerHTML = event.target.innerHTML
+                closest.querySelector('span').innerHTML = event.target.innerHTML
                 closest.querySelector('ul').remove()
             }
         }

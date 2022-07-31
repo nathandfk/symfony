@@ -37,7 +37,13 @@
 }
 @media screen and (max-width: 920px) {
     .atypikhouse-container {
-        width: 95%;
+        width: 90%;
+    }
+    .message-wrapper {
+        grid-template: auto/1fr;
+    }
+    header {
+        width: 100% !important;
     }
     .grid-lg-4 {
         grid-template: auto/1fr 1fr;
@@ -121,6 +127,23 @@
     .contact-form.grid-lg-2 {
         grid-template: 15rem auto/1fr;
     }
+    .search-dwelling {
+        display: grid;
+        grid-template: auto/ 1fr;
+    }
+    #dwelling_gps{
+        display: none;
+    }
+    .search-dwelling-picture {
+        width: 50%;
+    }
+    .atypikhouse-main-col1 {
+        grid-row: 2;
+    }
+    .col-lg-6 {
+        width: 100%;
+    }
+    
 }
 @media screen and (max-height: 600px) {
     .responsive-menu > ul {
@@ -139,6 +162,12 @@
     }
     .form-style{
         width: 95%;
+    }
+    .search-dwelling-picture {
+        width: 100%;
+    }
+    .search-dwelling-item {
+        flex-direction: column;
     }
     
 }

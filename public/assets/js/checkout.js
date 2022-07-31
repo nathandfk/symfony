@@ -121,7 +121,7 @@ if (event.target.name == 'checking-dispo' && dataProduct()[6] != "") {
         }
       }
       
-    }, 100);
+    }, 700);
     }
   }
 })

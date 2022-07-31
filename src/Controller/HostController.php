@@ -11,6 +11,7 @@ use App\Entity\Posts;
 use App\Entity\Reservation;
 use App\Entity\Users;
 use App\Form\DwellingType;
+use App\Repository\PostsRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +25,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class HostController extends AbstractController
 {
+    public function __invoke($id, $email, $salt, PostsRepository $postsRep)
+    {
+        return $postsRep->notification($id, $email, $salt);
+    }
+
     #[Route('/mon-compte/hote', name: 'host')]
     public function host(Request $request, DataSite $dataSite, UserInterface $user, SluggerInterface $slugger, ManagerRegistry $doctrine, Security $security)
     {

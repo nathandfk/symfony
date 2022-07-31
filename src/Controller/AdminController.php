@@ -55,7 +55,7 @@ class AdminController extends AbstractController
     #[Route('/admin/user-view', name: 'admin_user_view')]
     public function view(ManagerRegistry $doctrine, Security $security, UsersRepository $users): Response
     {
-        $security = $security->getUser();
+        $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data) {
             return $this->redirectToRoute('app_index');
@@ -78,7 +78,7 @@ class AdminController extends AbstractController
             $unlocked = $account ? 'checked' : '';
             $locked = $account ? '' : 'checked';
             $adminRole = in_array("ROLE_ADMIN", $roles) ? "checked" : "";
-            $adminDisplay = !in_array("ROLE_ADMIN", $roles) ? "d-none" : "";
+            $adminDisplay = !in_array("ROLE_ADMIN", $auth->getRoles()) ? "d-none" : "";
             $hostRole = in_array("ROLE_HOST", $roles) ? "checked" : "";
             $moderatorRole = in_array("ROLE_MODERATOR", $roles) ? "checked" : "";
 

@@ -15,6 +15,7 @@ use App\Form\ResetType;
 use App\Form\UserMetaType;
 use App\Form\UsersType;
 use App\Repository\ReservationRepository;
+use App\Repository\UsersRepository;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,8 +32,15 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Mailer\MailerInterface;
 
+#[AsController]
 class UsersController extends AbstractController
 {
+    
+    public function __invoke(Request $request, UsersRepository $usersRepository)
+    {
+        return $usersRepository->findByEmail($request->get('email'), $request->get('profil'), $request->get('salt'));
+    }
+
     #[Route('/inscription', name: 'register')]
     public function register(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security, MailerInterface $mailer): Response
     {
@@ -67,7 +76,7 @@ class UsersController extends AbstractController
                 if ($posts) {
                     foreach ($posts as $post) {
                         $email = (new Email())
-                            ->from($post->getDescription())
+                            ->from("AtypikHouse <".$post->getDescription().">")
                             ->to($emailUser)
                             ->subject('Inscription réussie')
                             ->text('Inscription utilisateur sur le site de AtypikHouse')
@@ -107,10 +116,6 @@ class UsersController extends AbstractController
     public function activate(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security)
     {
         $security = $security->getUser();
-        if ($security) {
-            return $this->redirectToRoute('app_index');
-        }
-
         if (!isset($_GET['key']) || empty($_GET['key']) || !isset($_GET['email']) || empty($_GET['email'])) {
             $this->addFlash("error", "Ce lien est incorrect");
             return $this->redirectToRoute('app_index');
@@ -119,6 +124,8 @@ class UsersController extends AbstractController
             $exit = $repository->findOneBy(["email" => $_GET['email'], "activationKey" => $_GET['key']]);
             if ($exit) {
                 $em = $doctrine->getManager();
+                $exit->setStatut(true);
+                $exit->setUpdatedAt(new DateTimeImmutable('now', new DateTimeZone('Europe/Paris')));
                 $em->persist($exit);
                 $em->flush();
                 $this->addFlash("success", "Votre compte a été activé avec succès");
@@ -466,7 +473,7 @@ class UsersController extends AbstractController
         $form->handleRequest($request);
         return $this->render('inc/pages/users/message.html.twig', [
             'carousel' => true,
-            'title' => 'Mon compte',
+            'title' => 'Messagerie',
             'form' => $form->createView(),
             'calendar' => $calendar,
         ]);

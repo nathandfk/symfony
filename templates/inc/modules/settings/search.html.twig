@@ -1,35 +1,40 @@
 {% if datas %}
-<table id="settings-table" class="text-center ath-table-form">
-    <thead>
-        <tr>
-            <th>Type</th>
-            <th>Donnée</th>
-            <th>Supprimé</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for data in datas %}
-        <tr data-id="{{ data.id }}">
-            <td>{{ data.type }}</td>
-            <td class="settings_data_value">{{ data.description }}</td>
-            {% if data.deleted_at is empty %}
-            <td>Non</td>
-            {% else %}
-            <td>{{ data.deleted_at }}</td>
-            {% endif %}
-            <td class="d-flex gap-1 w-max-content m-auto">
+<div class="ressponsive-table">
+    <table id="settings-table" class="text-center ath-table-form">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Donnée</th>
+                <th>Supprimé</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for data in datas %}
+            <tr data-id="{{ data.id }}">
+                <td>{{ data.type }}</td>
+                <td class="settings_data_value">{{ data.description }}</td>
                 {% if data.deleted_at is empty %}
-                <button name="btn-delete-params" title="Supprimer" class="click click-brown m-auto d-flex gap-1 fas fa-times"></button>
+                <td>Non</td>
                 {% else %}
-                <button name="btn-delete-params" title="Restaurer" class="click click-brown m-auto d-flex gap-1 fas fa-undo"></button>
+                <td>{{ data.deleted_at }}</td>
                 {% endif %}
-                <button name="btn-update-params" title="Modifier" class="click click-success m-auto d-flex gap-1 fas fa-pen"></button>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+                <td class="d-flex gap-1 w-max-content m-auto">
+                    {% if data.deleted_at is empty %}
+                    <button name="btn-delete-params" title="Supprimer" class="click click-brown m-auto d-flex gap-1 fas fa-times"></button>
+                    {% else %}
+                    <button name="btn-delete-params" title="Restaurer" class="click click-brown m-auto d-flex gap-1 fas fa-undo"></button>
+                    {% endif %}
+                    <button name="btn-update-params" title="Modifier" class="click click-success m-auto d-flex gap-1 fas fa-pen"></button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="btn-navigate paginate-settings-search d-flex jc-center gap-2 my-3">
+{{ knp_pagination_render(datas) }}
+</div>
 
 {% endif %}
 {% if message %}

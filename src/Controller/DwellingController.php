@@ -11,6 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -71,7 +73,7 @@ class DwellingController extends AbstractController
 
 
     #[Route('/dwelling/add-signal', name: 'dwelling_add_signal')]
-    public function signal(ReservationRepository $reservations, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
+    public function signal(MailerInterface $mailer, ManagerRegistry $doctrine, Security $security): Response
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -115,6 +117,36 @@ class DwellingController extends AbstractController
                     $em->persist($posts);
                     $em->flush();
 
+                        $postsRep = $doctrine->getRepository(Posts::class);
+                        $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+                        if ($posts) {
+                            foreach ($posts as $post) {
+                                $first = $user->getFirstName();
+                                $last = $user->getLastName();
+                                $emailUser = $user->getEmail();
+                                $email = (new Email())
+                                    ->from("Site AtypikHouse <".$post->getDescription().">")
+                                    ->to($post->getDescription())
+                                    ->subject('SIGNALEMENT')
+                                    ->text('SIGNALEMENT')
+                                    ->html("
+                                    <div>
+                                    <p>Message destiné à l'administration de AtypikHouse !</p>
+                                    <p>Un utilisateur vient de signaler un logement sur le site, veuillez vous rendre dans la rubrique dédiée à ce sujet pour en connaître les détails et traiter ce signalement.</p>
+                                    <div>Détails de l'utilisateur ayant signalé le logement</div>
+                                    <p>Prénom: <b>$first</b></p>
+                                    <p>Nom: <b>$last</b></p>
+                                    <p>Email: <b>$emailUser</b></p>
+                                    <p>L'équipe AtypikHouse.</p>
+                                    <div style='text-align: center;'>
+                                    <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                    </div>
+                                    ");
+
+                                $mailer->send($email);
+                            }
+                        }
+
                     $output = '{"response":"success", "message":"Ce logement a bien été ajouté dans la liste de vos signalements", "icon":"fas fa-check"}';
                 } else {
                     $output = '{"response":"error", "message":"Une erreur est survenue, veuillez recommencer", "icon":"fas fa-exclamation"}';
@@ -132,7 +164,7 @@ class DwellingController extends AbstractController
 
 
     #[Route('/dwelling/closed-signal', name: 'dwelling_closed_signal')]
-    public function closedSignal(ReservationRepository $reservations, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
+    public function closedSignal(MailerInterface $mailer, ManagerRegistry $doctrine, Security $security): Response
     {
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -160,7 +192,38 @@ class DwellingController extends AbstractController
                         $postData->setNumber($user->getId());
                         $em->persist($postData);
                         $em->flush();
-                        $output = '{"response":"success", "message":"Signalement cloturé avec succès", "icon":"fas fa-check"}';
+
+                        $postsRep = $doctrine->getRepository(Posts::class);
+                        $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+
+                        $userRepSig = $doctrine->getRepository(Users::class);
+                        $userSig = $userRepSig->find($postData->getUser());
+
+                        if ($posts) {
+                            foreach ($posts as $post) {
+                                $first = $userSig->getFirstName();
+                                $email = (new Email())
+                                    ->from("AtypikHouse <".$post->getDescription().">")
+                                    ->to($userSig->getEmail())
+                                    ->subject('VOTRE SIGNALEMENT A ÉTÉ TRAITÉ')
+                                    ->text('VOTRE SIGNALEMENT A ÉTÉ TRAITÉ')
+                                    ->html("
+                                    <div>
+                                    <p>Bonjour $first,</p>
+                                    <p>Il y'a du nouveau sur votre signalement, veuillez-vous connecter et vous rendre dans la rubrique dédiée pour en connaître l'état.</p>
+                                    <p>Il est possible que nous revenons vers vous pour en savoir d'avantages sur les raisons qui vous ont poussé à signaler ce logement.</p>
+                                    <p>Nous faisons de notre mieux pour améliorer nos services.</p>
+                                    <p>Nous vous remercions pour la confiance que vous nous accorder.</p>
+                                    <p>L'équipe AtypikHouse.</p>
+                                    <div style='text-align: center;'>
+                                    <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                    </div>
+                                    ");
+
+                                $mailer->send($email);
+                            }
+                        }
+                        $output = '{"response":"success", "message":"Modification appliquée avec succès", "icon":"fas fa-check"}';
 
                     } else {
                         $output = '{"response":"error", "message":"Une erreur inattendue est survenue", "icon":"fas fa-exclamation"}';

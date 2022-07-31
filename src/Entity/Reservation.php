@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\HistoricalController;
 use App\Repository\ReservationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,10 +13,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ApiResource(
     itemOperations: [
-        "get"
-    ],
+        "update" => [
+            "method" => "GET",
+            'controller' => HistoricalController::class,
+            "path" => "/reservations/{id}/{statut}/{salt}",
+        ]
+    ], 
     collectionOperations: [
-        "post",
         "get"
     ]
 )]

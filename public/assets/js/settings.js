@@ -178,6 +178,11 @@ window.addEventListener("DOMContentLoaded", (event) => {
         } else if (event.target.id == "closed_folder") {
             closest = event.target.closest('tr')
             request(event.target.dataset.link, JSON.stringify({id:closest.dataset.id}), true, 'update')
+        } else if (event.target.closest('.paginate-settings-search')) {
+            if (event.target.href && event.target.nodeName == "A") {
+                event.preventDefault()
+                request(event.target.href, JSON.stringify({value:''}), false, 'search')
+            }
         }
         
     })

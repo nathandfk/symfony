@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\UsersController;
 use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,10 +18,42 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity("email", message: "L'utilisateur existe déjà")]
 #[ApiResource(
     itemOperations: [
-        "get"
+        "email" => [
+            "method" => "GET",
+            "path" => "user",
+            'controller' => UsersController::class,
+            'read' => false,
+            'filters' => [],
+            'openapi_context' => [
+                'summary' => "Données de l'utilisateur",
+                'parameters' => [
+                    [
+                        'in' => 'query',
+                        'name' => 'email',
+                        'schema' => [
+                            'type' => 'string'
+                        ]
+                    ],
+                    [
+                        'in' => 'query',
+                        'name' => 'profil',
+                        'schema' => [
+                            'type' => 'string'
+                        ]
+                    ],
+                    [
+                        'in' => 'query',
+                        'name' => 'salt',
+                        'schema' => [
+                            'type' => 'string'
+                        ]
+                    ]
+                ]
+            ],
+        ],
     ],
     collectionOperations: [
-        "post"
+        "get"
     ]
 )]
 // #[ApiResource(
@@ -42,13 +76,11 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\Length(max: 100)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[a-zA-Z \p{L}-]{2,100}+$/")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[a-zA-Z \p{L}-]{2,50}+$/")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
@@ -62,7 +94,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 150)]
     #[Assert\NotBlank()]
     #[Assert\Email()]
-    #[Assert\Regex("/^[A-Za-z0-9]+@([A-Za-z0-9]+\.)+[A-Za-z]{2,4}$/")]
+    #[Assert\Regex("/^[A-Za-z0-9.-_]+@([A-Za-z0-9]+\.)+[A-Za-z]{2,4}$/")]
     private $email;
 
     #[ORM\Column(type: 'string', length: 25, nullable: true)]
@@ -154,7 +186,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
         $this->deletedAt = null;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;

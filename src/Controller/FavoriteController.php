@@ -87,7 +87,8 @@ class FavoriteController extends AbstractController
         return $this->render('inc/pages/users/favorite.html.twig', [
             'datas' => $final,
             'message' => $message,
-            'calendar' => $calendar
+            'calendar' => $calendar,
+            'title' => 'Habitations favorites'
         ]);
     }
 

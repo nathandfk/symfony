@@ -25,6 +25,10 @@ use Symfony\Component\Security\Core\Security;
 
 class HistoricalController extends AbstractController
 {
+    public function __invoke($id, $statut, $salt, ReservationRepository $reservRep)
+    {
+        return $reservRep->update($id, $statut, $salt);
+    }
     #[Route('/mon-compte/historical/host', name: 'compte_historical_host')]
     public function host(ManagerRegistry $doctrine, ReservationRepository $reservations, Request $request, Security $security, UsersRepository $dataUsers, DwellingRepository $dwelRep, PaginatorInterface $paginator)
     {

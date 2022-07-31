@@ -2,13 +2,15 @@
     <div class="atypikhouse-navbar-wrapper atypikhouse-container">
         <div class="atypikhouse-navbar-display"> 
             <div class="atypikhouse-logo">
-                <a href="{{ path('app_index') }}"><img src="{{ ath_link }}/assets/pictures/logo-ath4.png"></a>
+                <a href="{{ path('app_index') }}">
+                <img src="{{ ath_link }}/assets/pictures/logo-ath4.png" alt="Logo de la société AtypikHouse">
+                </a>
             </div>
             <ul class="atypikhouse-menu">
                 <li><a href="{{ path('app_habitations') }}">Habitations</a></li>
                 <li><a href="{{ path('host') }}">Mode hôte</a></li>
                 <li><a href="{{ path('contact') }}">Contact</a></li>
-                <li><a class="fas fa-search size18 popup-open-search" href="javascript:void(0);"></a></li>
+                <li><span class="fas fa-search size18 popup-open-search cp"></span></li>
             </ul>
             <div class="atypikhouse-account">
                 <ul class="atypikhouse-account-menu" id="atypikhouse-account-menu">

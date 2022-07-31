@@ -1,0 +1,437 @@
+<?php //App.Entity.Users
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        (($f = &\Symfony\Component\VarExporter\Internal\Registry::$factories)['Symfony\\Component\\Validator\\Mapping\\ClassMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\ClassMetadata'))(),
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')),
+        ($f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'))(),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\Length'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Length')),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\NotBlank'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\NotBlank')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\Email'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Email')),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\Regex'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Regex')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Regex'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Regex'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+    ],
+    null,
+    [
+        'stdClass' => [
+            'constraints' => [
+                [
+                    $o[1],
+                ],
+                2 => [
+                    $o[3],
+                    $o[4],
+                ],
+                5 => [
+                    $o[6],
+                    $o[7],
+                ],
+                8 => [
+                    $o[9],
+                ],
+                10 => [
+                    $o[11],
+                    $o[12],
+                    $o[13],
+                    $o[14],
+                ],
+                15 => [
+                    $o[16],
+                    $o[17],
+                ],
+                18 => [
+                    $o[19],
+                    $o[20],
+                ],
+                21 => [
+                    $o[22],
+                ],
+                23 => [
+                    $o[24],
+                    $o[25],
+                ],
+                26 => [
+                    $o[27],
+                ],
+                28 => [
+                    $o[29],
+                    $o[30],
+                ],
+                31 => [
+                    $o[32],
+                ],
+                33 => [
+                    $o[34],
+                ],
+            ],
+            'constraintsByGroup' => [
+                [
+                    'Default' => [
+                        $o[1],
+                    ],
+                    'Users' => [
+                        $o[1],
+                    ],
+                ],
+                2 => [
+                    'Default' => [
+                        $o[3],
+                        $o[4],
+                    ],
+                    'Users' => [
+                        $o[3],
+                        $o[4],
+                    ],
+                ],
+                5 => [
+                    'Default' => [
+                        $o[6],
+                        $o[7],
+                    ],
+                    'Users' => [
+                        $o[6],
+                        $o[7],
+                    ],
+                ],
+                8 => [
+                    'Default' => [
+                        $o[9],
+                    ],
+                    'Users' => [
+                        $o[9],
+                    ],
+                ],
+                10 => [
+                    'Default' => [
+                        $o[11],
+                        $o[12],
+                        $o[13],
+                        $o[14],
+                    ],
+                    'Users' => [
+                        $o[11],
+                        $o[12],
+                        $o[13],
+                        $o[14],
+                    ],
+                ],
+                15 => [
+                    'Default' => [
+                        $o[16],
+                        $o[17],
+                    ],
+                    'Users' => [
+                        $o[16],
+                        $o[17],
+                    ],
+                ],
+                18 => [
+                    'Default' => [
+                        $o[19],
+                        $o[20],
+                    ],
+                    'Users' => [
+                        $o[19],
+                        $o[20],
+                    ],
+                ],
+                21 => [
+                    'Default' => [
+                        $o[22],
+                    ],
+                    'Users' => [
+                        $o[22],
+                    ],
+                ],
+                23 => [
+                    'Default' => [
+                        $o[24],
+                        $o[25],
+                    ],
+                    'Users' => [
+                        $o[24],
+                        $o[25],
+                    ],
+                ],
+                26 => [
+                    'Default' => [
+                        $o[27],
+                    ],
+                    'Users' => [
+                        $o[27],
+                    ],
+                ],
+                28 => [
+                    'Default' => [
+                        $o[29],
+                        $o[30],
+                    ],
+                    'Users' => [
+                        $o[29],
+                        $o[30],
+                    ],
+                ],
+                31 => [
+                    'Default' => [
+                        $o[32],
+                    ],
+                    'Users' => [
+                        $o[32],
+                    ],
+                ],
+                33 => [
+                    'Default' => [
+                        $o[34],
+                    ],
+                    'Users' => [
+                        $o[34],
+                    ],
+                ],
+            ],
+            'name' => [
+                'App\\Entity\\Users',
+                2 => 'firstName',
+                5 => 'lastName',
+                8 => 'society',
+                10 => 'email',
+                15 => 'phoneNumber',
+                18 => 'address',
+                21 => 'complAddress',
+                23 => 'city',
+                26 => 'activationKey',
+                28 => 'password',
+                31 => 'addedAt',
+                33 => 'updatedAt',
+            ],
+            'defaultGroup' => [
+                'Users',
+            ],
+            'members' => [
+                [
+                    'firstName' => [
+                        $o[2],
+                    ],
+                    'lastName' => [
+                        $o[5],
+                    ],
+                    'society' => [
+                        $o[8],
+                    ],
+                    'email' => [
+                        $o[10],
+                    ],
+                    'phoneNumber' => [
+                        $o[15],
+                    ],
+                    'address' => [
+                        $o[18],
+                    ],
+                    'complAddress' => [
+                        $o[21],
+                    ],
+                    'city' => [
+                        $o[23],
+                    ],
+                    'activationKey' => [
+                        $o[26],
+                    ],
+                    'password' => [
+                        $o[28],
+                    ],
+                    'addedAt' => [
+                        $o[31],
+                    ],
+                    'updatedAt' => [
+                        $o[33],
+                    ],
+                ],
+            ],
+            'properties' => [
+                [
+                    'firstName' => $o[2],
+                    'lastName' => $o[5],
+                    'society' => $o[8],
+                    'email' => $o[10],
+                    'phoneNumber' => $o[15],
+                    'address' => $o[18],
+                    'complAddress' => $o[21],
+                    'city' => $o[23],
+                    'activationKey' => $o[26],
+                    'password' => $o[28],
+                    'addedAt' => $o[31],
+                    'updatedAt' => $o[33],
+                ],
+            ],
+            'groups' => [
+                1 => [
+                    'Default',
+                    'Users',
+                ],
+                3 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                6 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                9 => [
+                    'Default',
+                    'Users',
+                ],
+                11 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                16 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                19 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                22 => [
+                    'Default',
+                    'Users',
+                ],
+                24 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                27 => [
+                    'Default',
+                    'Users',
+                ],
+                29 => [
+                    'Default',
+                    'Users',
+                ],
+                [
+                    'Default',
+                    'Users',
+                ],
+                32 => [
+                    'Default',
+                    'Users',
+                ],
+                34 => [
+                    'Default',
+                    'Users',
+                ],
+            ],
+            'message' => [
+                1 => 'L\'utilisateur existe déjà',
+                30 => 'Votre mot de passe doit au moins contenir 10 caractères dont 1 lettre majuscule, 1 lettre minuscule, 1 caractère spacial et 1 chiffre',
+            ],
+            'fields' => [
+                1 => 'email',
+            ],
+            'class' => [
+                2 => 'App\\Entity\\Users',
+                5 => 'App\\Entity\\Users',
+                8 => 'App\\Entity\\Users',
+                10 => 'App\\Entity\\Users',
+                15 => 'App\\Entity\\Users',
+                18 => 'App\\Entity\\Users',
+                21 => 'App\\Entity\\Users',
+                23 => 'App\\Entity\\Users',
+                26 => 'App\\Entity\\Users',
+                28 => 'App\\Entity\\Users',
+                31 => 'App\\Entity\\Users',
+                33 => 'App\\Entity\\Users',
+            ],
+            'property' => [
+                2 => 'firstName',
+                5 => 'lastName',
+                8 => 'society',
+                10 => 'email',
+                15 => 'phoneNumber',
+                18 => 'address',
+                21 => 'complAddress',
+                23 => 'city',
+                26 => 'activationKey',
+                28 => 'password',
+                31 => 'addedAt',
+                33 => 'updatedAt',
+            ],
+            'max' => [
+                3 => 100,
+                6 => 50,
+                9 => 50,
+                11 => 150,
+                16 => 25,
+                19 => 150,
+                22 => 255,
+                24 => 75,
+                27 => 255,
+            ],
+            'pattern' => [
+                14 => '/^[A-Za-z0-9.-_]+@([A-Za-z0-9]+\\.)+[A-Za-z]{2,4}$/',
+                17 => '/^[0-9\\-\\(\\)\\/\\+\\s]*$/',
+                30 => '/^(?=.{10,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W).*$/',
+            ],
+        ],
+    ],
+    $o[0],
+    []
+); }];

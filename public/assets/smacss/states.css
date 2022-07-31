@@ -498,6 +498,7 @@
     position: absolute;
     top: 30px;
     opacity: 1;
+    z-index: 20;
 }
 
 .col-lg-6{
@@ -533,9 +534,10 @@
 .alert{
     padding: 10px;
     position: fixed;
-    top: 2rem;
+    top: 3rem;
     right: -20rem;
     width: 19rem;
+    height: max-content;
     z-index: 200;
     border-radius: 5px;
     box-shadow: 0px 0px 5px var(--black20);
@@ -561,4 +563,16 @@
 .card-dismiss{
     opacity: 0;
     transform: translate(-50%, -80%);
+}
+
+.form-input{
+    z-index: -1;
+}
+.accessibility-form{
+    padding: 1rem;
+    font-size: 18px;
+    width: fit-content;
+    border-radius: 7px;
+    margin: auto;
+    max-width: 90%;
 }

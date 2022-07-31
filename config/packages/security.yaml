@@ -24,20 +24,15 @@ security:
         main:
             lazy: true
             provider: from_database
-            logout:
-                path: logout
-            # form_login:
-                # check_path: users.login
-                # login_path: users.login
-                # enable_csrf: true
-
-            custom_authenticator: App\Security\LoginFormAuthenticator
             json_login:
-                check_path: /api/users/authentication
+                check_path: /authentication_token
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            logout:
+                path: logout
+            custom_authenticator: App\Security\LoginFormAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -48,12 +43,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/authentication_token, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users, roles: PUBLIC_ACCESS }
+        - { path: ^/api/notification, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/user, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/docs, roles: PUBLIC_ACCESS }
-        - { path: ^/api/users/authentication, roles: PUBLIC_ACCESS }
-        - { path: ^/api/users, roles: PUBLIC_ACCESS }
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mon-compte, roles: ROLE_USER }
         - { path: ^/mon-compte/paiement, roles: ROLE_HOST }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

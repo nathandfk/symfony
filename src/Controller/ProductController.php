@@ -12,6 +12,7 @@ use App\Entity\Users;
 use App\Repository\DwellingRepository;
 use App\Repository\ReservationRepository;
 use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use Error;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -31,8 +32,8 @@ class ProductController extends AbstractController
         if (isset($_REQUEST['payment_intent']) && $_REQUEST['redirect_status'] === 'succeeded') {
 
             $repository = $doctrine->getRepository(ReservationMeta::class);
-            $reservationMeta = $repository->findOneBy(['value' => $_REQUEST["payment_intent"]]);
-            $reservationMetaId = $reservationMeta->getReservation();
+            $reservationMeta = $repository->findBy(['value' => $_REQUEST["payment_intent"]]);
+            $reservationMetaId = $reservationMeta[0]->getReservation();
 
             $entityManager = $doctrine->getManager();
             $reservation = $entityManager->getRepository(Reservation::class)->find($reservationMetaId);
@@ -43,6 +44,9 @@ class ProductController extends AbstractController
                 );
             }
             $reservation->setStatut('RESERVED');
+            $reservation->setReservedAt(new DateTimeImmutable("now", new DateTimeZone("Europe/Paris")));
+            $reservation->setUpdatedAt(new DateTimeImmutable("now", new DateTimeZone("Europe/Paris")));
+            $entityManager->persist($reservation);
             $entityManager->flush();
 
             $repository = $doctrine->getRepository(Posts::class);
@@ -83,7 +87,7 @@ class ProductController extends AbstractController
 
                 $postsRep = $doctrine->getRepository(Posts::class);
                 $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
-                $firstName = $firstname;
+                $name = $firstname;
                 $emailUser = $email;
                 if ($posts) {
                     foreach ($posts as $post) {
@@ -94,7 +98,7 @@ class ProductController extends AbstractController
                             ->text('RÉSERVATION CONFIRMÉE')
                             ->html("
                             <div>
-                            <p>Bonjour <b>$firstName</b></p>
+                            <p>Bonjour <b>$name</b></p>
                             <p>Votre réservation a bien été enregistré, vous pouvez dès à présent directement échangé avec l'hôte depuis votre espace dans la rubrique message.</p>
                             <p>L'hôte vous enverra toutes les informations nécessaires.</p>
                             <p>Vous pouvez annuler votre réservation à tout moment avant votre date d'arrivée.</p>
@@ -172,6 +176,7 @@ class ProductController extends AbstractController
             'controller_name' => 'ProductController',
             'dwellings' => $dwellings,
             'calendar' => $calendar,
+            'title' => $dwellings[0][0]['title'],
             'calendarReset' => $calendarReset,
             'likes' => $likes,
             'comments' => $comments,
@@ -200,8 +205,8 @@ class ProductController extends AbstractController
                 $price = $dwelling[0]['price'];
             }
             $postRep = $doctrine->getRepository(Posts::class);
-            $tax = $postRep->findOneBy(['type' => strtoupper("tax")]);
-            $tax_service = $tax ? intval($tax->getDescription()) : 10;
+            $tax = $postRep->findBy(['type' => strtoupper("tax")]);
+            $tax_service = $tax ? intval($tax[0]->getDescription()) : 10;
             $stripe = false;
             $dayOf = intval($countDay)-1;
             $totalPrice = $this->priceOfClient(intval($price), $dayOf, $tax_service, $stripe, false, false);
@@ -312,29 +317,16 @@ class ProductController extends AbstractController
                 
                 /* Id User Connected */
                 $repository = $doctrine->getRepository(Users::class);
-                $users = $repository->findBy(array("email" => $userAuth));
-                $auth_id = "";
-                $firstname = "";
-                $lastname = "";
-                foreach ($users as $user) {
-                    $auth_id = $user->getId();
-                    $firstname = $user->getFirstName();
-                    $lastname = $user->getLastName();
-                }
+                $users = $repository->findOneBy(array("email" => $userAuth));
                 /* End Id User Connected */
 
                 $showDateBetwween = $this->date_range($arrival, $departure);
-                $date = "";
                 $dateCheck = [];
                 $countDay = count($showDateBetwween);
 
                 /* Start Price */
                 $dwellings = $dwelRep->showDataDwellings($id);
-                $price = "";
-                $user_id = "";
-                $product_title = "";
-                $product_id = "";
-                $maxPeople = "";
+                $price = $user_id = $product_title = $product_id = $maxPeople = "";
                 foreach ($dwellings as $dwelling) {
                     $price = $dwelling[0]['price'];
                     $user_id = $dwelling[0]['user_id'];
@@ -358,7 +350,11 @@ class ProductController extends AbstractController
                     }
                 }
                 $countDay = intval($countDay)-1;
-                $tax_service = 10;
+                
+                $postRep = $doctrine->getRepository(Posts::class);
+                $tax = $postRep->findBy(['type' => strtoupper("tax")]);
+                $tax_service = $tax ? intval($tax[0]->getDescription()) : 10;
+
                 $totalPrice = $this->priceOfClient($price, intval($countDay), $tax_service, true, false, false);
                 $insertTotalPrice = $this->priceOfClient($price, intval($countDay), $tax_service, false, false, false);
                 $subTotalPrice = $this->priceOfClient($price, intval($countDay), $tax_service, false, true, false);
@@ -385,18 +381,16 @@ class ProductController extends AbstractController
 
 
 
-
-
-
-
     public function priceOfClient($unitPrice, $nbDay, $tax_service, bool $stripe, bool $showSubTotal, bool $showTax){
         $subTotal = $stripe ? intval($unitPrice) * intval($nbDay) * 100 : intval($unitPrice) * intval($nbDay);
         $tax = ($subTotal * intval($tax_service)) / 100;
         $total = $subTotal + $tax;
         if ($showSubTotal) {
-            return $subTotal;
+            return number_format($subTotal, 2, '.', '');
         } else if($showTax){
-            return $tax;
+            return number_format($tax, 2, '.', '');
+        } else if (!$stripe) {
+            return number_format($total, 2, '.', '');
         }
         return $total;
     }
@@ -419,7 +413,6 @@ class ProductController extends AbstractController
         $insertReservation->setEndDate(\DateTime::createFromFormat('Y-m-d', $departure));
         $em->persist($insertReservation);
         $em->flush();
-
         
         $repository = $doctrine->getRepository(Reservation::class);
         $reservation = $repository->findBy(['dwelling' => $dwelling_id], ['id' => "DESC"], 1);
