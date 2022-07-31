@@ -109,6 +109,18 @@ class HostController extends AbstractController
                         $em = $doctrine->getManager();
                         $dwelling->setUser($dataSite);
                         $dwelling->setPictures($finalPictures);
+
+                        $postsRep = $doctrine->getRepository(Posts::class);
+                        $countryRep = $doctrine->getRepository(Country::class);
+                        $country = $countryRep->find($dwelling->getCountry());
+                        if ($country) {
+                            $dwelling->setCountry($country);
+                        }
+                        $type = $postsRep->find($dwelling->getType());
+                        if ($type) {
+                            $dwelling->setType($type);
+                        }
+                        
                         $em->persist($dwelling);
                         $em->flush();
 
