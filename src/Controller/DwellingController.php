@@ -41,6 +41,7 @@ class DwellingController extends AbstractController
                 if ($user) {
                     $reservRep = $doctrine->getRepository(Reservation::class);
                     $reservation = $reservRep->find($id);
+                    if ($reservation->getStatut() == "CONFIRMED") {
                         $date = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
                         if ((strtotime($date->format('Y-m-d')) - strtotime($reservation->getStartDate()->format('Y-m-d'))) >= 0) {
                             $postsRep = $doctrine->getRepository(Posts::class);
@@ -60,6 +61,7 @@ class DwellingController extends AbstractController
                                 $em->flush();
                                 $output = '{"response" => "success", "message" => "Commentaire ajouté avec succès"}';
                             }
+                        }
                     }
                 }
             }

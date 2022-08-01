@@ -146,6 +146,9 @@
     .col-lg-6 {
         width: 100%;
     }
+    .product-lastline-display {
+        grid-template: auto/1fr;
+    }
     
 }
 @media screen and (max-height: 600px) {

@@ -98,9 +98,7 @@ class HostController extends AbstractController
                                     $this->getParameter('pictures_directory'),
                                     $newFilename
                                 );
-                            } catch (FileException $e) {
-                                // ... handle exception if something happens during file upload
-                            }
+                            } catch (FileException $e) {}
                         array_push($finalPictures, $newFilename);
                         }
                     }
@@ -120,7 +118,7 @@ class HostController extends AbstractController
                         if ($type) {
                             $dwelling->setType($type);
                         }
-                        
+
                         $em->persist($dwelling);
                         $em->flush();
 

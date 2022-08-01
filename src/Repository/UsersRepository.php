@@ -106,7 +106,7 @@ class UsersRepository extends ServiceEntityRepository
                                 $commentaire = false;
                                 $userId = $reservation['user_id'];
                                 $reservId = $reservation['id'];
-                                if ($reservation['statut'] == "CONFIRMED" || $reservation['statut'] == "RESERVED") {
+                                if ($reservation['statut'] == "CONFIRMED") {
                                     $date = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
                                     if ((strtotime($date->format('Y-m-d')) - strtotime($reservation['start_date'])) < 0) {
                                         $button = true;

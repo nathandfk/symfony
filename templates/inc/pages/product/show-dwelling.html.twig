@@ -281,11 +281,12 @@
 
 
 
-                    {% if dwelling[4] or dwelling[7] %}
+                    {% if dwelling[4] or dwelling[7] or dwelling[8] %}
                     <div class="product-page-lastline my-4">
                         <h3>COMMENTAIRES ET NOTES</h3>
                         <br>
                         <div class="product-lastline-display">
+                        {% if dwelling[7] or dwelling[8] %}
                         <div class="product-user-likes">
                             <ul class="p-0">
                                 {% if dwelling[7] %}<li>Propreté {{ dwelling[7] }}<span></span></li>{% endif %}
@@ -296,15 +297,16 @@
                                 {% if dwelling[12] %}<li>Rapport qualité prix {{ dwelling[12] }}<span></span></li>{% endif %}
                             </ul>
                         </div>
+                        {% endif %}
+                        {% if dwelling[4] %}
                         <div class="product-user-comments">
-                            {% if dwelling[4] %}
                                 {% for comments in dwelling[4] %}
                                     <h4>{{ comments[1].first_name }}</h4>
                                     <p>{{ comments[0].added_at }}</p>
                                     <p>{{ comments[0].description }}</p>
                                 {% endfor %}
-                            {% endif %}
                         </div>
+                        {% endif %}
                         </div>
                     </div>
                     {% endif %}

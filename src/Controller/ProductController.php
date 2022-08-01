@@ -137,39 +137,35 @@ class ProductController extends AbstractController
         }
         $calendar = $calendarDate->calendar();
         $calendarReset = !empty($finalDateNotDisponible) ? $calendarDate->calendar($finalDateNotDisponible, true) : $calendarDate->calendar();
-        $likes = false;
-        $comments = false;
+        $likes = $comments = false;
         $auth = $security->getUser();
         if ($auth) {
             $userTable = $doctrine->getRepository(Users::class);
             $user = $userTable->findOneBy(['email' => $auth->getUserIdentifier()]);
 
             $reservationTable = $doctrine->getRepository(Reservation::class);
-            $reservation = $reservationTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'statut' => 'RESERVED', 'statut' => 'CONFIRMED'], ['id' => 'DESC'], 1);
+            $data = $reservationTable->findOneBy(['user' => $user->getId(), 'dwelling' => $id, 'statut' => 'CONFIRMED']);
 
-            foreach ($reservation as $data) {
-                if ($data->getReservedAt()) {
-                    $old = strtotime($data->getReservedAt()->format('Y-m-d'));
-                    $new = new DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+            if ($data) {
+                $likes = $comments = true;
+                $old = strtotime($data->getReservedAt()->format('Y-m-d'));
+                $new = new DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
 
-                    $postTable = $doctrine->getRepository(Posts::class);
-                    $postsLike = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'LIKES', 'number' => $data->getId()]);
-                    $postsComments = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'COMMENTS', 'number' => $data->getId()]);
-
-                    if ((strtotime($new->format('Y-m-d')) - $old) >= 0 && (strtotime($new->format('Y-m-d')) - $old) <= 30) {
-                        $likes = true;
-                        $comments = true;
-                    } else {
-                        $likes = false;
-                        $comments = false;
-                    }
-                    if ($postsLike) {
-                        $likes = false;
-                    }
-                    if($postsComments){
-                        $comments = false;
-                    } 
+                $postTable = $doctrine->getRepository(Posts::class);
+                $postsLike = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'LIKES', 'number' => $data->getId()]);
+                $postsComments = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'COMMENTS', 'number' => $data->getId()]);
+                
+                if ((strtotime($new->format('Y-m-d')) - $old) >= 0) {
+                    $likes = $comments = true;
+                } else {
+                    $likes = $comments = false;
                 }
+                if ($postsLike) {
+                    $likes = false;
+                }
+                if($postsComments){
+                    $comments = false;
+                } 
             }
         }
         return $this->render('inc/pages/product/show-dwelling.html.twig', [
