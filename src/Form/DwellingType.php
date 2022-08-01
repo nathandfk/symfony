@@ -44,7 +44,7 @@ class DwellingType extends AbstractType
                     new Count(['max' => 4, 'max' => 10]),
                     new All([
                         new File([
-                            'maxSize' => '15M',
+                            'maxSize' => '2M',
                             'mimeTypes' => [
                                 'image/jpeg',
                                 'image/png',
@@ -57,7 +57,7 @@ class DwellingType extends AbstractType
                 'attr' => [
                     'accept' => '.jpg, .jpeg, .png'
                 ],
-                'label' => ' Images (Taille totale maximale 15MB, 4 fichiers min et 10 fichiers max)'
+                'label' => ' Images (Taille maximale par image 2 MB, 4 fichiers min et 10 fichiers max)'
             ])
             ->add('title', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Titre *'], 'label' => 'Titre *'])
             ->add('abstract', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Résumé *'], 'label' => 'Résumé *'])

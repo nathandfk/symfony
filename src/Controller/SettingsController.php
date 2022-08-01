@@ -6,9 +6,7 @@ use App\Data\Calendar;
 use App\Entity\Dwelling;
 use App\Entity\Posts;
 use App\Entity\Users;
-use App\Repository\DwellingRepository;
 use App\Repository\PostsRepository;
-use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,15 +17,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Validator\Constraints\Json;
 
 class SettingsController extends AbstractController
 {
+    // Création d'une route et Gestion des paramètres
+    // Ajout et modifications des paramètres
     #[Route('/account/settings', name: 'account_settings')]
     public function settings(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer, PostsRepository $postsRepExist)
     {
         $auth = $security->getUser();
-        // $data = json_decode(file_get_contents('php://input'), true);
         if (!isset($_POST['email_admin_setting']) && !isset($_POST['message_setting'])) {
             return $this->redirectToRoute('app_index');
         }
@@ -48,6 +46,7 @@ class SettingsController extends AbstractController
                 $aboutpic = "";
                 $pictures = ["about_picture_setting", "home_picture_setting"];
                 foreach ($pictures as $picture) {
+                    // Vérifion les input images présente dans nos paramètres si elles sont vides ou non
                     if (isset($_FILES[$picture]) && !empty($_FILES[$picture])) {
                         $img_name = $_FILES[$picture]['name'];
                         if (!empty($img_name)) {
@@ -55,6 +54,7 @@ class SettingsController extends AbstractController
                             $img_type = $_FILES[$picture]['type'];
                             $tmp_name = $_FILES[$picture]['tmp_name'];
                             $error = $_FILES[$picture]['error'];
+                            // Vérification des images
                             if ($img_size > 1024*1024*2) {
                                 $output = '{"response":"error", "message":"Cette image est trop volumineuse", "icon":"fas fa-exclamation"}';
                                 return new JsonResponse($output);
@@ -78,7 +78,11 @@ class SettingsController extends AbstractController
                     }
                 }
                 if (!empty($message) && !empty($tax) && !empty($title) && !empty($email) && !empty($aboutTitle) && !empty($abstract) && !empty($description)) {
+                    // Vérification de l'email
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    // Les données avec true en dernier son des valeurs uniques,
+                    // Ce sont des valeurs que le système renseigne qu'une seule fois
+                    // Une fois que ses données existent le système ne fera plus que des maj
                     $data = [
                         'welcome' => ["Message de bienvenue lors d'une réservation", $message, true],
                         'hometitle' => ["Grand titre de la page d'accueil", $title, true],
@@ -97,6 +101,7 @@ class SettingsController extends AbstractController
                         $postRep = $doctrine->getRepository(Posts::class);
                         $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
                         $em = $doctrine->getManager();
+                        // Vérification des données et insertions
                         if ($value[2] == true) {
                             $exist = $postRep->findOneBy(['type' => strtoupper($key)]);
                             if ($exist) {
@@ -112,12 +117,16 @@ class SettingsController extends AbstractController
                             }
                         } else if (empty($value[1])) {
                             continue;
+                        // Vérifions si la donnée dans notre boucle est une tax
+                        // Si elle est vérifions si elle est de type int, si elle n'est pas en coupe la boucle
                         } else if ($key == 'tax'){
                             if (!is_int($value[1])) {
                                 continue;
                             }
                         }
 
+                        // Vérifions si l'équipement ou le type que nous renseignons existe déjà
+                        // Si elle existe renvoyons une erreur avec un message
                         $exists = $value[1];
                         $postsExists = $postsRepExist->showPosts("*", "WHERE (type='EQUIPMENT' AND description = '$exists') OR (type='TYPE' AND description = '$exists')");
                         foreach ($postsExists as $postExist) {
@@ -137,6 +146,7 @@ class SettingsController extends AbstractController
                         $em->flush();
 
 
+                        // Insertion du type et de l'équipement
                         if ($key == "type") {
                             $notif = new Posts();
                             $notif->setUser($user);
@@ -161,6 +171,8 @@ class SettingsController extends AbstractController
                         $users = $userRep->findBy(["statut" => true, "account" => true]);
                         foreach ($users as $user) {
                             if ($user->getDeletedAt() == null && in_array('ROLE_HOST', $user->getRoles())) {
+                                // Récupération de l'email de l'administrateur
+                                // Envoie de l'email aux hôtes pour leur informer des nouvelles modifications
                                 $postsRep = $doctrine->getRepository(Posts::class);
                                 $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                                 $mail = $user->getEmail();
@@ -206,6 +218,7 @@ class SettingsController extends AbstractController
     }
 
 
+    // Barre de recherche des équipements et types 
     #[Route('/account/settings/search', name: 'account_settings_search')]
     public function search(Security $security, PostsRepository $postRep, PaginatorInterface $paginator, Request $request): Response
     {
@@ -252,6 +265,8 @@ class SettingsController extends AbstractController
 
 
 
+
+    // Retourne les logements signalés 
     #[Route('/account/settings/signal', name: 'account_settings_signal')]
     public function signal(ManagerRegistry $doctrine, Security $security, PostsRepository $postRep, PaginatorInterface $paginator, Request $request): Response
     {
@@ -306,6 +321,7 @@ class SettingsController extends AbstractController
     }
 
 
+    // Retourne les paramètres déjà renseignés sur les formulaire en value
     #[Route('/account/settings/show', name: 'account_settings_show')]
     public function show(ManagerRegistry $doctrine, Security $security)
     {
@@ -356,6 +372,7 @@ class SettingsController extends AbstractController
     }
 
 
+    // Inscription à la newsletter
     #[Route('/newsletter', name: 'register_newsletter')]
     public function newsletter(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
@@ -368,6 +385,7 @@ class SettingsController extends AbstractController
         if (!empty($email)) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
+                // Vérifions si l'adresse mail existe déjà
                 $postsRep = $doctrine->getRepository(Posts::class);
                 $posts = $postsRep->findBy(['description' => $email, 'type' => 'NEWSLETTER']);
                 foreach ($posts as $post) {
@@ -376,6 +394,7 @@ class SettingsController extends AbstractController
                         return new JsonResponse($output);
                     }
                 }
+                // Insertion en base de données si l'adresse mail n'existe pas 
                 $em = $doctrine->getManager();
                 $post = new Posts();
                 if ($auth) {
@@ -391,6 +410,7 @@ class SettingsController extends AbstractController
                 $em->flush();
 
 
+                // Email de confirmation à la newsletter
                 $postsRep = $doctrine->getRepository(Posts::class);
                 $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                 if ($posts) {
@@ -426,6 +446,7 @@ class SettingsController extends AbstractController
     }
 
 
+    // Mise à jour des types et équipements
     #[Route('/account/settings/update', name: 'account_settings_update')]
     public function update(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
@@ -453,6 +474,7 @@ class SettingsController extends AbstractController
                     $em->persist($findPost);
                     $em->flush();
 
+                        // Informons nos hôtes que des mises à jour ont été faite
                         $userRep = $doctrine->getRepository(Users::class);
                         $users = $userRep->findBy(["statut" => true, "account" => true]);
                         foreach ($users as $user) {
@@ -501,6 +523,7 @@ class SettingsController extends AbstractController
     }
 
 
+    // Suppression des types et équipements
     #[Route('/account/settings/delete', name: 'account_delete')]
     public function delete(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
@@ -526,6 +549,7 @@ class SettingsController extends AbstractController
             $em->persist($findPost);
             $em->flush();
 
+            // Informons nos hôtes que des mises à jour ont été faite
             $userRep = $doctrine->getRepository(Users::class);
             $users = $userRep->findBy(["statut" => true, "account" => true]);
             foreach ($users as $user) {
@@ -564,6 +588,8 @@ class SettingsController extends AbstractController
     }
 
 
+    // Suppression d'un compte
+    // Les comptes utilisateurs sont automatiquements et définitivements supprimés au bout d'un an
     #[Route('/account/delete', name: 'delete')]
     public function deleteAccount(ManagerRegistry $doctrine, Request $request, Security $security)
     {

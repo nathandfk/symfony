@@ -68,6 +68,7 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
 
+    // Annullation des réservations depuis l'application mobile
     public function update(int $id, String $statut, String $salt)
     {
         if ($salt == "_Z34azertNCVI3Y65514-_ddezERTEETAZbn----qse321ghbd_-ghdsrza23436d___") {
@@ -184,6 +185,7 @@ class ReservationRepository extends ServiceEntityRepository
         return $output;
     }
 
+    // Remboursement client
     public function stripeRefunds(string $payentIntent){
         $stripe = new \Stripe\StripeClient("sk_test_51GD6saG2KF2h4mZbuzmOm3C372M2rcRQYd3jsLcLsKxEMh6oEwwnsPHtfm62OvpeUwYikn3ha0Ja4gkoz8MHlv8600HSvfcksV");
         $stripe->refunds->create(['payment_intent' => $payentIntent]);
@@ -206,6 +208,7 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
 
+    // Affichage des historiques
     public function historical(bool $client = true, int $client_id = null, bool $host = false, int $host_id = null, int $searchByDwelling = null, $unavailable = false, $admin = false)
     {
         try {

@@ -25,10 +25,14 @@ use Symfony\Component\Security\Core\Security;
 
 class HistoricalController extends AbstractController
 {
+    // Requête API Platform pour l'application mobile
     public function __invoke($id, $statut, $salt, ReservationRepository $reservRep)
     {
         return $reservRep->update($id, $statut, $salt);
     }
+
+
+    // Affichage des historiques hôtes
     #[Route('/mon-compte/historical/host', name: 'compte_historical_host')]
     public function host(ManagerRegistry $doctrine, ReservationRepository $reservations, Request $request, Security $security, UsersRepository $dataUsers, DwellingRepository $dwelRep, PaginatorInterface $paginator)
     {
@@ -64,6 +68,7 @@ class HistoricalController extends AbstractController
 
 
 
+    // Affichage des historiques clients
     #[Route('/mon-compte/historical/client', name: 'compte_historical_client')]
     public function client(ManagerRegistry $doctrine, ReservationRepository $reservations, Request $request, Security $security, UsersRepository $dataUsers, DwellingRepository $dwelRep, PaginatorInterface $paginator)
     {
@@ -94,6 +99,8 @@ class HistoricalController extends AbstractController
     }
 
 
+
+    // Action au niveau des historiques, confirmation ou annulation
     #[Route('/mon-compte/historical/action', name: 'historical.action')]
     public function historicalAction(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer)
     {
@@ -119,7 +126,9 @@ class HistoricalController extends AbstractController
 
             if ($reservation) {
                 $reservationMeta = $reservationMetaRep->findOneBy(["reservation" => $reservation->getId(), "field" => "_payment_intent"]);
+                // Annulation par le client
                 if ($btn == "annuled") {
+                    // Vérifions si l'habitat réservé ou la date d'indisponibilité verrouillé par l'hôte correspond bien au critère d'annulation
                     if ($reservation->getStatut() == 'RESERVED' || $reservation->getStatut() == 'CONFIRMED' || $reservation->getStatut() == 'UNAVAILABLE') {
                         if ($reservation->getUser()->getId() == $user->getId()) {
                             $zone = new \DateTimeZone('Europe/Paris');
@@ -132,6 +141,7 @@ class HistoricalController extends AbstractController
                                     $em->persist($reservation);
                                     $em->flush();
 
+                                    // Envoie de mail de confirmation
                                     $postsRep = $doctrine->getRepository(Posts::class);
                                     $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                                     $firstName = $user->getFirstName();
@@ -166,7 +176,9 @@ class HistoricalController extends AbstractController
                             }
                         }
                     }
+                    // Annulation par l'hôte
                 } else if($btn == "annuled_by_host"){
+                    // Vérifions si l'habitat réservé ou la date d'indisponibilité verrouillé par l'hôte correspond bien au critère d'annulation
                     if ($reservation->getStatut() == 'RESERVED' || $reservation->getStatut() == 'CONFIRMED' || $reservation->getStatut() == 'UNAVAILABLE') {
                         if ($dwelling->getUser()->getId() == $user->getId()) {
                             $zone = new \DateTimeZone('Europe/Paris');
@@ -185,6 +197,7 @@ class HistoricalController extends AbstractController
                                         $em->flush();
                                         $userClient = $userRep->find($reservation->getUser()->getId());
 
+                                        // Récupération du mail admin et envoie de mail de confirmation aux clients
                                         $postsRep = $doctrine->getRepository(Posts::class);
                                         $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                                         $firstName = $userClient->getFirstName();
@@ -229,6 +242,7 @@ class HistoricalController extends AbstractController
                             $toDay = new DateTimeImmutable('now', $zone);
                             $time = strtotime($toDay->format('Y-m-d')) - strtotime($reservation->getStartDate()->format('Y-m-d'));
                             if ($time < 0) {
+                                // Modification du statut de la réservation
                                 $reservation->setStatut('CONFIRMED');
                                 $em->persist($reservation);
                                 $em->flush();

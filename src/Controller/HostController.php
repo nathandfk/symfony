@@ -25,11 +25,13 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class HostController extends AbstractController
 {
+    // Requête API Platform pour l'application mobile
     public function __invoke($id, $email, $salt, PostsRepository $postsRep)
     {
         return $postsRep->notification($id, $email, $salt);
     }
 
+    // Ajout d'une habitation en base de données
     #[Route('/mon-compte/hote', name: 'host')]
     public function host(Request $request, DataSite $dataSite, UserInterface $user, SluggerInterface $slugger, ManagerRegistry $doctrine, Security $security)
     {
@@ -40,12 +42,14 @@ class HostController extends AbstractController
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
 
+        // Créons le formulaire
         $dwelling = new Dwelling();
         $form = $this->createForm(DwellingType::class, $dwelling);
         $form->handleRequest($request);
         $getEmail = $user->getUserIdentifier();
         $dataSite = $dataSite->getDataUser($doctrine, $getEmail, 0);
 
+        // Vérifions que les données renseignées sont correctes
         if ($form->isSubmitted() && $form->isValid()) {
                 $dataDwellingMeta = [
                     "_animals" => $_POST['animals'],
@@ -88,6 +92,7 @@ class HostController extends AbstractController
                 } else if (in_array($_POST['animals'], $bool) == false || in_array($_POST['breakfast'], $bool) == false || in_array($_POST['water'], $bool) == false || in_array($_POST['eletricity'], $bool) == false || in_array($_POST['parking'], $bool) == false) {
                     $this->addFlash("error", "Une ou plusieurs données sont incorrectes 2.");
                 } else {
+                    // Vérifons nos images
                     if ($pictures) {
                         foreach ($pictures as $picture) {
                             $originalFilename = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
@@ -103,7 +108,7 @@ class HostController extends AbstractController
                         }
                     }
                     if (count($finalPictures) >= 4 && count($finalPictures) <= 10)  {
-
+                        // Insertion de nos données
                         $em = $doctrine->getManager();
                         $dwelling->setUser($dataSite);
                         $dwelling->setPictures($finalPictures);
@@ -122,7 +127,8 @@ class HostController extends AbstractController
                         $em->persist($dwelling);
                         $em->flush();
 
-
+                        // Insertion des métas données dans la seconde table Dwelling
+                        // Table imbriquée
                         foreach ($dataDwellingMeta as $key => $value) {
                             $dwellingMeta = new DwellingMeta();
                             $repository = $doctrine->getRepository(Dwelling::class);
@@ -137,6 +143,7 @@ class HostController extends AbstractController
                         $flash='';
                         $roles = [];
                         if (!in_array('ROLE_HOST', $auth->getRoles())) {
+                            // Modification du role de l'utilisateur si c'est pour sa 1ere fois
                             $em = $doctrine->getManager();
                             $repository = $doctrine->getRepository(Users::class);
                             $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
@@ -166,10 +173,11 @@ class HostController extends AbstractController
         ]);
     }
 
+    // Mise en indisponibilité d'un logement par l'hôte
     #[Route('/habition/not-disponible', name: 'unavailable')]
     public function unavailable( ManagerRegistry $doctrine, Security $security, ReservationRepository $reservation)
     {
-        
+        // Données utilisateur connecté
         $auth = $security->getUser();
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data) {
@@ -197,6 +205,7 @@ class HostController extends AbstractController
                             return new JsonResponse('{"response":"error", "message":"Les dates sélectionnées sont occupées", "icon":"fas fa-exclamation", "redirect":""}');
                         }
                     }
+                    // Insertion des données avec un statut UNAVAILABLE pour indisponible
                     $reservation = new Reservation();
                     $em = $doctrine->getManager();
 
@@ -222,6 +231,7 @@ class HostController extends AbstractController
         return new JsonResponse($output);
     }
 
+    // Fonction de vérification des dates
     function isValidDate($dateString){
         $regEx = "/^\d{4}-\d{2}-\d{2}$/";
         if (!preg_match($regEx, $dateString)) {
@@ -237,6 +247,7 @@ class HostController extends AbstractController
     }
 
 
+    // Fonction d'affichage de toutes les dates, de arrivée à départ
     function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' ) {
 
         $dates = array();

@@ -21,16 +21,14 @@
             {% set pictures = dwelling.pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
             <td class="w-7r h-7r"><img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"></td>
             <td>{{ dwelling.title }}</td>
-            <td>{{ dwelling.price }}</td>
+            <td class="ff-m c1 size20 w-7r">{{ dwelling.price }} €</td>
             <td>{{ dwelling.city }}</td>
             <td>{{ dwelling.state }}</td>
             {% if dwelling.deleted_at %}<td class="ff-m size16 c2">Archivé</td>{% else %}<td class="ff-m size16 c1">Actif</td>{% endif %}
             {% set productUrl = dwelling.title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
             <td class="d-flex gap-1 w-max-content m-auto ai-center w-100">
                 {% if app.user %}
-                    {# {% if app.user.id == dwelling.user_id %} #}
                     <a href="{{ path('edit_dwelling', {id: dwelling.id}) }}" class="click click-brown">Modifier</a>
-                    {# {% endif %} #}
                     <a href='{{ path('app_habitation', {'slug': productUrl, 'id': dwelling.id}) | lower }}' class="click click-success">Voir</a>
                     {% if app.user.id == dwelling.user_id %}
                         {% if dwelling.deleted_at == null %}

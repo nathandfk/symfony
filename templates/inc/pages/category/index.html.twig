@@ -31,8 +31,8 @@
                             </div>
                             <div>
                                 <label>Type</label>
-                                
                                 <select name="type">
+                                    <option value="">Choisir le type</option>
                                     {% for type in types %}
                                     <option value="{{ type.id }}" {% if app.request.query.get("type") == type.id %}selected="selected"{% endif %}>{{ type.description }}</option>
                                     {% endfor %}
@@ -45,7 +45,7 @@
                 <div class="filter_range">
                     <label>{{ value }}</label>
                     <input type="range" id="price_range" name="price_range" data-link="{{ path('app_habitations') }}"
-                    min="{{ min }}" max="{{ max }}" value="{{ value }}" step="10">
+                    min="{{ min }}" max="{{ max }}" value="{{ value }}" step="1">
                 </div>
             </div>
             {% endif %}

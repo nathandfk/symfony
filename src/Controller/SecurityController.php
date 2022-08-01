@@ -18,6 +18,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    // Déconnexion d'un utilisateur
     #[Route(path: '/logout', name: 'logout')]
     public function logout()
     {
@@ -25,6 +26,7 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
+    // Création d'une route et connexion d'un utilisateur
     #[Route(path: '/connexion', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils, ManagerRegistry $doctrine, Security $security): Response
     {

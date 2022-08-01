@@ -69,6 +69,8 @@ class DwellingRepository extends ServiceEntityRepository
         }
     }
 
+
+    // Fonction qui retourne toutes les données habitations
     public function showDataDwellings(int $id = null, string $start_date = null, string $end_date = null, string $place = null, int $maxPeople = null, $limitPrice = null, int $filterType = null, bool $orderTitle = null, $orderId = null)
     {
         if (!is_null($place)) {
@@ -77,42 +79,35 @@ class DwellingRepository extends ServiceEntityRepository
                 $place = $ex[0];
             }
         }
-        // $where = "";
-        // $where = !is_null($id) && !is_null($place) ? "WHERE id = $id AND city LIKE '%$place%'" : $where;
-        // $where = !is_null($place) && is_null($id) ? "WHERE city LIKE '%$place%'" : $where;
-        // $where = is_null($place) && !is_null($id) ? "WHERE id = $id" : $where;
-        // !is_null($start_date) && !is_null($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = "";
-
-        $where = !is_null($id) || !is_null($start_date) || !is_null($id) || !is_null($end_date)
-        || !is_null($place) || !is_null($maxPeople) || !is_null($limitPrice)
-        || !is_null($filterType) ? "WHERE " : "";
+        $where = !is_null($id) || !is_null($filterType)
+        || !is_null($place) || !is_null($limitPrice) ? "WHERE " : "";
 
         $element = "";
 
         $element .= !is_null($id) ? "id = $id" : "";
-
-        $element .= !is_null($id) && !is_null($place) ? " AND city LIKE '%$place%' " : "";
-        $element .= !is_null($place) && is_null($id) ? "city LIKE '%$place%'" : "";
-
-        $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) ? " AND ".$limitPrice." " : "";
-        $element .= is_null($id) && is_null($place) && !is_null($limitPrice) ? $limitPrice." " : "";
-        $element .= (is_null($id) || is_null($place)) && !is_null($limitPrice) ? " AND ".$limitPrice." " : "";
-
-        $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) && !is_null($filterType) ? " AND `type_id`=".$filterType." " : "";
-        $element .= is_null($id) && is_null($place) && is_null($limitPrice) && !is_null($filterType) ? " `type_id`=".$filterType : "";
-        $element .= (is_null($id) || is_null($place) || is_null($limitPrice)) && !is_null($filterType) ? " AND `type_id`=".$filterType." " : "";
-
-        $orderId = $orderId ? "ASC" : "DESC";
-        $element .= !is_null($orderId) ? " ORDER BY id $orderId " : "";
-
-        if (!is_null($orderTitle) && is_bool($orderTitle)) {
-        $order = $orderTitle ? "ASC" : "DESC";
-        $element .= !is_null($id) && !is_null($place) && !is_null($limitPrice) && !is_null($filterType) && !is_null($orderTitle) ? " ORDER BY title $order " : "";
-        $element .= (is_null($id) || is_null($place) || is_null($limitPrice) || is_null($filterType)) && !is_null($orderTitle) ? " ORDER BY title $order " : "";
-        $element .= is_null($id) && is_null($place) && is_null($limitPrice) && is_null($filterType) && !is_null($orderTitle) ? " ORDER BY title $order " : "";
+        if (!is_null($place)) {
+            $element .= !empty($element) ? " AND city LIKE '%$place%'" : "city LIKE '%$place%'";
         }
-
+        if (!is_null($limitPrice)) {
+            $element .= !empty($element) ? " AND $limitPrice"  : $limitPrice;
+        }
+        if (!is_null($filterType)) {
+            $element .= !empty($element) ? " AND `type_id`=".$filterType  : "`type_id`=".$filterType;
+        }
+        
+        $element .= !is_null($orderId) || !is_null($orderTitle) ? " ORDER BY " : "";
+        if (!is_null($orderId)) {
+            $orderId = $orderId ? "ASC" : "DESC";
+            $element .= !is_null($orderId) ? " id $orderId " : "";
+        }
+        $element .= !is_null($orderId) ? ", " : ""; 
+        if (!is_null($orderTitle)) {
+            $orderTitle = $orderTitle ? "ASC" : "DESC";
+            $element .= !is_null($orderTitle) ? " title $orderTitle " : "";
+        }
+        
         $resultDwellings = $this->showDwellings("*", $where.$element);
+
         if (!is_null($start_date) && !is_null($end_date)) {
             $range = $this->date_range("$start_date", "$end_date");
             $date = "";
@@ -263,6 +258,7 @@ class DwellingRepository extends ServiceEntityRepository
         return $finalResult;
     }
 
+    // Les différentes dates entre une période à une autre
     function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' ) {
 
         $dates = array();

@@ -16,6 +16,8 @@ use Symfony\Component\Security\Core\Security;
 
 class MessageController extends AbstractController
 {
+
+    // Création route et Affichage des messages d'un utilisateur
     #[Route('/mon-compte/message/selected', name: 'message_selected')]
     public function selected(ManagerRegistry $doctrine, Security $security, MessageRepository $messages)
     {   
@@ -30,7 +32,6 @@ class MessageController extends AbstractController
             $senderId = $repository->findOneBy(["email" => $auth->getUserIdentifier()]);
             $senderId = $senderId->getId();
 
-            // $selected = $messages->showAllMessages("msg_id, sender_id, recipient_id, message, m.added_at, u1.first_name as fn1, u1.last_name as ln1, u2.first_name as fn2, u2.last_name as ln2", "WHERE m.sender_id = 1 OR m.recipient_id = 1 GROUP BY sender_id OR recipient_id ORDER BY m.id ASC");
             $selected = $messages->showAllMessages("sender_id, recipient_id, message, m.added_at, u1.first_name as fn1, u1.last_name as ln1, u2.first_name as fn2, u2.last_name as ln2", "WHERE m.sender_id = $senderId OR m.recipient_id = $senderId ORDER BY m.id DESC");
             
             $array = [];
@@ -53,6 +54,7 @@ class MessageController extends AbstractController
 
     }
 
+    // Détails d'une conversation entre un client et un hôte
     #[Route('/mon-compte/message/details', name: 'message_details')]
     public function details(ManagerRegistry $doctrine, Security $security, MessageRepository $messages)
     {   
@@ -81,6 +83,9 @@ class MessageController extends AbstractController
         return $this->render('inc/modules/messages/details.html.twig', $response);
 
     }
+
+
+    // Envoie de message d'un utilisateur à un autre
     #[Route('/mon-compte/message/send', name: 'message_send')]
     public function send(Request $request, ManagerRegistry $doctrine, Security $security, MessageRepository $messages)
     {   
@@ -98,6 +103,7 @@ class MessageController extends AbstractController
             $recipientId = $repository->findOneBy(["id" => $recipient]);
             $senderId = $repository->findOneBy(["email" => $auth->getUserIdentifier()]);
 
+            // Insertion en base de données
             $em = $doctrine->getManager();
             $messages = new Message();
             $messages->setSender($senderId);

@@ -94,7 +94,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 150)]
     #[Assert\NotBlank()]
     #[Assert\Email()]
-    #[Assert\Regex("/^[A-Za-z0-9.-_]+@([A-Za-z0-9]+\.)+[A-Za-z]{2,4}$/")]
+    #[Assert\Regex("/^[A-Za-z0-9.-]+@([A-Za-z0-9]+\.)+[A-Za-z]{2,4}$/")]
     private $email;
 
     #[ORM\Column(type: 'string', length: 25, nullable: true)]

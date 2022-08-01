@@ -149,7 +149,6 @@
     .product-lastline-display {
         grid-template: auto/1fr;
     }
-    
 }
 @media screen and (max-height: 600px) {
     .responsive-menu > ul {

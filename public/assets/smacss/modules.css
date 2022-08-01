@@ -556,6 +556,9 @@
 .card-pic-dwelling{
     position: relative;
 }
+.inner-pic{
+    flex-wrap: wrap;
+}
 
 /* Menu */
 .responsive-menu{

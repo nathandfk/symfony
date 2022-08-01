@@ -22,10 +22,13 @@ use Symfony\Component\Security\Core\Security;
 
 class DwellingController extends AbstractController
 {
+    // Insertion d'un commentaire depuis l'application AtypikHouse
     #[Route('/api/comment/{id}', name: 'api_comment', methods:['POST'])]
     public function app_comment(ManagerRegistry $doctrine)
     {
         $data = json_decode(file_get_contents('php://input'), true);
+
+        // Si la variable $data est vide retournons une erreur en format JSON
         if (!$data) {
             return new JsonResponse('{"response" => "error", "message" => "Accès refusé"}');
         }
@@ -34,13 +37,21 @@ class DwellingController extends AbstractController
         $comment = $data['comment'];
         $salt = $data['salt'];
         $output = "{'response' => 'error', 'message' => 'Aucune clé'}";
+
+        // Vérifions la clé salt que l'application a envoyé si elle concorde
         if ($salt == "_Z34azertNCVI3Y65514-_ddezERTEETAZbn----qse321ghbd_-ghdsrza23436d___") {
+
+            // Vérifions si le commentaire envoyé est vide avant l'insertion
             if (!empty($comment)) {
+                // Récupérons les données utilisateurs de l'utilisateur qui s'est connecté sur l'application
                 $userRep = $doctrine->getRepository(Users::class);
                 $user = $userRep->findOneBy(['email' => $email]);
                 if ($user) {
                     $reservRep = $doctrine->getRepository(Reservation::class);
                     $reservation = $reservRep->find($id);
+
+
+                    // Vérifions si le logement à commenter a un statut CONFIRMED
                     if ($reservation->getStatut() == "CONFIRMED") {
                         $date = new DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
                         if ((strtotime($date->format('Y-m-d')) - strtotime($reservation->getStartDate()->format('Y-m-d'))) >= 0) {
@@ -48,6 +59,7 @@ class DwellingController extends AbstractController
                             $posts = $postsRep->findBy(['user' => $user->getId(), 'dwelling' => $reservation->getDwelling()->getId(), 'type' => 'COMMENTS', 'number' => $reservation->getId()]);
                             
                             if (!$posts) {
+                                // Insérons le commentaire et renvoyons lui une réponse
                                 $postAdd = new Posts();
                                 $em = $doctrine->getManager();
                                 $postAdd->setUser($user);
@@ -69,10 +81,14 @@ class DwellingController extends AbstractController
         return new JsonResponse($output);
     }
 
+    // Insertion d'un logement dans les favoris
     #[Route('/dwelling/add-favorite', name: 'dwelling_add_favorite')]
     public function favorite(ReservationRepository $reservations, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security): Response
     {
+        // Utilisateur connecté
         $auth = $security->getUser();
+
+        // Récupérons les données JSON envoyées
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data) {
             return $this->redirectToRoute('app_index');
@@ -89,14 +105,17 @@ class DwellingController extends AbstractController
 
 
                 if ($user && $dwel) {
+                    // Récupérons les données de la table POST du logement que l'utilisateur connecté souhaite ajouter
                     $postsRep = $doctrine->getRepository(Posts::class);
                     $postData = $postsRep->findBy(['user' => $user->getId(), 'type' => 'FAVORITE', 'dwelling' => $dwel->getId()]);
 
+                    // Si ce logement existe retournons lui une erreur avec un messsage
                     if ($postData) {
                         $output = '{"response":"error", "message":"Ce logement fait déjà parti de vos favoris", "icon":"fas fa-exclamation"}';
                         return new JsonResponse($output);
                     }
                     
+                    // Insertion d'un logement dans les Favoris
                     $em = $doctrine->getManager();
                     $posts = new Posts();
                     $posts->setUser($user);
@@ -123,17 +142,24 @@ class DwellingController extends AbstractController
     }
 
 
+    // Ajout des signalements des habitations
     #[Route('/dwelling/add-signal', name: 'dwelling_add_signal')]
     public function signal(MailerInterface $mailer, ManagerRegistry $doctrine, Security $security): Response
     {
+        // Données utilisateur connecté
         $auth = $security->getUser();
+
+        // Données JSON
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data) {
             return $this->redirectToRoute('app_index');
         }
+        // Si l'utilisateur est bien connecté
         if ($auth) {
             $id = $data['id'];
             if (!empty($id)) {
+
+                // Récupérons toutes les données de l'utilisateur connecté
                 $userRep = $doctrine->getRepository(Users::class);
                 $user = $userRep->findOneBy(['email' => $auth->getUserIdentifier()]);
 
@@ -147,6 +173,7 @@ class DwellingController extends AbstractController
                     $postData = $postsRep->findBy(['user' => $user->getId(), 'dwelling' => $dwel->getId(), 'type' => 'SIGNAL', 'statut' => 'IN_PROGRESS']);
                     $check = $postsRep->findBy(['user' => $user->getId(), 'type' => 'SIGNAL', 'statut' => 'IN_PROGRESS']);
 
+                    // Vérifions si le signalement n'existe pas déjà et n'est toujours pas traité
                     if ($postData) {
                         if (count($check) >= 10) {
                             $output = '{"response":"error", "message":"Nous avons récemment reçu plusieurs de vos signalements. Veuillez attendre que certains soient traiter par l\'administrateur", "icon":"fas fa-exclamation"}';
@@ -156,6 +183,7 @@ class DwellingController extends AbstractController
                         return new JsonResponse($output);
                     }
                     
+                    // Insertion du signalement dans notre base de données
                     $em = $doctrine->getManager();
                     $posts = new Posts();
                     $posts->setUser($user);
@@ -168,9 +196,12 @@ class DwellingController extends AbstractController
                     $em->persist($posts);
                     $em->flush();
 
+                    // Récupération du mail administrateur
                         $postsRep = $doctrine->getRepository(Posts::class);
                         $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                         if ($posts) {
+
+                            // Envoyons un mail de confirmation à l'utilisateur pour son signalement
                             foreach ($posts as $post) {
                                 $first = $user->getFirstName();
                                 $last = $user->getLastName();
@@ -213,7 +244,7 @@ class DwellingController extends AbstractController
     }
 
 
-
+    // Fermeture ou la réouverture d'un signalement
     #[Route('/dwelling/closed-signal', name: 'dwelling_closed_signal')]
     public function closedSignal(MailerInterface $mailer, ManagerRegistry $doctrine, Security $security): Response
     {

@@ -8,19 +8,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductControllerTest extends WebTestCase {
 
-    public function testArticlePage() {
+    public function testDwellingPage() {
         $client = static::createClient();
-        $client->request('GET', '/article');
+        $client->request('GET', '/habitations');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
-    public function testH2ArticlePage()  {
+    public function testH1DwellingPage()  {
         $client = static::createClient();
-        $client->request('GET', '/article');
-        $this->assertSelectorTextContains('h2', 'Entrez un article');
+        $client->request('GET', '/habitations');
+        $this->assertSelectorTextContains('h1', 'LAISSEZ-VOUS GUIDER');
     }
-    public function testArticleFormExist()  {
+    public function testDwellingFormExist()  {
         $client = static::createClient();
-        $client->request('GET', '/article');
+        $client->request('GET', '/mon-compte/hote');
         $this->assertSelectorExists("form", "Success");
     }
 }

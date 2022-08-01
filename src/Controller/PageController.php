@@ -19,6 +19,7 @@ use Symfony\Component\Security\Core\Security;
 
 class PageController extends AbstractController
 {
+    // Création de route et envoie des messages de la page contact
     #[Route('/contact', name: 'contact')]
     public function contact(ManagerRegistry $doctrine, Security $security, MailerInterface $mailer): Response
     {
@@ -79,6 +80,7 @@ class PageController extends AbstractController
                             $user = $userRep->findOneBy(['email' => $auth->getUserIdentifier()]);
                             $post->setUser($user);
                         }
+                        // Insertion en base de données du message
                         $post->setType("CONTACT");
                         $post->setTitle($object);
                         $abstract = "$firstName, $lastName";
@@ -88,6 +90,7 @@ class PageController extends AbstractController
                         $em->persist($post);
                         $em->flush();
                         $this->addFlash('success', "Nous avons bien reçu votre message.");
+                        // Confirmation de mail
                         if ($posts) {
                             foreach ($posts as $post) {
                                 $email1 = (new Email())

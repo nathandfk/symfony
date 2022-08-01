@@ -26,6 +26,7 @@ use Symfony\Component\Security\Core\Security;
 
 class ProductController extends AbstractController
 {
+    // Affichage des détails d'un logement en fonction de son identifiant ID
     #[Route('/habitation/{slug}/{id}', name: 'app_habitation')]
     public function habitation(string $slug, int $id, DwellingRepository $dwelRep, ReservationRepository $reservRep, Calendar $calendarDate, ManagerRegistry $doctrine, Security $security, MailerInterface $mailer): Response
     {
@@ -43,6 +44,8 @@ class ProductController extends AbstractController
                     'Aucune réservation trouvée avec cet id '.$id
                 );
             }
+            // Modification du statut IN_PROGRESS en RESERVED après une commande réalisée avec succès
+            // Le prochain statut est CONFIRMED seul l'hôte du logement peut l'attribuer 
             $reservation->setStatut('RESERVED');
             $reservation->setReservedAt(new DateTimeImmutable("now", new DateTimeZone("Europe/Paris")));
             $reservation->setUpdatedAt(new DateTimeImmutable("now", new DateTimeZone("Europe/Paris")));
@@ -65,6 +68,7 @@ class ProductController extends AbstractController
                 $userClientId = $element[14];
                 $city = $element[12];
                 
+                // Création d'une conversation en ajoutant dans la messagerie du client un message de confirmation
                 $message = $welcome->getDescription();
                 $message = str_replace("_firstname_", $firstname, $message);
                 $message = str_replace("_lastname_", $lastname, $message);
@@ -98,6 +102,8 @@ class ProductController extends AbstractController
                 $nameHost = $users->getFirstName();
                 $emailUser = $email;
                 $emailHost = $users->getEmail();
+
+                // Envoie des mails au client et à l'hôte
                 if ($posts) {
                     foreach ($posts as $post) {
                         $emailHost = (new Email())
@@ -162,6 +168,7 @@ class ProductController extends AbstractController
                 }
             }
         }
+        
         $calendar = $calendarDate->calendar();
         $calendarReset = !empty($finalDateNotDisponible) ? $calendarDate->calendar($finalDateNotDisponible, true) : $calendarDate->calendar();
         $likes = $comments = false;
@@ -170,6 +177,7 @@ class ProductController extends AbstractController
             $userTable = $doctrine->getRepository(Users::class);
             $user = $userTable->findOneBy(['email' => $auth->getUserIdentifier()]);
 
+            // Vérifier si l'utilisateur n'a pas encore commenté ou apprécié un logement
             $reservationTable = $doctrine->getRepository(Reservation::class);
             $data = $reservationTable->findOneBy(['user' => $user->getId(), 'dwelling' => $id, 'statut' => 'CONFIRMED']);
 
@@ -182,6 +190,7 @@ class ProductController extends AbstractController
                 $postsLike = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'LIKES', 'number' => $data->getId()]);
                 $postsComments = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'COMMENTS', 'number' => $data->getId()]);
                 
+                // Affichage du formulaire de commentaire et d'appréciation si une réservation est arrivé à son jour ou est passé
                 if ((strtotime($new->format('Y-m-d')) - $old) >= 0) {
                     $likes = $comments = true;
                 } else {
@@ -286,6 +295,8 @@ class ProductController extends AbstractController
         return true;
     }
 
+
+    // Création d'un intent de paiement Stripe
     public function create($totalPrice, $title, $user_id, $product_id){
         // This is your test secret API key.
         \Stripe\Stripe::setApiKey('sk_test_51GD6saG2KF2h4mZbuzmOm3C372M2rcRQYd3jsLcLsKxEMh6oEwwnsPHtfm62OvpeUwYikn3ha0Ja4gkoz8MHlv8600HSvfcksV');
@@ -325,6 +336,8 @@ class ProductController extends AbstractController
         return $output;
     }
 
+
+    // Création de route et envoie des données de réservation par get
     #[Route('/checkout/paiement/{id}/{arrival}/{departure}/{adults}/{childrens}/{babies}/{animals}', name: 'app_checkout_paiement')]
     public function paiement(int $id, string $arrival, string $departure, string $adults, string $childrens, string $babies, string $animals, ReservationRepository $reservation, ManagerRegistry $doctrine, DwellingRepository $dwelRep, Security $security)
     {
@@ -334,10 +347,15 @@ class ProductController extends AbstractController
         $countBabies = $babies != "ND" ? $babies : 0;
         $totalTravelers = intval($countAnimals)+intval($countChildrens)+intval($countAdults)+intval($countBabies);
         $security = $security->getUser();
+
+        // Vérifions si l'utilisateur s'est authentifié
         if ($security) {
             $userAuth = $security->getUserIdentifier();
+
+            // Vérifions si les dates sont correctes, au bon format yyyy-mm-dd
             if ($this->isValidDate($arrival) && $this->isValidDate($departure)) {
                 
+                // Définissons nos variables avant envoie
                 /* Id User Connected */
                 $repository = $doctrine->getRepository(Users::class);
                 $users = $repository->findOneBy(array("email" => $userAuth));
@@ -374,10 +392,12 @@ class ProductController extends AbstractController
                 }
                 $countDay = intval($countDay)-1;
                 
+                // Récupération le pourcentage de nos frais de service depuis la base de données 
                 $postRep = $doctrine->getRepository(Posts::class);
                 $tax = $postRep->findBy(['type' => strtoupper("tax")]);
                 $tax_service = $tax ? intval($tax[0]->getDescription()) : 10;
 
+                // Calcul des prix avec la fonction priceOfClient
                 $totalPrice = $this->priceOfClient($price, intval($countDay), $tax_service, true, false, false);
                 $insertTotalPrice = $this->priceOfClient($price, intval($countDay), $tax_service, false, false, false);
                 $subTotalPrice = $this->priceOfClient($price, intval($countDay), $tax_service, false, true, false);
@@ -385,6 +405,7 @@ class ProductController extends AbstractController
                 $output = $this->create($totalPrice, $product_title, $user_id, $product_id);
                 
                 if ($output) {
+                    // Envoyons nos données à la fonction insertReservation pour insertion
                     $clientSecret = $output['clientSecret'];
                     $paymentIntent = explode('_secret_', $clientSecret);
                     $this->insertReservation($doctrine, $id, "IN_PROGRESS", $arrival, $departure, $paymentIntent[0], $clientSecret, $adults, $childrens, $babies, $animals, $insertTotalPrice, $countDay, $subTotalPrice, $taxService, json_encode($dwellings));
@@ -404,6 +425,7 @@ class ProductController extends AbstractController
 
 
 
+    // Calcul du prix total, tax de services en fonction du pourcentage et du sous total
     public function priceOfClient($unitPrice, $nbDay, $tax_service, bool $stripe, bool $showSubTotal, bool $showTax){
         $subTotal = $stripe ? intval($unitPrice) * intval($nbDay) * 100 : intval($unitPrice) * intval($nbDay);
         $tax = ($subTotal * intval($tax_service)) / 100;
@@ -419,7 +441,7 @@ class ProductController extends AbstractController
     }
 
 
-
+    // Insertion des données de réservation
     public function insertReservation($doctrine, $dwelling_id, $statut, $arrival, $departure, $paymentIntent, $clientSecret, $adults, $childrens, $babies, $animals, $totalPrice, $countDay, $subTotalPrice, $taxService, $dataDwelling)
     {
         $dataPayment = ["_payment_intent" => $paymentIntent, "_client_secret" => $clientSecret, "_adults" => $adults, "_childrens" => $childrens, "_babies" => $babies, "_animals" => $animals, "_price_of_reservation" => $totalPrice,
@@ -446,6 +468,8 @@ class ProductController extends AbstractController
         $repository = $doctrine->getRepository(Reservation::class);
         $reservationData = $repository->find($last_id);
 
+        // Table imbriquée
+        // Données meta
         foreach ($dataPayment as $oneData => $value) {
             $insertReserMeta = new ReservationMeta();
             $insertReserMeta->setReservation($reservationData);

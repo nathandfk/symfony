@@ -3,11 +3,8 @@
 namespace App\Controller;
 
 use App\Data\Calendar;
-use App\Entity\Dwelling;
-use App\Entity\DwellingMeta;
 use App\Entity\Posts;
 use App\Repository\DwellingRepository;
-use App\Repository\ReservationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,41 +14,50 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class CategoryController extends AbstractController
 {
+    // Affichage des habitions du site
     #[Route('/habitations', name: 'app_habitations')]
-    public function index(ManagerRegistry $doctrine, Request $request, DwellingRepository $dwelRep, PaginatorInterface $paginator, ReservationRepository $reservations): Response
+    public function index(ManagerRegistry $doctrine, Request $request, DwellingRepository $dwelRep, PaginatorInterface $paginator): Response
     {
-        // var_dump($reservations->historical());
+        // Récupération du calendrier
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
 
-        $range = $dwelRep->showDwellings("MIN(price) as min, MAX(price) as max", "");
+        // Récupérons le prix minimal et maximal en fonction du statut du logement ou si le logement a été supprimé
+        $range = $dwelRep->showDwellings("MIN(price) as min, MAX(price) as max", "WHERE activate=true AND deleted_at IS NULL");
         $min = $range[0]['min'];
         $max = $range[0]['max'];
-        $value = isset($_GET['price']) && !empty($_GET['price']) ? $_GET['price'] : $range[0]['max'];
         
-        $priceRange = $value<=$max && $min >= 0 ? "price BETWEEN $min AND $value" : null;
+        // Initialisation d'une valeur
+        $value = isset($_GET['price']) && !empty($_GET['price']) ? $_GET['price'] : $max;
 
-        $typeId = isset($_GET['type']) && !empty($_GET['type']) && is_int($_GET['type'])
+        // Requête a envoyé pour l'affichage des prix d'une fourchette donnée
+        $priceRange = $value<=$max && $min <= $value ? "price BETWEEN $min AND $value" : null;
+
+        $typeId = isset($_GET['type']) && !empty($_GET['type'])
         ? $_GET['type'] : null;
         
-        $order = null;
         $order = isset($_GET['order']) && !empty($_GET['order']) && ($_GET['order'] == 'toc')
-            ? TRUE : $order;
-        $order = isset($_GET['order']) && !empty($_GET['order']) && ($_GET['order'] == 'tod')
-            ? FALSE : $order;
+            ? TRUE : null;
         
+        // Récupérons les données type se trouvant dans la table posts 
         $repository = $doctrine->getRepository(Posts::class);
-        $type = $repository->findBy(['type' => $typeId, 'type' => 'TYPE']);
+        $type = $repository->findOneBy(['id' => $typeId, 'type' => 'TYPE']);
         $types = $repository->findBy(['type' => 'TYPE']);
 
         $filterType = $type ? $typeId : null;
 
+        // Données des habitats en fonction des requêtes précédentes 
         $dataDwellings = $dwelRep->showDataDwellings(null, null, null, null, null, $priceRange, $filterType, $order);
+
+        // Pagination de nos données
         $dataDwellings = $paginator->paginate(
             $dataDwellings,
             $request->query->getInt('page', 1),
             12);
+
         $price = ($min >= 0 && $max>=$value) ? $value : $max; 
+
+        // Retournons nos valeurs
         return $this->render('inc/pages/category/index.html.twig', [
             'carousel' => false,
             'title' => 'Laissez-vous guider',

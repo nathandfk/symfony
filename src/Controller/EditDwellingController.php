@@ -19,13 +19,16 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class EditDwellingController extends AbstractController
 {
+    // Récupération pour affichage et Modification des données d'habitations
     #[Route('/mon-compte/hote/{id}', name: 'edit_dwelling')]
     public function editDwelling(Request $request, int $id, ManagerRegistry $doctrine, Security $security, SluggerInterface $slugger)
     {
+        // Création d'un formulaire
         $dwelling = new Dwelling();
         $form = $this->createForm(DwellingType::class, $dwelling);
         $form->handleRequest($request);
 
+        // Récupération du calendrier
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
 
@@ -56,7 +59,7 @@ class EditDwellingController extends AbstractController
             }
         }
 
-
+        // Vérifions si notre formulaire est correctement rensigné
         if ($form->isSubmitted() && $form->isValid()) {
 
                 $dataDwellingMeta = [
@@ -103,9 +106,10 @@ class EditDwellingController extends AbstractController
                 } else if (in_array($_POST['animals'], $bool) == false || in_array($_POST['breakfast'], $bool) == false || in_array($_POST['water'], $bool) == false || in_array($_POST['eletricity'], $bool) == false || in_array($_POST['parking'], $bool) == false) {
                     $this->addFlash("error", "Une ou plusieurs données sont incorrectes 2.");
                 } else {
+                    // Vérification des images et ajout des images dans le dossier dédier
                     if ($pictures) {
                         foreach ($pictures as $picture) {
-                            $originalFilename = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
+                        $originalFilename = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
                         $safeFilename = $slugger->slug($originalFilename);
                         $newFilename = $safeFilename.'-'.uniqid().'.'.$picture->guessExtension();
                             try {
@@ -119,7 +123,9 @@ class EditDwellingController extends AbstractController
                         array_push($finalPictures, $newFilename);
                         }
                     }
+                    // Vérifions si le nombre d'image est respecté
                     if (count($finalPictures) >= 4 && count($finalPictures) <= 10)  {
+                        // Insertion des données dans la base de données
                         $em = $doctrine->getManager();
                         $dwel->setUser($userData);
                         $dwel->setPictures($finalPictures);
@@ -138,6 +144,7 @@ class EditDwellingController extends AbstractController
                         $dwel->setComplAddress($dwelling->getComplAddress());
                         $dwel->setCity($dwelling->getCity());
 
+                        // Insertion des données pays et type en forme Entité
                         $postsRep = $doctrine->getRepository(Posts::class);
                         $countryRep = $doctrine->getRepository(Country::class);
                         $country = $countryRep->find($dwelling->getCountry());
@@ -173,10 +180,6 @@ class EditDwellingController extends AbstractController
             } else if($form->isSubmitted() && !$form->isValid()) {
                 $this->addFlash("error", "Une ou plusieurs erreurs se sont produites, il pourrait s'agir des champs mal renseignés");
             }
-
-
-
-
 
 
         $dwelRep = $doctrine->getRepository(Dwelling::class);

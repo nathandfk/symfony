@@ -36,11 +36,13 @@ use Symfony\Component\Mailer\MailerInterface;
 class UsersController extends AbstractController
 {
     
+    // Requête API Platform pour l'application mobile
     public function __invoke(Request $request, UsersRepository $usersRepository)
     {
         return $usersRepository->findByEmail($request->get('email'), $request->get('profil'), $request->get('salt'));
     }
 
+    // Création de route et Incription
     #[Route('/inscription', name: 'register')]
     public function register(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security, MailerInterface $mailer): Response
     {
@@ -49,6 +51,9 @@ class UsersController extends AbstractController
             return $this->redirectToRoute('app_index');
         }
 
+
+
+        // Création d'un formaulaire
         $user = new Users();
         $form = $this->createForm(UsersType::class, $user);
         $form->handleRequest($request);
@@ -56,6 +61,7 @@ class UsersController extends AbstractController
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
 
+        // Vérifions si les données renseignées sont correctes
         if ($form->isSubmitted() && $form->isValid()) {
             $repository = $doctrine->getRepository(Country::class);
             $country = $repository->findOneBy(["id" => $user->getCountry()]);
@@ -72,6 +78,8 @@ class UsersController extends AbstractController
                 $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                 $firstName = $user->getFirstName();
                 $emailUser = $user->getEmail();
+                // Envoie d'email de confirmation avec un lien d'activation
+                // Lien expirant sous 24h
                 $link = "https://f2i-dev14-nd.nathandfk.fr/membre/compte?key=".$activate."&email=".$user->getEmail();
                 if ($posts) {
                     foreach ($posts as $post) {
@@ -112,8 +120,9 @@ class UsersController extends AbstractController
         ]);
     }
 
+    // Création de route et activation d'un compte utilisateur à travers le lien qu'il aura reçu
     #[Route('/membre/compte', name: 'activate')]
-    public function activate(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security)
+    public function activate(ManagerRegistry $doctrine, Security $security)
     {
         $security = $security->getUser();
         if (!isset($_GET['key']) || empty($_GET['key']) || !isset($_GET['email']) || empty($_GET['email'])) {
@@ -138,6 +147,7 @@ class UsersController extends AbstractController
 
     }
 
+    // Réinitialisation d'un mot de passe
     #[Route('/membre/reinit', name: 'forgot')]
     public function forgot(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, Security $security, MailerInterface $mailer): Response
     {
@@ -156,18 +166,24 @@ class UsersController extends AbstractController
             'calendar' => $calendar,
         ];
         $em = $doctrine->getManager();
+        // Vérifions si tous nos get sont présents et corrects
+        // Si correct affichons un formulaire de réinitialisation
         if (isset($_GET['key']) && !empty($_GET['key']) && isset($_GET['email']) && !empty($_GET['email'])) {
+
+            // Vérifions si les données des get sont correctes
             $exit = $repository->findOneBy(["email" => $_GET['email'], "activationKey" => $_GET['key']]);
             if (!$exit) {
                 $this->addFlash("error", "Votre lien est incorrect");
                 return $this->redirectToRoute('forgot');
             }
+            // S'ils sont correctes créons un formulaire de réinitialisation avec mot de passe
             $form = $this->createForm(PasswordType::class, $users);
             $form->handleRequest($request);
             $response['form'] = $form->createView();
             if ($form->isSubmitted() && $form->get('password')->isValid()) {
                 $user = $repository->findOneBy(["email" => $_GET['email']]);
                 if ($user->getActivationKey() == $_GET['key']) {
+                    // Modifions le mot de passe et redirigeons l'utilisateur vers la page de login
                     if ($user->getStatut() == false) {
                         $user->setStatut(true);
                     }
@@ -181,6 +197,8 @@ class UsersController extends AbstractController
                     return $this->redirectToRoute('forgot');
                 }
             }
+
+        // Si non affichons un formulaire de demande de réinitialisation avec tout juste un input email
         } else {
             if (isset($_POST['btn-reset']) && isset($_POST['email']) && !empty($_POST['email'])) {
                 if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
@@ -196,6 +214,7 @@ class UsersController extends AbstractController
                         $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                         $firstName = $user->getFirstName();
                         $emailUser = $user->getEmail();
+                        // Ensuite envoyons lui un email de réinitialisation
                         $link = "https://f2i-dev14-nd.nathandfk.fr/membre/reinit?key=".$activate."&email=".$user->getEmail();
                         if ($posts) {
                             foreach ($posts as $post) {
@@ -239,6 +258,7 @@ class UsersController extends AbstractController
 
 
 
+    // Modification du profil utilisateur
     #[Route('/mon-compte', name: 'dashboard')]
     public function dashboard(Request $request, ManagerRegistry $doctrine,  UserInterface $user, UserPasswordHasherInterface $passwordHasher,)
     {
@@ -252,6 +272,7 @@ class UsersController extends AbstractController
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
         
+        // Si l'utilisateur souhaite conserver l'ancien mdp
         if ($form->isSubmitted() 
                 && $form->get('firstName')->isValid() 
                 && $form->get('lastName')->isValid()
@@ -282,6 +303,7 @@ class UsersController extends AbstractController
                     }
                     return $this->redirectToRoute('dashboard');
         
+        // Si l'utilisateur souhaite modifier son mdp
         } else if ($form->isSubmitted()
         && $form->get('firstName')->isValid() 
         && $form->get('lastName')->isValid()
@@ -318,6 +340,10 @@ class UsersController extends AbstractController
         ]);
     }
 
+
+    // Gestion des paiements
+    // Insertion de l'IBAN
+    // Validattion et traitement des paiements par l'admin pour l'hôte
     #[Route('/mon-compte/paiement', name: 'payment')]
     public function payment(Security $security, Request $request, ManagerRegistry $doctrine, UserInterface $user, ReservationRepository $reservRep, PaginatorInterface $paginator)
     {
@@ -425,6 +451,8 @@ class UsersController extends AbstractController
         ]);
     }
 
+
+    // Création d'une route et d'une page historique
     #[Route('/mon-compte/historical', name: 'historical')]
     public function historical(Request $request, Security $security, ManagerRegistry $doctrine, ReservationRepository $reservationRepository)
     {
@@ -455,6 +483,8 @@ class UsersController extends AbstractController
     }
 
 
+    // Création d'une route
+    // Retourne des paramètres dans la page message
     #[Route('/mon-compte/message', name: 'message')]
     public function message(Request $request, Security $security)
     {   
@@ -479,6 +509,7 @@ class UsersController extends AbstractController
         ]);
     }
 
+    // Générateur de chaine de caractères
     public function generator(int $limit = 8, $remove = []){
         $character = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'A', 'b', 'B', 'c', 'C', '$', '^', '-', '_','d', 'D', 'e', 'E', 'f', 'F', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         $tableSize = count($character);

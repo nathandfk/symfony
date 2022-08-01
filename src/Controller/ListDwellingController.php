@@ -18,6 +18,7 @@ use Symfony\Component\Security\Core\Security;
 
 class ListDwellingController extends AbstractController
 {
+    // Liste des habitations 
     #[Route('/dwelling/list', name: 'list_dwelling')]
     public function listDwelling(ManagerRegistry $doctrine, Security $security, DwellingRepository $dwellingRepository, PaginatorInterface $paginator, Request $request)
     {
@@ -77,6 +78,7 @@ class ListDwellingController extends AbstractController
         return $this->render('inc/modules/host/list.html.twig', $response);
     }
 
+    // Activer ou désactiver un logement
     #[Route('/dwelling/activate', name: 'dwelling_activate')]
     public function dwellingActivate(ManagerRegistry $doctrine, Security $security, DwellingRepository $dwellingRepository)
     {

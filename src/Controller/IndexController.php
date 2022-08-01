@@ -3,12 +3,8 @@
 namespace App\Controller;
 
 use App\Data\Calendar;
-use App\Entity\Dwelling;
 use App\Entity\Posts;
-use App\Entity\Users;
 use App\Repository\DwellingRepository;
-use DateTimeImmutable;
-use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,15 +12,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
+    // Afficharge de la page d'accueil
     #[Route('/', name: 'app_index')]
     public function index(ManagerRegistry $doctrine, DwellingRepository $dwelRep): Response
     {
+        // Récupération de notre calendrier
         $calendar = new Calendar();
         $calendar = $calendar::calendar();
+
+        // Récupérons le repository de notre entité Posts
         $postsRep = $doctrine->getRepository(Posts::class);
 
+        // Récupérons les données de nos logements
         $ideas = $dwelRep->showDataDwellings(null, null, null, null, null, null, null, null, true);
-
+        
+        // Réponse en array
         $response = [
             'controller_name' => 'IndexController',
             'calendar' => $calendar,
@@ -38,6 +40,8 @@ class IndexController extends AbstractController
             'ideas' => $ideas,
         ];
         $posts = $postsRep->findAll();
+
+        // Injection des valeurs dans la réponse
         foreach ($posts as $post) {
             switch ($post->getType()) {
                 case 'HOMEPIC':
@@ -58,6 +62,7 @@ class IndexController extends AbstractController
                 
             }
         }
+        // Retournons les valeurs dans la page d'accueil
         return $this->render('index.html.twig', $response);
     }
 }
