@@ -82,17 +82,44 @@ class ProductController extends AbstractController
                 $insertMessage->setRecipient($recipient);
                 $insertMessage->setMessage($message);
                 $em->persist($insertMessage);
-                $em->flush();                
+                $em->flush();   
                 
 
                 $postsRep = $doctrine->getRepository(Posts::class);
                 $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
+
+                $dwellingData = $doctrine->getRepository(Dwelling::class);
+                $dwel = $dwellingData->find($reservation->getDwelling()->getId());
+
+                $userData = $doctrine->getRepository(Users::class);
+                $users = $userData->find($dwel->getUser()->getId());
+
                 $name = $firstname;
+                $nameHost = $users->getFirstName();
                 $emailUser = $email;
+                $emailHost = $users->getEmail();
                 if ($posts) {
                     foreach ($posts as $post) {
+                        $emailHost = (new Email())
+                            ->from("AtypikHouse <".$post->getDescription().">")
+                            ->to($emailHost)
+                            ->subject('RÉSERVATION DE VOTRE LOGEMENT')
+                            ->text('RÉSERVATION CONFIRMÉE')
+                            ->html("
+                            <div>
+                            <p>Bonjour <b>$nameHost</b></p>
+                            <p>Votre logement vient d'être réserver par un membre de AtypikHouse.</p>
+                            <p>Merci de lui donner votre réponse depuis votre espace dans la rubrique historique et de lui transmettre les données ou indications précis du logement depuis la messagerie du site.</p>
+                            <p>Nous vous remercions pour la confiance que vous nous accorder.</p>
+                            <p>L'équipe AtypikHouse.</p>
+                            <div style='text-align: center;'>
+                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            </div>
+                            ");
+                        $mailer->send($emailHost);
+
                         $email = (new Email())
-                            ->from($post->getDescription())
+                            ->from("AtypikHouse <".$post->getDescription().">")
                             ->to($emailUser)
                             ->subject('NOUS VOUS CONFIRMONS VOTRE RÉSERVATION')
                             ->text('RÉSERVATION CONFIRMÉE')

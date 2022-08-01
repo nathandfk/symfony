@@ -141,7 +141,7 @@ dom("html, body").addEventListener('click', event => {
                 if (payment && payment.childElementCount < 1) {
                     notification("Une erreur inattendue s'est produite, veuillez recommencer !", "fas fa-exclamation")
                 }
-            }, 3000);
+            }, 5000);
         }
     }
 });
