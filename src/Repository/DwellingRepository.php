@@ -100,7 +100,7 @@ class DwellingRepository extends ServiceEntityRepository
             $orderId = $orderId ? "ASC" : "DESC";
             $element .= !is_null($orderId) ? " id $orderId " : "";
         }
-        $element .= !is_null($orderId) ? ", " : ""; 
+        $element .= !is_null($orderId) && !is_null($orderTitle) ? ", " : ""; 
         if (!is_null($orderTitle)) {
             $orderTitle = $orderTitle ? "ASC" : "DESC";
             $element .= !is_null($orderTitle) ? " title $orderTitle " : "";

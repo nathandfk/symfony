@@ -131,6 +131,7 @@ class EditDwellingController extends AbstractController
                         $dwel->setPictures($finalPictures);
 
                         $dwel->setTitle($dwelling->getTitle());
+                        $dwel->setPrice($dwelling->getPrice());
                         
                         $dwel->setAddress($dwelling->getAddress());
                         $dwel->setLatitude($dwelling->getLatitude());
