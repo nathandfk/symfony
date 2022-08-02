@@ -1,0 +1,71 @@
+{% if datas %}
+<div class="my-1">
+                    <label>Email de l'administration *</label>
+                    <input type="email" {% if datas.email_admin_setting %}value="{{ datas.email_admin_setting }}"{% endif %} required placeholder="gestion@atypikhouse.com" name="email_admin_setting" id="email_admin_setting">
+                </div>
+                <div class="my-1">
+                    <label>Message de réservation *</label>
+                    <textarea name="message_setting" required id="message_setting">{% if datas.message_setting %}{{ datas.message_setting }}{% endif %}</textarea>
+                    <div>Insérer dans votre message</div>
+                    <ul>
+                        <li>_firstname_ pour le prénom</li>
+                        <li>_lastname_ pour le nom</li>
+                        <li>_title_ pour le titre</li>
+                        <li>_totalprice_ pour le prix total</li>
+                        <li>_arrival_ pour la date d'arrivée</li>
+                        <li>_departure_ pour la date de départ</li>
+                        <li>_city_ pour la ville</li>
+                    </ul>
+                </div>
+                <div>
+                    <label>Frais de service (En pourcentage) *</label>
+                    <input type="number" {% if datas.tax_setting %}value="{{ datas.tax_setting }}"{% endif %} min="0" max="100" name="tax_setting" id="tax_setting">
+                </div>
+                <section class="my-3">
+                    <h3>Page d'accueil</h3>
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label>Titre de la page d'accueil *</label>
+                            <input type="text" {% if datas.home_title_setting %}value="{{ datas.home_title_setting }}"{% endif %} required name="home_title_setting" id="home_title_setting">
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label>Image de la page d'accueil (2MB maximum)</label>
+                            <input type="file" accept="image/*" name="home_picture_setting" id="home_picture_setting">
+                        </div>
+                    </div>
+                </section>
+                <section class="my-3">
+                    <h3>Page à propos</h3>
+                    <div class="form-row">
+                        <div class="form-group bloc-lg-6">
+                            <label>Titre</label>
+                            <input type="text" {% if datas.about_title_setting %}value="{{ datas.about_title_setting }}"{% endif %} name="about_title_setting" name="about_title_setting" id="about_title_setting" class="reset-value" placeholder="Pourquoi choisir AtypikHouse ?">
+                        </div>
+                        <div class="form-group bloc-lg-6">
+                            <label>Résumé</label>
+                            <input type="text" {% if datas.abstract_title_setting %}value="{{ datas.abstract_title_setting }}"{% endif %} name="abstract_title_setting" id="abstract_title_setting" class="reset-value" placeholder="Atypikhouse vous aide à...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Desciption</label>
+                        <textarea type="text" row="10" name="about_description_setting" id="about_description_setting" class="reset-value" placeholder="Des habitats spacieux, répondant à tous vos besoins">{% if datas.about_description_setting %}{{ datas.about_description_setting }}{% endif %}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Image de couverture (2MB maximum)</label>
+                        <input type="file" accept="image/*" name="about_picture_setting" id="about_picture_setting" class="reset-value">
+                    </div>
+                </section>
+                <div class="form-row">
+                    <div class="form-group bloc-lg-6">
+                        <label>Ajouter un type d'habitation</label>
+                        <input type="text" name="type_setting" name="type_setting" id="type_setting" class="reset-value" placeholder="exp: Yourte, Cabane dans les arbre, Cabane flottante">
+                    </div>
+                    <div class="form-group bloc-lg-6">
+                        <label>Ajouter un équipement</label>
+                        <input type="text" name="equipment_setting" id="equipment_setting" class="reset-value" placeholder="exp: Wifi, Eau">
+                    </div>
+                </div>
+
+
+                <button type="submit" class="click click-success">Appliquer</button>
+{% endif %}

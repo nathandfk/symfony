@@ -123,6 +123,6 @@ class __TwigTemplate_dc03fa4350aed700c5cc492305b03cd4 extends Template
     <button class=\"click click-rounded click-success br-50 btn-search fas fa-search size18\">
     </button>
 </div>
-", "inc/modules/search/search.html.twig", "/Users/nathandfk/Development/Symfony/atypikhouse/templates/inc/modules/search/search.html.twig");
+", "inc/modules/search/search.html.twig", "/Users/nathandfk/Development/Symfony/final/dsp-project/templates/inc/modules/search/search.html.twig");
     }
 }

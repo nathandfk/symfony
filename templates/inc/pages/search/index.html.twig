@@ -1,9 +1,6 @@
 {% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
 
-{% if carousel == true %}
-{% include 'inc/parts/carousel.html.twig' %}
-{% endif %}
 {% include 'inc/modules/search/popupsearch.html.twig' %}
 
 
@@ -19,11 +16,12 @@
             </div>
             <div class="search-dwelling">
                 <div class="search-dwelling-items">
+
                     {% for dwellings in dataDwellings %}
                         <a href="{{ path('app_habitation', {'slug': dwellings[0].title, 'id': dwellings[0].id}) | replace({'%20':'-', '%c3%a9':'e', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) |lower }}" class="search-dwelling-item">
                             <div class="search-dwelling-picture border-radius-form">
-                                {% set pictures = dwellings[0].pictures | split(',') %}
-                                <img src="{{ pictures[0] }}"/>
+                                {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
+                                <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="AtypikHouse search">
                             </div>
                             
                             <div class="dwelling-item-info d-flex flex flex-dir-col jc-space-between gap-1">
@@ -33,8 +31,8 @@
                                 </div>
                                 <div class="my-1">
                                     {% for limit in dwellings[1] %}
-                                    {% if limit.field == "_limit_animals" %}
-                                    <span>{% if limit.value > 0 %}Animaux acceptés,{% else %}Animaux non acceptés,{% endif %}</span>
+                                    {% if limit.field == "_animals" %}
+                                    <span>{% if limit.value == "TRUE" %}Animaux acceptés,{% else %}Animaux non acceptés,{% endif %}</span>
                                     {% endif %}
                                     {% endfor %}
                                     <span>etc,...</span>
@@ -42,23 +40,44 @@
                                 </div>
                                 <div class="my-1 d-flex flex flex-dir-col">
                                     <span>{{ dwellings[0].title }}</span>
-                                    <span>{{ dwellings[2].real_name }} ({{ dwellings[2].code }}) - {{ dwellings[2].nom }}</span>
-                                    <span>{{ dwellings[2].name_fr }}</span>
+                                    <span>{{ dwellings[0].city }}, {{ dwellings[0].state }}</span>
+                                    <span class="c1 ff-m size22">{{ dwellings[2] }}</span>
                                 </div>
                             </div>
                         </a>
                     {% endfor %}
+                    
                     <div class="btn-navigate d-flex jc-center gap-2 my-3">
-                        <a class="navigate-left click click-brown" href="">Précédent</a>
-                        <a class="navigate-right click click-success" href="">Suivant</a>
+                    {{ knp_pagination_render(dataDwellings) }}
                     </div>
                 </div>
-                <div class="search-dwelling-gps">
-                </div>
+                <div id="dwelling_gps"></div>
             </div>
         </div>
     </div>
 </div>
+<script>
 
+villes = []
+{% for location in locations %}
+    var ville = {city: '{{ location[0] }}', lon: '{{ location[1] }}', lat: "{{ location[2] }}"}
+    villes.push(ville)
+{% endfor %}
+var cities = JSON.stringify(Object.assign({}, villes))
+cities = JSON.parse(cities)
+
+    var map = L.map('dwelling_gps').setView([cities[0].lat, cities[0].lon], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        minZoom: 1,
+        maxZoom: 19,
+        attribution: '© OpenStreetMap | AtypikHouse'
+    }).addTo(map);
+    for(city in cities){
+        var marqueur = L.marker([cities[city].lat, cities[city].lon])
+        .addTo(map);
+        marqueur.bindPopup("<p>"+cities[city].city+"</p>")
+    }
+    {#var marker = L.marker([48.86, 2.33]).addTo(map);#} 
+</script>
 
 {% include 'inc/parts/footer.html.twig' %}

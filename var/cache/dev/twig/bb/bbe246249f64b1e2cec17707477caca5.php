@@ -75,6 +75,6 @@ class __TwigTemplate_1ce1b3d87e28b8bd7809db60e0f96436 extends Template
         <span>Fermer</span>
     </div>
     {% include 'inc/modules/search/search.html.twig' %}
-</div>", "inc/modules/search/popupsearch.html.twig", "/Users/nathandfk/Development/Symfony/atypikhouse/templates/inc/modules/search/popupsearch.html.twig");
+</div>", "inc/modules/search/popupsearch.html.twig", "/Users/nathandfk/Development/Symfony/final/dsp-project/templates/inc/modules/search/popupsearch.html.twig");
     }
 }

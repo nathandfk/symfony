@@ -4,6 +4,16 @@
 {% if carousel == true %}
 {% include 'inc/parts/carousel.html.twig' %}
 {% endif %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
 
 <div class="atypikhouse-container my-6">
     <div class="page-title">
@@ -93,6 +103,7 @@
                     <button class="click click-brown ml-auto" name="click-register">Je m'inscris</button>
                 </div>
             {{ form_end(form) }}
+            <div><a href="{{ path('login') }}" class="text-link-success">Déjà inscrit ?</a></div>
         </div>
     </div>
 </div>

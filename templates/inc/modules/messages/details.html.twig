@@ -1,0 +1,30 @@
+{% if details %}
+            <div class="message-col2-header message-header">
+                {% if details[0].sender_id != app.user.id %}
+                <h4 data-id="{{ details[0].sender_id }}" id="id-message">{{ details[0].fn1 }} {{ details[0].ln1 }}</h4>
+                {% else %}
+                <h4 data-id="{{ details[0].recipient_id }}" id="id-message">{{ details[0].fn2 }} {{ details[0].ln2 }}</h4>
+                {% endif %}
+            </div>
+            <div class="message-col2-body message-body">
+                    {% for element in details %}
+                    {% if element.sender_id != app.user.id %}
+                    <div class="content-message message-received bg-c1 c4">
+                        <h4>{{ element.fn1 }} {{ element.ln1 }}</h4>
+                        <h5>{{ element.added_at }}</h5>
+                        <p>{{ element.message}}</p>
+                    </div>
+                    {% elseif element.sender_id == app.user.id %}
+                    <div class="content-message message-send bg-c2 c4">
+                        <h4>{{ element.fn1 }} {{ element.ln1 }}</h4>
+                        <h5>{{ element.added_at }}</h5>
+                        <p>{{ element.message}}</p>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+            </div>
+            {% endif %}
+            <div class="message-col2-footer d-flex gap-1 p-1">
+                <textarea id="show-message"></textarea>
+                <button class="click click-success" id="send-message"><i class="fas fa-paper-plane size24"></i></button>
+            </div>

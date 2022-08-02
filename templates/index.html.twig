@@ -1,16 +1,100 @@
 {% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
 
-{% include 'inc/parts/header.html.twig' %}
+{% if homepic and hometitle %}
+<header class="atypikhouse-container">
+    <div class="atypikhouse-header-inner grid-level-3">
+        <div class="header-background-picture">
+            <img src="{{ ath_link }}/uploads/pages/{{ homepic }}" alt="AtypikHouse image mise en avant, logement insolite">
+        </div>
+        <div class="header-cover"></div>
+        <div class="header-text">
+            <h1 class="accessibility-form wb ff-sb">{{ hometitle }}</h1>
+        </div>
+    </div>
+</header>
+{% endif %}
 {% include 'inc/modules/search/popupsearch.html.twig' %}
 
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-error">
+        {{ message }}
+    </div>
+{% endfor %}
 
 {% include 'inc/pages/home/discovery.html.twig' %}
-
-{% include 'inc/pages/home/ideas.html.twig' %}
-
-{% include 'inc/pages/home/why.html.twig' %}
-
+{% if ideas %}
+<section class="atypikhouse-section atypikhouse-container my-6">
+    <div class="atypikhouse-section-display picture-radius">
+        <div class="section-title">
+            <h2 class="c1 my-1">DES IDÉES POUR VOTRE PROCHAINE RÉSERVATION</h2>
+        </div>
+        <div class="section-display grid-lg-4 grid-md-4 grid-sm-4">
+            {% for dwellings in ideas |slice(0, 4) %}
+            {% set productUrl = dwellings[0].title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+            <a href="{{ path('app_habitation', {'slug': productUrl, 'id': dwellings[0].id}) | lower }}" class="section-display-child">
+                <div class="section-child-picture img">
+                    {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
+                    <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="AtypikHouse image d'une idée de la prochaine réservation"/>
+                </div>
+                <div class="display-child-text">
+                    <h3 class="child-text-city size22">{{ dwellings[0].city }}</h3>
+                    <h3 class="child-text-country size22 ff-m c1">{{ dwellings[2] }}</h3>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% if abouttitle and aboutabstract and aboutpic %}
+<section class="atypikhouse-section atypikhouse-section-why my-6">
+    <div class="section-why-form">
+        {% for i in 0..120 %}
+        <span></span>
+        {% endfor %}
+    </div>
+    <div class="atypikhouse-container section-why-content d-grid grid-lg-2">
+        <div class="section-why-col1 atypikhouse-grid-form1 mr-auto">
+            <div class="card-picture border-solid-2 c1"></div>
+            <div class="card-picture">
+                <img src="{{ ath_link }}/uploads/pages/{{ aboutpic }}" alt="Image découverte habitations insolites">
+            </div>
+        </div>
+        <div class="section-why-col2 d-flex jc-space-between gap-3 flex-dir-col">
+            <div class="section-title">
+                <h2 class="c1 my-1">{{ abouttitle }}</h2>
+            </div>
+            <div class="section-why-text">
+                <p>{{ aboutabstract }}</p>
+            </div>
+            <div class="section-why-quality d-grid grid-lg-4">
+                <div class="text-center">
+                    <i class="fas fa-solid fa-credit-card size24"></i>
+                    <h3>Paiement sécurisé</h3>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-home size24"></i>
+                    <h3>Logement sécurisé</h3>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-solid fa-umbrella size24"></i>
+                    <h3>Assurance</h3>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-solid fa-calendar-day size24"></i>
+                    <h3>Réservation instantanée</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
 {% include 'inc/pages/home/additional.html.twig' %}
 
 

@@ -1,0 +1,37 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+{% if datas %}
+{% for data in datas %}
+{% if data.type == "ABOUTPIC" %}
+<header class="atypikhouse-container">
+    <div class="atypikhouse-header-inner grid-level-3">
+        <div class="header-background-picture">
+            <img src="{{ ath_link }}/uploads/pages/{{ data.description }}" alt="AtypikHouse image mise en avant, logement insolite">
+        </div>
+    </div>
+</header>
+{% endif %}
+{% endfor %}
+<div class="atypikhouse-container">
+    {% for data in datas %}
+        {% if data.type == "ABOUTTITLE" %}
+            <div class="page-title my-3">
+                <h1 class="text-uppercase c1 size20 ff-r">{{ data.description }}</h1>
+            </div>
+        {% endif %}
+        {% if data.type == "ABOUTABSTRACT" %}
+            <div class="my-3">
+                {{ data.description }}
+            </div>
+        {% endif %}
+        {% if data.type == "ABOUTDESCRIPTION" %}
+            <div class="my-3">
+                {{ data.description }}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% include 'inc/parts/footer.html.twig' %}

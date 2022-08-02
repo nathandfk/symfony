@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DwellingRepository::class)]
-#[ApiResource]
 class Dwelling
 {
     #[ORM\Id]
@@ -21,8 +20,11 @@ class Dwelling
     #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'dwellings')]
     private $user;
 
-    #[ORM\Column(type: 'json')]
+    #[ORM\ManyToOne(targetEntity: Posts::class, inversedBy: 'dwellings')]
     #[Assert\NotBlank()]
+    private $type;
+
+    #[ORM\Column(type: 'json')]
     private $pictures = [];
 
     #[ORM\Column(type: 'string', length: 100)]
@@ -44,6 +46,10 @@ class Dwelling
     #[Assert\Regex('/^[0-9\.]{2,}$/')]
     private $price;
 
+    #[ORM\Column(type: 'json')]
+    #[Assert\NotBlank()]
+    private $equipments = [];
+
     #[ORM\Column(type: 'string', length: 150)]
     #[Assert\Length(max: 150)]
     #[Assert\NotBlank()]
@@ -53,20 +59,27 @@ class Dwelling
     #[Assert\Length(max: 255)]
     private $complAddress;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $city;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $state;
-
     #[ORM\ManyToOne(targetEntity: Country::class, inversedBy: 'dwellings')]
     private $country;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank()]
+    private $city;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank()]
+    private $state;
+
     #[ORM\Column(type: 'float')]
+    #[Assert\NotBlank()]
     private $longitude;
 
     #[ORM\Column(type: 'float')]
+    #[Assert\NotBlank()]
     private $latitude;
+
+    #[ORM\Column(type: 'boolean')]
+    private $activate;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private $addedAt;
@@ -83,12 +96,18 @@ class Dwelling
     #[ORM\OneToMany(mappedBy: 'dwelling', targetEntity: Reservation::class)]
     private $reservations;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private $deletedAt;
 
     public function __construct()
     {
         $this->dwellingMetas = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->reservations = new ArrayCollection();
+        $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->deletedAt = null;
+        $this->activate = true;
     }
 
     public function getId(): ?int
@@ -108,12 +127,24 @@ class Dwelling
         return $this;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
     public function getPictures(): ?array
     {
         return $this->pictures;
     }
 
-    public function setPictures(array $pictures): self
+    public function setPictures(?array $pictures): self
     {
         $this->pictures = $pictures;
 
@@ -168,6 +199,18 @@ class Dwelling
         return $this;
     }
 
+    public function getEquipments(): ?array
+    {
+        return $this->equipments;
+    }
+
+    public function setEquipments(array $equipments): self
+    {
+        $this->equipments = $equipments;
+
+        return $this;
+    }
+
     public function getAddress(): ?string
     {
         return $this->address;
@@ -192,6 +235,18 @@ class Dwelling
         return $this;
     }
 
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    public function setCountry($country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
     public function getCity(): string
     {
         return $this->city;
@@ -211,18 +266,6 @@ class Dwelling
     public function setState(string $state): self
     {
         $this->state = $state;
-
-        return $this;
-    }
-
-    public function getCountry(): ?Country
-    {
-        return $this->country;
-    }
-
-    public function setCountry(?Country $country): self
-    {
-        $this->country = $country;
 
         return $this;
     }
@@ -253,6 +296,18 @@ class Dwelling
     }
 
 
+    public function isActivate(): ?bool
+    {
+        return $this->activate;
+    }
+
+    public function setActivate(bool $activate): self
+    {
+        $this->activate = $activate;
+
+        return $this;
+    }
+    
     public function getAddedAt(): ?\DateTimeInterface
     {
         return $this->addedAt;
@@ -277,6 +332,18 @@ class Dwelling
         return $this;
     }
 
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+    
     /**
      * @return Collection<int, DwellingMeta>
      */

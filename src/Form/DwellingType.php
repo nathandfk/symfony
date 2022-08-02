@@ -4,10 +4,10 @@ namespace App\Form;
 
 use App\Entity\Country;
 use App\Entity\Dwelling;
+use App\Entity\Posts;
 use Symfony\Component\Form\AbstractType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -26,15 +26,25 @@ class DwellingType extends AbstractType
         foreach ($this->countries as $country) {
             $choice += [$country->getNameFr() => $country->getId()];
         }
+
+        $types = ["Choisissez le type d'habitat" => ''];
+        foreach ($this->type as $element) {
+            $types += [$element->getDescription() => $element->getId()];
+        }
+
+        $equipments = [];
+        foreach ($this->equipments as $element) {
+            $equipments += [$element->getDescription() => $element->getId()];
+        }
         $builder
             ->add('pictures', FileType::class, [
                 'multiple' => true,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new Count(['max' => 4, 'max' => 10]),
                     new All([
                         new File([
-                            'maxSize' => '12M',
+                            'maxSize' => '2M',
                             'mimeTypes' => [
                                 'image/jpeg',
                                 'image/png',
@@ -44,33 +54,24 @@ class DwellingType extends AbstractType
                     ])
                     ],
                 
-                // 'upload_max_size_message' => 'La taille totale de fichiers ne doit pas dépasser 10 MB',
-                // 'attr'     => [
-                //     'accept' => 'image/*',
-                //     'multiple' => 'multiple',
-                //     'required' => 'required',
-                // ], 
                 'attr' => [
                     'accept' => '.jpg, .jpeg, .png'
                 ],
-                'label' => 'Images (Taille totale maximale 12MB, 4 fichiers min et 10 fichiers max)*'
+                'label' => ' Images (Taille maximale par image 2 MB, 4 fichiers min et 10 fichiers max)'
             ])
             ->add('title', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Titre *'], 'label' => 'Titre *'])
             ->add('abstract', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Résumé *'], 'label' => 'Résumé *'])
             ->add('description', TextareaType::class, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Description *'], 'label' => 'Description *'])
             ->add('price', NumberType::class, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Exemple: 129'], 'label' => 'Prix (Les prix sont en euros, entrez uniquement le nombre) *'])
+            ->add('equipments', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Équipements *', 'choices'  => $equipments, 'multiple' => true])
             ->add('address', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Adresse *'], 'label' => 'Adresse *'])
             ->add('complAddress', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Complément d\'adresse'], 'label' => 'Complément d\'adresse'])
-            ->add('country', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Pays *', 'choices'  => $choice,])
-            ->add('city', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Ville *'], 'label' => 'Ville *'])
-            ->add('state', null, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Région *'], 'label' => 'Région *'])
+            ->add('city', null, ['required' => true, 'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Ville *'], 'label' => 'Ville *'])
+            ->add('state', null, ['required' => true, 'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Région *'], 'label' => 'Région *'])
             ->add('longitude', HiddenType::class, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Longitude *'], 'label' => 'Longitude *'])
             ->add('latitude', HiddenType::class, ['attr' => ['class' => 'form-control w-100', 'placeholder' => 'Latitude *'], 'label' => 'Latitude *'])
-
-            // ->add('addedAt')
-            // ->add('updatedAt')
-            // ->add('user')
-            // ->add('city')
+            ->add('type', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Type *', 'choices'  => $types])
+            ->add('country', ChoiceType::class, ['required' => true,'attr' => ['class' => 'form-control w-100'], 'label' => 'Pays *', 'choices'  => $choice])
         ;
     }
 
@@ -84,5 +85,12 @@ class DwellingType extends AbstractType
         $repository = $doctrine->getRepository(Country::class);
         $countries = $repository->findBy(['europe' => '1'], ['nameFr' => "ASC"]);
         $this->countries = $countries;
+
+        $repository = $doctrine->getRepository(Posts::class);
+        $type = $repository->findBy(['type' => 'TYPE', 'deletedAt' => null], ['description' => 'ASC']);
+        $this->type = $type;
+
+        $equipments = $repository->findBy(['type' => 'EQUIPMENT', 'deletedAt' => null], ['description' => 'ASC']);
+        $this->equipments = $equipments;
     }
 }

@@ -1,0 +1,38 @@
+{% if historical %}
+<div class="responsive-table">
+<table id="historical-table" class="text-center ath-table-form">
+    <thead>
+        <tr>
+            <th>Habitation</th>
+            <th>Période de la réservation</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for histo in historical %}
+        <tr data-id='{{ histo[8] }}'>
+            {% set productUrl = histo[4] | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+            <td><a href="{{ path('app_habitation', {'slug': productUrl, 'id': histo[3] }) | lower }}">{{ histo[4] }}</a></td>
+            <td>{{ histo[5]|date("d-m-Y") }} - {{ histo[6]|date("d-m-Y") }}</td>
+            <td class="c1 ff-m">{% if histo[9] %}{{ histo[9] }} €{% endif %}</td>
+            <td>{{ histo[7] }}</td>
+            <td>
+            {% if (histo[7] == "RESERVED" or histo[7] == "CONFIRMED") and histo[15] %}
+            <input type="submit" class="click click-brown" value="Annuler" name="annuled">
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<div class="btn-navigate paginate-historical-client d-flex jc-center gap-2 my-3">
+{{ knp_pagination_render(historical) }}
+</div>
+{% endif %}
+
+{% if message %}
+<p class="size18 ff-m c2 text-center">{{ message }}</p>
+{% endif %}

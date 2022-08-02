@@ -44,29 +44,39 @@ class __TwigTemplate_b835485a15dc8aa86d5464cbfe2cc44e extends Template
         echo "
 ";
         // line 4
-        if (((isset($context["carousel"]) || array_key_exists("carousel", $context) ? $context["carousel"] : (function () { throw new RuntimeError('Variable "carousel" does not exist.', 4, $this->source); })()) == true)) {
+        $context['_parent'] = $context;
+        $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 4, $this->source); })()), "flashes", [0 => "success"], "method", false, false, false, 4));
+        foreach ($context['_seq'] as $context["_key"] => $context["message"]) {
             // line 5
-            $this->loadTemplate("inc/parts/carousel.html.twig", "inc/pages/users/login.html.twig", 5)->display($context);
-        }
-        // line 7
-        if ($this->extensions['Symfony\Bridge\Twig\Extension\SecurityExtension']->isGranted("IS_AUTHENTICATED_FULLY")) {
-            // line 8
-            echo "    <p>Email: ";
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 8, $this->source); })()), "user", [], "any", false, false, false, 8), "email", [], "any", false, false, false, 8), "html", null, true);
-            echo "</p>
+            echo "    <div class=\"alert alert-success\">
+        ";
+            // line 6
+            echo twig_escape_filter($this->env, $context["message"], "html", null, true);
+            echo "
+    </div>
 ";
         }
-        // line 10
-        if (twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 10, $this->source); })()), "user", [], "any", false, false, false, 10)) {
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['message'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 9
+        $context['_parent'] = $context;
+        $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 9, $this->source); })()), "flashes", [0 => "error"], "method", false, false, false, 9));
+        foreach ($context['_seq'] as $context["_key"] => $context["message"]) {
+            // line 10
+            echo "    <div class=\"alert alert-error\">
+        ";
             // line 11
-            echo "    <p>Email: ";
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 11, $this->source); })()), "user", [], "any", false, false, false, 11), "email", [], "any", false, false, false, 11), "html", null, true);
-            echo "</p>
+            echo twig_escape_filter($this->env, $context["message"], "html", null, true);
+            echo "
+    </div>
 ";
         }
-        // line 13
-        echo "
-<div class=\"atypikhouse-container my-6\">
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['message'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 14
+        echo "<div class=\"atypikhouse-container my-6\">
     <div class=\"page-title\">
         <h1 class=\"text-uppercase c1 size20 ff-r\">";
         // line 16
@@ -88,7 +98,10 @@ class __TwigTemplate_b835485a15dc8aa86d5464cbfe2cc44e extends Template
                     <label for=\"password\">Mot de passe</label>
                     <input type=\"password\" name=\"password\" id=\"password\" placeholder=\"Mot de passe\" required/>
                 </div>
-                <a href=\"\">Mot de passe oublié ?</a>
+                <a href=\"";
+        // line 30
+        echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("forgot");
+        echo "\">Mot de passe oublié ?</a>
                 ";
         // line 31
         if ((isset($context["error"]) || array_key_exists("error", $context) ? $context["error"] : (function () { throw new RuntimeError('Variable "error" does not exist.', 31, $this->source); })())) {
@@ -147,7 +160,7 @@ class __TwigTemplate_b835485a15dc8aa86d5464cbfe2cc44e extends Template
 
     public function getDebugInfo()
     {
-        return array (  132 => 50,  118 => 40,  110 => 37,  107 => 36,  105 => 35,  102 => 34,  96 => 32,  94 => 31,  84 => 24,  73 => 16,  68 => 13,  62 => 11,  60 => 10,  54 => 8,  52 => 7,  49 => 5,  47 => 4,  44 => 3,  42 => 2,  40 => 1,);
+        return array (  145 => 50,  131 => 40,  123 => 37,  120 => 36,  118 => 35,  115 => 34,  109 => 32,  107 => 31,  103 => 30,  94 => 24,  83 => 16,  79 => 14,  70 => 11,  67 => 10,  63 => 9,  54 => 6,  51 => 5,  47 => 4,  44 => 3,  42 => 2,  40 => 1,);
     }
 
     public function getSourceContext()
@@ -155,16 +168,16 @@ class __TwigTemplate_b835485a15dc8aa86d5464cbfe2cc44e extends Template
         return new Source("{% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
 
-{% if carousel == true %}
-{% include 'inc/parts/carousel.html.twig' %}
-{% endif %}
-{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <p>Email: {{ app.user.email }}</p>
-{% endif %}
-{% if app.user %}
-    <p>Email: {{ app.user.email }}</p>
-{% endif %}
-
+{% for message in app.flashes('success') %}
+    <div class=\"alert alert-success\">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class=\"alert alert-error\">
+        {{ message }}
+    </div>
+{% endfor %}
 <div class=\"atypikhouse-container my-6\">
     <div class=\"page-title\">
         <h1 class=\"text-uppercase c1 size20 ff-r\">{{ title }}</h1>
@@ -181,7 +194,7 @@ class __TwigTemplate_b835485a15dc8aa86d5464cbfe2cc44e extends Template
                     <label for=\"password\">Mot de passe</label>
                     <input type=\"password\" name=\"password\" id=\"password\" placeholder=\"Mot de passe\" required/>
                 </div>
-                <a href=\"\">Mot de passe oublié ?</a>
+                <a href=\"{{ path('forgot') }}\">Mot de passe oublié ?</a>
                 {% if error %}
                     <div class=\"alert alert-danger\">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
@@ -201,6 +214,6 @@ class __TwigTemplate_b835485a15dc8aa86d5464cbfe2cc44e extends Template
 </div>
 
 
-{% include 'inc/parts/footer.html.twig' %}", "inc/pages/users/login.html.twig", "/Users/nathandfk/Development/Symfony/atypikhouse/templates/inc/pages/users/login.html.twig");
+{% include 'inc/parts/footer.html.twig' %}", "inc/pages/users/login.html.twig", "/Users/nathandfk/Development/Symfony/final/dsp-project/templates/inc/pages/users/login.html.twig");
     }
 }

@@ -38,6 +38,15 @@ class CountryRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function findOneCountry(int $id)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM country c WHERE c.id = $id";
+        $prepare = $conn->prepare($sql);
+        $execute = $prepare->executeQuery();
+        $result = $execute->fetchAllAssociative();
+        return $result;
+    }
 
 //    /**
 //     * @return Country[] Returns an array of Country objects

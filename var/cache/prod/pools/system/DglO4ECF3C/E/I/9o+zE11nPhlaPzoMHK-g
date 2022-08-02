@@ -1,0 +1,156 @@
+<?php //App.Entity.Posts
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        (($f = &\Symfony\Component\VarExporter\Internal\Registry::$factories)['Symfony\\Component\\Validator\\Mapping\\ClassMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\ClassMetadata'))(),
+        ($f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'))(),
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Symfony\\Component\\Validator\\Constraints\\Length'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Length')),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\NotBlank'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\NotBlank')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Length'],
+    ],
+    null,
+    [
+        'stdClass' => [
+            'name' => [
+                'App\\Entity\\Posts',
+                'type',
+                4 => 'title',
+                7 => 'abstract',
+                9 => 'statut',
+            ],
+            'defaultGroup' => [
+                'Posts',
+            ],
+            'members' => [
+                [
+                    'type' => [
+                        $o[1],
+                    ],
+                    'title' => [
+                        $o[4],
+                    ],
+                    'abstract' => [
+                        $o[7],
+                    ],
+                    'statut' => [
+                        $o[9],
+                    ],
+                ],
+            ],
+            'properties' => [
+                [
+                    'type' => $o[1],
+                    'title' => $o[4],
+                    'abstract' => $o[7],
+                    'statut' => $o[9],
+                ],
+            ],
+            'constraints' => [
+                1 => [
+                    $o[2],
+                    $o[3],
+                ],
+                4 => [
+                    $o[5],
+                    $o[6],
+                ],
+                7 => [
+                    $o[8],
+                ],
+                9 => [
+                    $o[10],
+                ],
+            ],
+            'constraintsByGroup' => [
+                1 => [
+                    'Default' => [
+                        $o[2],
+                        $o[3],
+                    ],
+                    'Posts' => [
+                        $o[2],
+                        $o[3],
+                    ],
+                ],
+                4 => [
+                    'Default' => [
+                        $o[5],
+                        $o[6],
+                    ],
+                    'Posts' => [
+                        $o[5],
+                        $o[6],
+                    ],
+                ],
+                7 => [
+                    'Default' => [
+                        $o[8],
+                    ],
+                    'Posts' => [
+                        $o[8],
+                    ],
+                ],
+                9 => [
+                    'Default' => [
+                        $o[10],
+                    ],
+                    'Posts' => [
+                        $o[10],
+                    ],
+                ],
+            ],
+            'class' => [
+                1 => 'App\\Entity\\Posts',
+                4 => 'App\\Entity\\Posts',
+                7 => 'App\\Entity\\Posts',
+                9 => 'App\\Entity\\Posts',
+            ],
+            'property' => [
+                1 => 'type',
+                4 => 'title',
+                7 => 'abstract',
+                9 => 'statut',
+            ],
+            'groups' => [
+                2 => [
+                    'Default',
+                    'Posts',
+                ],
+                [
+                    'Default',
+                    'Posts',
+                ],
+                5 => [
+                    'Default',
+                    'Posts',
+                ],
+                [
+                    'Default',
+                    'Posts',
+                ],
+                8 => [
+                    'Default',
+                    'Posts',
+                ],
+                10 => [
+                    'Default',
+                    'Posts',
+                ],
+            ],
+            'max' => [
+                2 => 50,
+                5 => 150,
+                8 => 150,
+                10 => 50,
+            ],
+        ],
+    ],
+    $o[0],
+    []
+); }];

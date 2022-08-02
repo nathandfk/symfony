@@ -6,23 +6,24 @@
             </div>
             <div class="additional-cover"></div>
             <div id="additional-questions-content" class="c4 as-center">
-                <h2 class="size42 ff-sb ml-4">Des questions ?</h2>
-                <a href="" class="click click-light-green ml-4 my-3">Discuter avec nous</a>
+                <a href="{{ path('contact') }}" class="click click-light-green ml-4 my-3">Discuter avec nous</a>
             </div>
         </div>
 
 
         <div class="grid-level-3 additional-questions additional-inner">
             <div id="additional-questions-picture">
-                <img src="assets/pictures/pic-ath5.jpg" alt="Avez-vous des questions" class="br-20" loading="lazy">
+                <img src="assets/pictures/pic-ath5.jpg" alt="Newsletter: Abonnez-vous pour suivre toute l'Actualité de AtypikHouse" class="br-20" loading="lazy">
             </div>
             <div class="additional-cover"></div>
-            <div id="additional-questions-content" class="c4 as-start my-3 px-4">
-                <h2 class="size42 ff-sb">Newsletter</h2>
-                <p class="size20">Abonnez-vous pour suivre toute l'Actualité de AtypikHouse</p>
-                <form class="d-flex px-1 br-5" id="newsletter-form">
-                    <input class="size22 ff-r" placeholder="Entrez votre adresse e-mail" name="newsletter" required>
-                    <button class="c1 size22 p-1 ff-sb">OK</button>
+            <div id="additional-questions-content" class="c4 as-start my-3 px-4 accessibility-form wb">
+                <form action="{{ path('register_newsletter') }}" id="newsletter-form" method="POST">
+                    <label class="size26 ff-sb" for="newsletter">Newsletter</label>
+                    <p>Abonnez-vous pour suivre toute l'Actualité de AtypikHouse</p>
+                    <div class="d-flex px-1 br-5" >
+                        <input type="email" class="ff-r" placeholder="Entrez votre adresse e-mail" name="newsletter" id="newsletter" required>
+                        <button class="c1 size22 p-1 ff-sb">OK</button>
+                    </div>
                 </form>
             </div>
         </div>

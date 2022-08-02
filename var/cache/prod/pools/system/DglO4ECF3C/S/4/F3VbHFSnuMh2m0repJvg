@@ -1,0 +1,141 @@
+<?php //App.Entity.Reservation
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        (($f = &\Symfony\Component\VarExporter\Internal\Registry::$factories)['Symfony\\Component\\Validator\\Mapping\\ClassMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\ClassMetadata'))(),
+        ($f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'))(),
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Symfony\\Component\\Validator\\Constraints\\Length'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Length')),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\NotBlank'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\NotBlank')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\Regex'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Regex')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        clone $p['Symfony\\Component\\Validator\\Constraints\\Regex'],
+    ],
+    null,
+    [
+        'stdClass' => [
+            'name' => [
+                'App\\Entity\\Reservation',
+                'statut',
+                4 => 'startDate',
+                7 => 'endDate',
+            ],
+            'defaultGroup' => [
+                'Reservation',
+            ],
+            'members' => [
+                [
+                    'statut' => [
+                        $o[1],
+                    ],
+                    'startDate' => [
+                        $o[4],
+                    ],
+                    'endDate' => [
+                        $o[7],
+                    ],
+                ],
+            ],
+            'properties' => [
+                [
+                    'statut' => $o[1],
+                    'startDate' => $o[4],
+                    'endDate' => $o[7],
+                ],
+            ],
+            'constraints' => [
+                1 => [
+                    $o[2],
+                    $o[3],
+                ],
+                4 => [
+                    $o[5],
+                    $o[6],
+                ],
+                7 => [
+                    $o[8],
+                    $o[9],
+                ],
+            ],
+            'constraintsByGroup' => [
+                1 => [
+                    'Default' => [
+                        $o[2],
+                        $o[3],
+                    ],
+                    'Reservation' => [
+                        $o[2],
+                        $o[3],
+                    ],
+                ],
+                4 => [
+                    'Default' => [
+                        $o[5],
+                        $o[6],
+                    ],
+                    'Reservation' => [
+                        $o[5],
+                        $o[6],
+                    ],
+                ],
+                7 => [
+                    'Default' => [
+                        $o[8],
+                        $o[9],
+                    ],
+                    'Reservation' => [
+                        $o[8],
+                        $o[9],
+                    ],
+                ],
+            ],
+            'class' => [
+                1 => 'App\\Entity\\Reservation',
+                4 => 'App\\Entity\\Reservation',
+                7 => 'App\\Entity\\Reservation',
+            ],
+            'property' => [
+                1 => 'statut',
+                4 => 'startDate',
+                7 => 'endDate',
+            ],
+            'groups' => [
+                2 => [
+                    'Default',
+                    'Reservation',
+                ],
+                [
+                    'Default',
+                    'Reservation',
+                ],
+                5 => [
+                    'Default',
+                    'Reservation',
+                ],
+                [
+                    'Default',
+                    'Reservation',
+                ],
+                8 => [
+                    'Default',
+                    'Reservation',
+                ],
+                [
+                    'Default',
+                    'Reservation',
+                ],
+            ],
+            'max' => [
+                2 => 50,
+            ],
+            'pattern' => [
+                6 => '/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/',
+                9 => '/^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$/',
+            ],
+        ],
+    ],
+    $o[0],
+    []
+); }];
