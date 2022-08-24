@@ -28,7 +28,7 @@ a, a:active, a:hover{
 .navbar-account{
     background: var(--black10);
 }
-.atypikhouse-account-menu > ul > li:hover{
+.atypikhouse-submenu > li:hover{
     background-color: var(--black10);
 }
 .atypikhouse-account-submenu{

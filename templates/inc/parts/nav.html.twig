@@ -20,7 +20,7 @@
                     <li><a href="{{ path('login') }}" class="navbar-account"><div class="navbar-user-rounded"><span class="fas fa-user"></span></div> <span>Mon compte</span></a></li>
                     {% endif %}
                     <li class="atypikhouse-account-submenu">
-                        <ul>
+                        <ul class="atypikhouse-submenu">
                             {% if app.user %}
                             <li><a href="{{ path('dashboard') }}">Mon compte</a></li>
                             <li><a href="{{ path('dwelling_favorite') }}">Favoris</a></li>
