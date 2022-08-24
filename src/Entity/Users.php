@@ -76,11 +76,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\Length(max: 100)]
     #[Assert\NotBlank()]
+    #[Assert\Regex("/^[A-zÀ-ú -]{100}$/")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank()]
+    #[Assert\Regex("/^[A-zÀ-ú -]{50}$/")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
