@@ -56,16 +56,6 @@ use Symfony\Component\Validator\Constraints as Assert;
         "get"
     ]
 )]
-// #[ApiResource(
-//     attributes: ["security" => "is_granted('ROLE_USER')"],
-//     collectionOperations: [
-//         "get",
-//         "post" => ["security" => "is_granted('ROLE_ADMIN')"],
-//     ],
-//     itemOperations: [
-//         "get",
-//     ],
-// )]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -76,13 +66,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\Length(max: 100)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[A-zÀ-ú -]{100}$/")]
+    #[Assert\Regex("/^[A-Za-zÀ-ÖØ-öø-ÿ -]{2, 100}$/")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[A-zÀ-ú -]{50}$/")]
+    #[Assert\Regex("/^[A-Za-zÀ-ÖØ-öø-ÿ -]{2, 50}$/")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
