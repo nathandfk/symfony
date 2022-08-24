@@ -333,7 +333,11 @@
                         </form>
                         {% endif %}
                     </div>
+                    {% else %}
+                    <p>Seuls les utilisateurs ayant déjà réservés ou ayant une réservation en cours peuvent noter ou laisser un commentaire sur ce logement.</p>
                     {% endif %}
+                    {% else %}
+                        <p>Connectez-vous et ayez une réservation enregistrée à votre nom pour laisser un commentaire ou une note.</p>
                     {% endif %}
                 </div>
                 {% if app.user %}
@@ -364,7 +368,6 @@
                     attribution: '© OpenStreetMap | AtypikHouse'
                 }).addTo(map);
                 var marker = L.marker([ville.lon, ville.lat]).addTo(map);
-                {# var marker = L.marker([48.86, 2.33]).addTo(map); #}
                 </script>
 
                 {% endfor %}
@@ -374,27 +377,5 @@
 
 
 </div>
-
-
-{# <script>
-    var villes = {
-        "Paris": {"lat": 48.852969, "lon":2.349903},
-        "Brest": {"lat": 48.383, "lon": -4.500},
-        "Quimper": {"lat": 48.000, "lon": -4.100 },
-        "Bayonne": {"lat": 43.500, "lon": -1.467},
-    }
-    var map = L.map('map').setView([48.852969, 2.349903], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        minZoom: 1,
-        maxZoom: 19,
-        attribution: '© OpenStreetMap | AtypikHouse'
-    }).addTo(map);
-    for(ville in villes){
-        var marqueur = L.marker([villes[ville].lat, villes[ville].lon])
-        .addTo(map);
-        marqueur.bindPopup("<p>Paris</p>")
-    }
-    {# var marker = L.marker([48.86, 2.33]).addTo(map); 
-</script>#}
 
 {% include 'inc/parts/footer.html.twig' %}
