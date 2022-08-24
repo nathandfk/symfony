@@ -160,7 +160,7 @@ class PageController extends AbstractController
         ]);
     }
 
-    #[Route('/mentions-légales', name: 'legalnotice')]
+    #[Route('/mentions-legales', name: 'legalnotice')]
     public function legalnotice(): Response
     {
         $calendar = new Calendar();
@@ -172,7 +172,7 @@ class PageController extends AbstractController
         ]);
     }
 
-    #[Route('/conditions-générales-de-vente', name: 'cgv')]
+    #[Route('/conditions-generales-de-vente', name: 'cgv')]
     public function cgv(): Response
     {
         $calendar = new Calendar();
@@ -184,7 +184,7 @@ class PageController extends AbstractController
         ]);
     }
 
-    #[Route('/conditions-générales-dutilisation', name: 'cgu')]
+    #[Route('/conditions-generales-dutilisation', name: 'cgu')]
     public function cgu(): Response
     {
         $calendar = new Calendar();
@@ -192,6 +192,18 @@ class PageController extends AbstractController
         return $this->render('inc/pages/simple-pages/cgu.html.twig', [
             'carousel' => true,
             'title' => 'Conditions générales d\'utilisation',
+            'calendar' => $calendar,
+        ]);
+    }
+
+    #[Route('/politique-de-confidentialite', name: 'confidentiality')]
+    public function confidentiality(): Response
+    {
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
+        return $this->render('inc/pages/simple-pages/confidentiality.html.twig', [
+            'carousel' => true,
+            'title' => 'Politique de confidentialité',
             'calendar' => $calendar,
         ]);
     }
