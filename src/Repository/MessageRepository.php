@@ -39,6 +39,28 @@ class MessageRepository extends ServiceEntityRepository
         }
     }
 
+    public function showMessages(string $selector="*", string $where="")
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT $selector FROM `message` m $where";
+        
+        $prepare = $conn->prepare($sql);
+        $execute = $prepare->executeQuery();
+        return $execute->fetchAllAssociative();
+    }
+
+    public function showAllMessages(string $selector="*", string $where="")
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT $selector FROM `message` m JOIN users u1 ON u1.id = m.sender_id JOIN users u2 ON u2.id = m.recipient_id  $where";
+
+        $prepare = $conn->prepare($sql);
+        $execute = $prepare->executeQuery();
+        return $execute->fetchAllAssociative();
+    }
+
 //    /**
 //     * @return Message[] Returns an array of Message objects
 //     */

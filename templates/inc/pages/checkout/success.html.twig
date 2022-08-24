@@ -1,1 +1,52 @@
-<h2>Détails de votre réservation</h2>
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+<div class="atypikhouse-container my-3">
+<h1 class="size24 c1 my-3">Détails de votre réservation</h1>
+{% if reservation %}
+<div class="responsive-table">
+<table id="reservation-table" class="text-center ath-table-form">
+    <thead>
+        <tr>
+            <th colspan="3">Client</th>
+            <th>Habitation</th>
+            <th>Ville</th>
+            <th>Période de la réservation</th>
+            <th>Sous total</th>
+            <th>Frais de service</th>
+            <th>Prix total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="bg-c5">Prénom</td>
+            <td class="bg-c5">Nom</td>
+            <td class="bg-c5">E-mail</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="bg-c5"></td>
+        </tr>
+        {% for histo in reservation %}
+        <tr>
+            <td>{{ histo[0] }}</td>
+            <td>{{ histo[1] }}</td>
+            <td>{{ histo[2] }}</td>
+            {% set productUrl = histo[4] | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+            <td><a href="{{ path('app_habitation', {'slug': productUrl, 'id': histo[3] }) | lower }}">{{ histo[4] }}</a></td>
+            <td>{{ histo[12] }}</td>
+            <td>{{ histo[5]|date("d-m-Y") }} au {{ histo[6]|date("d-m-Y") }}</td>
+            <td>{{ histo[10] }} €</td>
+            <td>{{ histo[11] }} €</td>
+            <td class="c1 ff-m size22">{{ histo[9] }} €</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endif %}
+
+</div>
+
+{% include 'inc/parts/footer.html.twig' %}

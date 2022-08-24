@@ -1,23 +1,23 @@
+authentication_token:
+    path: /authentication_token
+    methods: ['POST']
+
 controllers:
     resource: ../src/Controller/
     type: annotation
 
-kernel:
-    resource: ../src/Kernel.php
-    type: annotation
+# kernel:
+#     resource: ../src/Kernel.php
+#     type: annotation
     
 index:
     path: /
     controller: App\Controller\IndexController::index
     
-auth:
-    path: /api/users/authentication
-    methods: ["POST"]
-
 swagger:
   path: /docs
   controller: api_platform.swagger.action.ui
 
 app_logout:
-    path: /logout
+    path: logout
     methods: GET

@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}AtypikHouse{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="icon" href="{{ ath_link }}/assets/pictures/logo-ath1.png">
+        <title>{% if title %}{{ title }} | {% endif %}AtypikHouse</title>
+        <meta name="description" content="Réserver votre habitation de types yourtes, cabanes dans l'arbre et bien d'autres pour cet été sur notre site internet AtypikHouse">
+        <meta property="og:title" content="AtypikHouse vous réserve bien plus de surprise"/>
+        <meta name="keywords" content="AtypikHouse, Habitation, Habitat, Location, Logement, Yourtes, Cabanes sur l'eau, Cabanes dans les arbres, Réservation, Été, Hiver, Printemps, Location en Europe"/>
+        <meta property="og:type" content="Réservation"/>
+        <meta property="og:url" content="https://f2i-dev14-nd.nathandfk.fr/" />
+        <meta property="og:image" content="https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png" />
+        <meta property="og:site_name" content="Service de réservation d'habitat en ligne"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="google-site-verification" content="7imeEP2sObBQHPFxwXPbeDBCsN4kfs-y0gnmSvh3H_8"/>
         <script src="https://js.stripe.com/v3/"></script>
-        {% if app.request.get('_route') == 'app_checkout' %}
-        {% endif %}
         {% block stylesheets %}
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-    crossorigin=""/>
+            integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+            crossorigin=""/>
             <link rel="stylesheet" href="{{ ath_link }}/assets/smacss/base.css">
             <link rel="stylesheet" href="{{ ath_link }}/assets/css/checkout.css">
             <link rel="stylesheet" href="{{ ath_link }}/assets/smacss/layout.css">
@@ -18,25 +26,48 @@
             <link rel="stylesheet" href="{{ ath_link }}/assets/smacss/states.css">
             <link rel="stylesheet" href="{{ ath_link }}/assets/smacss/theme.css">
             <link rel="stylesheet" href="{{ ath_link }}/assets/smacss/responsive.css">
-            
         {% endblock %}
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
             <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-crossorigin=""></script>
-
-            <script type='text/javascript' src='{{ ath_link }}/assets/js/functions.js'></script>
-            <script type='text/javascript' src='{{ ath_link }}/assets/js/style.js'></script>
-            <script type='text/javascript' src='{{ ath_link }}/assets/js/search.js'></script>
-            <script type='text/javascript' src='{{ ath_link }}/assets/js/historical.js'></script>
+            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+            crossorigin=""></script>
+            <script src='{{ ath_link }}/assets/js/functions.js'></script>
+            <script src='{{ ath_link }}/assets/js/style.js'></script>
+            <script src='{{ ath_link }}/assets/js/search.js'></script>
+            {% if app.request.get('_route') == 'historical' %}
+            <script src='{{ ath_link }}/assets/js/historical.js'></script>
+            {% endif %}
+            {% if app.request.get('_route') == 'dashboard' %}
+            <script src='{{ ath_link }}/assets/js/users-list.js'></script>
+            {% endif %}
+            {% if app.request.get('_route') == 'message' %}
+            <script src='{{ ath_link }}/assets/js/message.js'></script>
+            {% endif %}
+            <script src='{{ ath_link }}/assets/js/settings.js'></script>
+            <script src='{{ ath_link }}/assets/js/category.js'></script>
+            <script src='{{ ath_link }}/assets/js/dwellings.js'></script>
+            <script src='{{ ath_link }}/assets/js/edit-dwelling.js'></script>
+            {% if app.request.get('_route') == 'app_index' %}
+            <script src='{{ ath_link }}/assets/js/home.js'></script>
+            {% endif %}
             <script src="https://kit.fontawesome.com/06fe12cea6.js"></script>
             <script src='{{ ath_link }}/assets/js/single-product.js' defer></script>
             <script src="{{ ath_link }}/assets/js/checkout.js" defer></script>
         {% endblock %}
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3V1MB9V9Z"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-Z3V1MB9V9Z');
+        </script>
     </head>
 <body>
+{% include 'inc/modules/search/popupsearch.html.twig' %}
 <div class="notification-card">
     <span class="notification-icon size28"></span>
     <p class="notification-msg"></p>

@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Country;
 use App\Entity\Dwelling;
+use App\Entity\Posts;
+use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,6 +25,7 @@ class DwellingRepository extends ServiceEntityRepository
     private $reservation;
     private $dwelling_meta;
     private $users;
+    private $doctrine;
     public function __construct(ManagerRegistry $registry, CountryRepository $country, PostsRepository $posts, ReservationRepository $reservation, DwellingMetaRepository $dwelling_meta, UsersRepository $users, PostMetaRepository $pm)
     {
         parent::__construct($registry, Dwelling::class);
@@ -31,6 +35,7 @@ class DwellingRepository extends ServiceEntityRepository
         $this->dwelling_meta = $dwelling_meta;
         $this->users = $users;
         $this->post_meta = $pm;
+        $this->doctrine = $registry;
     }
 
     public function add(Dwelling $entity, bool $flush = false): void
@@ -53,22 +58,57 @@ class DwellingRepository extends ServiceEntityRepository
 
     public function showDwellings(string $selector="*", string $where="")
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT $selector FROM dwelling d $where";
-        $prepare = $conn->prepare($sql);
-        $execute = $prepare->executeQuery();
-        
-        return $execute->fetchAllAssociative();
+        try {
+            $conn = $this->getEntityManager()->getConnection();
+            $sql = "SELECT $selector FROM dwelling d $where";
+            $prepare = $conn->prepare($sql);
+            $execute = $prepare->executeQuery();
+            
+            return $execute->fetchAllAssociative();
+        } catch (\Throwable $th) {
+        }
     }
 
-    public function showDataDwellings(int $id=0, string $start_date = "", string $end_date = "")
+
+    // Fonction qui retourne toutes les données habitations
+    public function showDataDwellings(int $id = null, string $start_date = null, string $end_date = null, string $place = null, int $maxPeople = null, $limitPrice = null, int $filterType = null, bool $orderTitle = null, $orderId = null)
     {
+        if (!is_null($place)) {
+            $ex = explode(", ", $place);
+            if (count($ex) > 1) {
+                $place = $ex[0];
+            }
+        }
+        $where = !is_null($id) || !is_null($filterType)
+        || !is_null($place) || !is_null($limitPrice) ? "WHERE " : "";
 
-        $id!=0 ? $where = "WHERE id = $id" : $where = "";
-        !empty($start_date) && !empty($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = "";
+        $element = "";
 
-        $resultDwellings = $this->showDwellings("*", $where);
-        if (!empty($start_date) && !empty($end_date)) {
+        $element .= !is_null($id) ? "id = $id" : "";
+        if (!is_null($place)) {
+            $element .= !empty($element) ? " AND city LIKE '%$place%'" : "city LIKE '%$place%'";
+        }
+        if (!is_null($limitPrice)) {
+            $element .= !empty($element) ? " AND $limitPrice"  : $limitPrice;
+        }
+        if (!is_null($filterType)) {
+            $element .= !empty($element) ? " AND `type_id`=".$filterType  : "`type_id`=".$filterType;
+        }
+        
+        $element .= !is_null($orderId) || !is_null($orderTitle) ? " ORDER BY " : "";
+        if (!is_null($orderId)) {
+            $orderId = $orderId ? "ASC" : "DESC";
+            $element .= !is_null($orderId) ? " id $orderId " : "";
+        }
+        $element .= !is_null($orderId) && !is_null($orderTitle) ? ", " : ""; 
+        if (!is_null($orderTitle)) {
+            $orderTitle = $orderTitle ? "ASC" : "DESC";
+            $element .= !is_null($orderTitle) ? " title $orderTitle " : "";
+        }
+        
+        $resultDwellings = $this->showDwellings("*", $where.$element);
+
+        if (!is_null($start_date) && !is_null($end_date)) {
             $range = $this->date_range("$start_date", "$end_date");
             $date = "";
             foreach ($range as $value) {
@@ -80,18 +120,48 @@ class DwellingRepository extends ServiceEntityRepository
         }
 
         $finalResult = [];
-
+        if ($resultDwellings) {
         foreach ($resultDwellings as $dwelling) {
+            $dwelRep = $this->find($dwelling['id']);
+
+            if ($dwelRep->getDeletedAt() != null || $dwelRep->isActivate() == false) {
+                continue;
+            }
+            $equipmentsValue = [];
+            $postRep = $this->doctrine->getRepository(Posts::class);
+            $type = $postRep->find($dwelRep->getType());
+
+            foreach ($dwelRep->getEquipments() as $id) {
+                $equipment = $postRep->find($id);
+                array_push($equipmentsValue, $equipment->getDescription());
+            }
+
             $id = $dwelling['id'];
-            $country_id = $dwelling['country_id'];
-            $user_id = $dwelling['user_id'];
-            $users = $this->users->showUsers("first_name, last_name, email, roles", "WHERE id= $user_id");
+            $user_id = $dwelRep->getUser()->getId();
+
+            $usersRep = $this->doctrine->getRepository(Users::class);
+            $users = $usersRep->findOneBy(['id'=>$user_id]);
+
+
             !empty($date) ? $checkReservation = $this->reservation->showReservation("*", 'WHERE dwelling_id='.$id.' AND '.$date) : $checkReservation = false;
             if ($checkReservation) {
                 continue;
+            } else if ($users->getHost() == "PRIVATE" || $users->getHost() == "CLOSED" || $users->getDeletedAt() != null|| $users->getStatut() == false || (!in_array('ROLE_HOST', $users->getRoles()) && !in_array('ROLE_ADMIN', $users->getRoles()) && !in_array('ROLE_MODERATOR', $users->getRoles())) ) {
+                continue;
             }
             $resultDwellingMeta = $this->dwelling_meta->showDwellingMeta($id);
-            $location = $this->country->findOneCountry($country_id);
+            if ($maxPeople > 0) {
+                $value = 0;
+                foreach ($resultDwellingMeta as $key) {
+                    if ($key['field'] == "_max_people") {
+                        $value = $key['value'];
+                    }
+                }
+                if ($value < $maxPeople) {
+                    continue;
+                }
+            }
+            $location = $this->doctrine->getRepository(Country::class)->find($dwelRep->getCountry());
 
             $countComments = $this->posts->showPosts("count(*) count", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');
             $comments = $this->posts->showPosts("user_id, dwelling_id, type, description, added_at", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');
@@ -157,119 +227,38 @@ class DwellingRepository extends ServiceEntityRepository
                     }
                 }
             }
-            !empty($cleanLiness) ? $cleanLiness = array_sum($cleanLiness) / count($cleanLiness) : $cleanLiness = [];
-            !empty($precision) ? $precision = array_sum($precision) / count($precision) : $precision = [];
-            !empty($communication) ? $communication = array_sum($communication) / count($communication) : $communication = [];
-            !empty($_location) ? $_location = array_sum($_location) / count($_location) : $_location = [];
-            !empty($arrival) ? $arrival = array_sum($arrival) / count($arrival) : $arrival = [];
-            !empty($value_for_money) ? $value_for_money = array_sum($value_for_money) / count($value_for_money) : $value_for_money = [];
+            $cleanLiness = !empty($cleanLiness) ? round(array_sum($cleanLiness) / count($cleanLiness), 2) : [];
+            $precision = !empty($precision) ? round(array_sum($precision) / count($precision), 2) : [];
+            $communication = !empty($communication) ? round(array_sum($communication) / count($communication), 2) : [];
+            $_location = !empty($_location) ? round(array_sum($_location) / count($_location), 2) : [];
+            $arrival = !empty($arrival) ? round(array_sum($arrival) / count($arrival), 2) : [];
+            $value_for_money = !empty($value_for_money) ? round(array_sum($value_for_money) / count($value_for_money), 2) : [];
 
             // End Notes
 
 
             /* Reservation Date */
-            $reservationDate =  $id != 0 ? $this->reservation->showReservation("*", "WHERE dwelling_id = $id AND statut='RESERVED' OR statut='CONFIRMED'") : [];
+            $reservationDate =  $id != 0 ? $this->reservation->showReservation("*", "WHERE dwelling_id = $id AND statut IN('RESERVED', 'CONFIRMED', 'UNAVAILABLE')") : [];
 
             /*End Reservation Date */
-
-
-            !empty($countLikes) && !empty($sumLikes) && $countLikes[0]["count"] != 0 ? $totalLikes = intval($sumLikes[0]["note"])/intval($countLikes[0]["count"]) : $totalLikes = "";
-
+            $totalLikes = round((intval($cleanLiness)+intval($precision)+intval($communication)
+            +intval($_location)+intval($arrival)+intval($value_for_money))/6, 2);
 
             !empty($resultDwellingMeta) ? $dwellingMeta = $resultDwellingMeta : $dwellingMeta = "";
-            !empty($location) ? $country = $location[0] : $country = "";
+            !empty($location) ? $country = $location->getNameFr() : $country = "";
             !empty($countComments) ? $nbComments = $countComments[0] : $nbComments = "";
             !empty($comments) ? $comments = $comments : $comments = "";
-            !empty($totalLikes) ? $nbLikes = $totalLikes : $nbLikes = "";
+            $nbLikes = !empty($totalLikes) ? $totalLikes : "";
             !empty($users) ? $users = $users : $users = "";
 
-            $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate];
+            $dwellings = [$dwelling, $dwellingMeta, $country, $nbComments, $dataComments, $nbLikes, $users, $cleanLiness, $precision, $communication, $_location, $arrival, $value_for_money, $reservationDate, $type->getDescription(), $equipmentsValue]; //15
             array_push($finalResult, $dwellings);
         }
-
-
+        }
         return $finalResult;
     }
 
-    // public function showDwellings(string $id=null, string $start_date=null, string $end_date=null, $count = false)
-    // {
-    //     !is_null($id) ? $id = "id = '$id'" : $id = null;
-    //     !is_null($start_date) && !is_null($end_date) ? $date = "start_date>='$start_date' AND end_date<='$end_date'" : $date = null;
-    //     !is_null($id) ? $where = "WHERE" : $where = null;
-        
-    //     $conn = $this->getEntityManager()->getConnection();
-    //     $sql1 = "SELECT * FROM dwelling d $where $id";
-        
-    //     $prepare1 = $conn->prepare($sql1);
-    //     $execute1 = $prepare1->executeQuery();
-    //     $place = $this->city;
-    //     $posts = $this->posts;
-    //     $sql2 = 'SELECT * FROM dwelling_meta';
-    //     $prepare2 = $conn->prepare($sql2);
-    //     $execute2 = $prepare2->executeQuery();
-
-    //     if (!is_null($start_date) && !is_null($end_date) ) {
-    //         $range = $this->date_range("$start_date", "$end_date");
-    //         $date = "";
-    //         foreach ($range as $value) {
-    //             $date .= "start_date = '$value' OR end_date = '$value' OR ";
-    //         }
-    //         $date = substr($date, 0, -4);
-    //     } else {
-    //         $date = "";
-    //     }
-    //     $sql3 = "SELECT * FROM reservation WHERE $date";
-        
-    //     $prepare3 = $conn->prepare($sql3);
-    //     $execute3 = $prepare3->executeQuery();
-
-    //     $result1 = $execute1->fetchAllAssociative();
-    //     $result2 = $execute2->fetchAllAssociative();
-    //     $result3 = $execute3->fetchAllAssociative();
-
-    //     $finalResult = [];
-    //     foreach ($result1 as $value1) {
-    //         $id = $value1['id'];
-    //         if ($result3) {
-    //         }
-    //         $city_id = $value1['city_id'];
-    //         foreach ($result2 as $value2) {
-    //             if ($value2['dwelling_id'] ==  $id) {
-    //                 $clear = "";
-    //                 foreach ($result3 as $clearId) {
-    //                     if($clearId['dwelling_id'] == $id) {
-    //                         $clear = $id;
-    //                     }
-    //                 }
-    //                 if ($clear == $id) {
-    //                     continue;
-    //                 } else {
-    //                     $cities = $place->showAllPlace($city_id);
-    //                     $likes = $posts->showPosts(false, false, "WHERE type='LIKES' AND dwelling_id=$id");
-    //                     var_dump($likes);
-    //                     $countLikes = $posts->showPosts(false, true, "WHERE type='LIKES' AND dwelling_id=$id");
-    //                     count($likes) > 0 ? $likes = $likes[0]["number"] : $likes = 0;
-    //                     count($countLikes) > 0 ? $countLikes = $countLikes[0]['count'] : $countLikes = 0;
-                        
-    //                     $likes != 0 ? $totalLikes = $likes/$countLikes : $totalLikes = '';
-                        
-    //                     $comments = $posts->showPosts(false, false, "WHERE type='COMMENTS' AND dwelling_id=$id");
-    //                     $countComments = $posts->showPosts(false, true, "WHERE type='COMMENTS' AND dwelling_id=$id");
-    //                     $wrapperValue = [$value1, $value2];
-    //                     foreach ($cities as $city) {
-    //                         array_push($wrapperValue, $city);
-    //                     }
-    //                     array_push($wrapperValue, $comments);
-    //                     array_push($wrapperValue, $countComments[0]);
-    //                     array_push($wrapperValue, $totalLikes);
-    //                     array_push($finalResult, $wrapperValue);
-
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return $finalResult;
-    // }
+    // Les différentes dates entre une période à une autre
     function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' ) {
 
         $dates = array();

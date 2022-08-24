@@ -1,0 +1,63 @@
+{% if app.user %}
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_HOST') or is_granted('ROLE_MODERATOR') %}
+{% if datas %}
+<div class="my-2">Les habitats archivés sont définitivements et automatiquements supprimés de notre base de données au bout d'une année</div>
+<div class="responsive-table">
+<table id="historical-table" class="text-center ath-table-form">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Titre</th>
+            <th>Prix</th>
+            <th>Ville</th>
+            <th>Etat</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dwelling in datas %}
+        <tr data-id="{{ dwelling.id }}">
+            {% set pictures = dwelling.pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
+            <td class="w-7r h-7r"><img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"></td>
+            <td>{{ dwelling.title }}</td>
+            <td class="ff-m c1 size20 w-7r">{{ dwelling.price }} €</td>
+            <td>{{ dwelling.city }}</td>
+            <td>{{ dwelling.state }}</td>
+            {% if dwelling.deleted_at %}<td class="ff-m size16 c2">Archivé</td>{% else %}<td class="ff-m size16 c1">Actif</td>{% endif %}
+            {% set productUrl = dwelling.title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+            <td class="d-flex gap-1 w-max-content m-auto ai-center w-100">
+                {% if app.user %}
+                    <a href="{{ path('edit_dwelling', {id: dwelling.id}) }}" class="click click-brown">Modifier</a>
+                    <a href='{{ path('app_habitation', {'slug': productUrl, 'id': dwelling.id}) | lower }}' class="click click-success">Voir</a>
+                    {% if app.user.id == dwelling.user_id %}
+                        {% if dwelling.deleted_at == null %}
+                        <button title="Archiver" id="dwelling-delete" class="click click-danger">Archiver</button>
+                        {% else %}
+                        <button title="Restaurer" id="dwelling-delete" class="click click-success">Restaurer</button>
+                        {% endif %}
+                    {% endif %}
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
+                        {% if dwelling.activate == true %}
+                        <button title="Bloquer" id="dwelling-activate" class="click click-danger">Bloquer</button>
+                        {% else %}
+                        <button title="Débloquer" id="dwelling-activate" class="click click-success">Débloquer</button>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<div class="btn-navigate paginate-dwelling-list d-flex jc-center gap-2 my-3">
+{{ knp_pagination_render(datas) }}
+</div>
+{% endif %}
+
+{% if message %}
+{{ message }}
+{% endif %}
+{% endif %}
+{% endif %}

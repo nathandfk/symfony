@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\DwellingController;
+use App\Controller\HostController;
+use App\Controller\LikesCommentsController;
 use App\Repository\PostsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +13,25 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostsRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    itemOperations: [
+        "notification" => [
+            "method" => "GET",
+            'controller' => HostController::class,
+            "path" => "/notification/{id}/{email}/{salt}",
+        ],
+        "comment" => [
+            "method" => "POST",
+            "path" => "/comment",
+            'controller' => DwellingController::class,
+        ]
+    ], 
+    collectionOperations: [
+        "get",
+        "post"
+    ] 
+    
+)]
 class Posts
 {
     #[ORM\Id]
@@ -41,13 +62,11 @@ class Posts
     #[ORM\Column(type: 'text')]
     private $description;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, nullable:true)]
     #[Assert\Length(max: 50)]
-    #[Assert\NotBlank()]
     private $statut;
 
-    #[ORM\Column(type: 'string', length: 25, nullable: true)]
-    #[Assert\Length(max: 25)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $number;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -62,11 +81,19 @@ class Posts
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostMeta::class)]
     private $postMetas;
 
+    #[ORM\OneToMany(mappedBy: 'type', targetEntity: Dwelling::class)]
+    private $dwellings;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private $deletedAt;
+
     public function __construct()
     {
         $this->postMetas = new ArrayCollection();
-        $this->addedAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->deletedAt = null;
+        $this->dwellings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,19 +178,19 @@ class Posts
         return $this->statut;
     }
 
-    public function setStatut(string $statut): self
+    public function setStatut(?string $statut): self
     {
         $this->statut = $statut;
 
         return $this;
     }
 
-    public function getNumber(): ?string
+    public function getNumber(): ?int
     {
         return $this->number;
     }
 
-    public function setNumber(?string $number): self
+    public function setNumber(?int $number): self
     {
         $this->number = $number;
 
@@ -232,6 +259,48 @@ class Posts
                 $postMeta->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dwelling>
+     */
+    public function getDwellings(): Collection
+    {
+        return $this->dwellings;
+    }
+
+    public function addDwelling(Dwelling $dwelling): self
+    {
+        if (!$this->dwellings->contains($dwelling)) {
+            $this->dwellings[] = $dwelling;
+            $dwelling->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDwelling(Dwelling $dwelling): self
+    {
+        if ($this->dwellings->removeElement($dwelling)) {
+            // set the owning side to null (unless already changed)
+            if ($dwelling->getType() === $this) {
+                $dwelling->setType(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }

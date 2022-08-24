@@ -6,6 +6,7 @@
     --c3: #000000;
     --c4: #ffffff;
     --c5: #F5F5F5;
+    --hover-c5: #dfdfdf;
 
     --black5: rgba(0 0 0 / 5%);
     --black10: rgba(0 0 0 / 10%);
@@ -70,7 +71,7 @@ a, a:active, a:hover{
     color: var(--c4);
 }
 .header-cover, .additional-cover{
-    background-color: var(--black30);
+    background-color: var(--black50);
 }
 .section-why-form>span{
     background-color: var(--black10);
@@ -193,12 +194,24 @@ a, a:active, a:hover{
     background-color: var(--c5);
     color: var(--c3);
 }
+.click-c5:hover{
+    background-color: var(--hover-c5);
+    color: var(--c3);
+}
 .choice-discussion:hover{
     background-color: var(--c1);
     color: var(--c4);
 }
 .alert-success{
     background-color: var(--c1);
+    color: var(--c4);
+}
+.alert-danger{
+    background-color: var(--c2);
+    color: var(--c4);
+}
+.alert-error{
+    background-color: var(--c2);
     color: var(--c4);
 }
 .list-location{
@@ -212,5 +225,35 @@ a, a:active, a:hover{
 }
 .list-location > li:hover{
     background-color: var(--c1);
+    color: var(--c4);
+}
+.user-view-cover{
+    background-color: var(--black30);
+}
+.form-user-view{
+    background-color: var(--c4);
+}
+.card{
+    background-color: var(--c4);
+}
+.text-link-success:hover{
+    color: var(--c1);
+}
+.text-link-brown:hover{
+    color: var(--c2);
+}
+
+.responsive-menu{
+    background-color: var(--c4);
+}
+.responsive-menu-cover{
+    background: var(--black20);
+}
+.wb{
+    background: var(--c4);
+    color: var(--c3);
+}
+.bw{
+    background: var(--c3);
     color: var(--c4);
 }

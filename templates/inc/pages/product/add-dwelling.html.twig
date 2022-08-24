@@ -13,18 +13,28 @@
         </div>
     {% endfor %}
     {% for message in app.flashes('error') %}
-        <div class="alert alert-success">
+        <div class="alert alert-error">
             {{ message }}
         </div>
     {% endfor %}
-    <div class="navigation-link d-flex gap-1 my-3">
+<div class="dashboard-wrapper">
+    <div class="navigation-link d-flex gap-1 my-2">
         <a data-checked="add" class="click click-success">Ajouter une habitation</a>
-        <a data-checked="delete" class="click click-c5">Habitations</a>
+        {% if app.user %}
+        {% if (is_granted("ROLE_HOST") or is_granted("ROLE_MODERATOR") or is_granted("ROLE_ADMIN")) %}
+        <a data-checked="show" class="click click-c5">Habitations</a>
+        {% endif %}
+        {% endif %}
     </div>
     <div class="host-wrapper" data-selected="add" >
         {{ form_start(form) }}
         <div class="img-uploaded"></div>
         <h3>Essentiels</h3>
+            <div class="form-group">
+                {{ form_label(form.type) }}
+                {{ form_widget(form.type) }}
+                {{ form_errors(form.type) }}
+            </div>
             <div class="form-row">
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.title) }}
@@ -49,8 +59,8 @@
                     {{ form_errors(form.price) }}
                 </div>
                 <div class="form-group bloc-lg-6">
-                    {{ form_label(form.pictures) }}
-                    {{ form_widget(form.pictures) }}
+                    {{ form_label(form.pictures, 'Images (Taille totale maximale 15MB, 4 fichiers min et 10 fichiers max) *') }}
+                    {{ form_widget(form.pictures, {required:'required'}, ) }}
                     {{ form_errors(form.pictures) }}
                 </div>
             </div>
@@ -73,8 +83,8 @@
                     {{ form_errors(form.country) }}
                 </div>
                 <div class="location-inner form-group bloc-lg-6">
-                    <label>Emplacement (Important de sélectionner le pays avant)*</label>
-                    <input type="text" data-link="{{ path('location') }}" class="seach-location" name="seach_location" placeholder="Rechercher la ville de votre habitation" required>
+                    <span>Emplacement (Important de sélectionner le pays avant)*</span>
+                    <input type="text" data-link="{{ path('location') }}" class="seach-location" autocomplete="off" name="seach_location" placeholder="Rechercher la ville de votre habitation" required>
                     <div class="location-content search-place"></div>
                     <input type="hidden" name="value_location">
                 </div>
@@ -90,6 +100,11 @@
                     {{ form_widget(form.state) }}
                     {{ form_errors(form.state) }}
                 </div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.equipments) }}
+                {{ form_widget(form.equipments) }}
+                {{ form_errors(form.equipments) }}
             </div>
         <h3>Informations complémentaires</h3>
             <div class="form-row">
@@ -215,14 +230,18 @@
                     </div>
                 </div>
             </div>
-            <div>
-                <label for="equipments">Équipements *(Séparez les équipements par une virgule)</label>
-                <textarea placeholder="Exemple: Lave linge,Parking,Cuisine,Wifi,Détecteur de fumée,Micro-ondes,Shampooing" name="equipments" id="equipments"></textarea>
-            </div>
 
-            <button type="submit" class="click click-success" name="add_dwelling">Ajouter ce logement</button>
+            <button type="submit" class="click click-success ml-auto" name="add_dwelling">Ajouter ce logement</button>
         {{ form_end(form) }}
     </div>
+    {% if app.user %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_HOST') or is_granted('ROLE_MODERATOR') %}
+    <div class="host-wrapper d-none" data-selected="show" >
+        {% include 'inc/pages/product/list-dwelling.html.twig' %}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
 </div>
 
 

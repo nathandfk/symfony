@@ -60,28 +60,29 @@ dom("html, body").addEventListener('click', event => {
         <div id="payment-message" class="hidden"></div>
     </form>`
 
-    let user = `<div>
-        <table class="text-left">
-            <thead>
-                <th>Récapitulatif</th>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td>Période du</td>
-                    <td><span class="reservation-arrival-date c2 size18"></span> - <span class="reservation-departure-date c2 size18"></span></td>
-                </tr>
-            </tbody>
-        </table>
-        <h4 class="c1">Les dates que vous venez de vérifier sont disponibles.</h4>
-        <div class="d-flex gap-1">
-        <div class="edit-reservation-date click click-brown">Modifier mes dates</div>
-        <a href='`+dataProduct()[7]+`' class="click click-success">Je me connecte</a>
-        </div>
-    </div>`
-
     if (event.target) {
         if(event.target.name == 'checking-dispo') {
+
+                let user = `<div>
+                <table class="text-left">
+                    <thead>
+                        <th>Récapitulatif</th>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Période du</td>
+                            <td><span class="reservation-arrival-date c2 size18"></span> - <span class="reservation-departure-date c2 size18"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4 class="c1">Les dates que vous venez de vérifier sont disponibles.</h4>
+                <div class="d-flex gap-1">
+                <div class="edit-reservation-date click click-brown">Modifier mes dates</div>
+                <a href='`+dataProduct()[7]+`' class="click click-success">Je me connecte</a>
+                </div>
+            </div>`
+
             let closestForm = event.target.closest('.product-form-check')
                 arrivalDate = closestForm.querySelector('.single-product-arrival').dataset.period
                 arrivalShow = closestForm.querySelector('.single-product-arrival').innerHTML
@@ -138,9 +139,9 @@ dom("html, body").addEventListener('click', event => {
             setTimeout(() => {
                 let payment = document.querySelector('#payment-element')
                 if (payment && payment.childElementCount < 1) {
-                    notification("Une erreur inattendue s'est produite, veuillez recommencer", "fas fa-exclamation")
+                    notification("Une erreur inattendue s'est produite, veuillez recommencer !", "fas fa-exclamation")
                 }
-            }, 1000);
+            }, 5000);
         }
     }
 });
@@ -210,5 +211,120 @@ dom("html, body").addEventListener('mouseup', event => {
     });
     text = adultsText + childrensText + babiesText + animalsText
     innerClosest.querySelector(".nb-traverlers").innerHTML = text
+    }
+})
+dom("html, body").addEventListener('click', event => {
+    if (event.target.classList.contains('criteria-star')) {
+        let closest = event.target.closest('.criteria')
+            span = closest.querySelector('span')
+            count = closest.querySelector('span').childElementCount
+
+
+        let index = null;
+        for (let i = 0; i < count; i++) {
+            if (span.children[i].classList.contains("c1")) {
+                span.children[i].classList.remove("c1")
+            }
+            if (event.target == span.children[i]) {
+                index = i
+            } 
+        }
+        if (index!=null) {
+            for (let i = 0; i <= index; i++) {
+                span.children[i].classList.add("c1")
+            } 
+        }       
+    } else if (event.target.name == "note-unavailable"){
+        let closest = event.target.closest('.product-form-check')
+            $arrival = closest.querySelector('.single-product-arrival').dataset.period
+            $departure = closest.querySelector('.single-product-departure').dataset.period
+
+        if (!$arrival || !$departure ) {
+            notification('Veuillez renseigner les dates', "fas fa-exclamation")
+        } else {
+            if ($arrival == "" && $departure == "") {
+                notification('Veuillez renseigner les dates', "fas fa-exclamation")
+            } else {
+                let path = closest.dataset.path
+                fetch(path, 
+                {headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                }, method: 'POST', body: JSON.stringify({arrival:$arrival, departure:$departure, dwelling:closest.dataset.dwelling}) })
+                .then(res => res.json())
+                .then(response => {
+                    const obj = JSON.parse(response);
+                    if(obj.response == "success") { 
+                        notification(obj.message, obj.icon)
+                    } else if (obj.response == "error") {
+                        notification(obj.message, obj.icon)
+                    }
+                })
+                .catch(error => console.log('error'));
+            }
+        }
+    }
+})
+
+let data = {_dwelling: "", _cleanliness:"", _precision: "",
+_communication:"", _location:"", 
+_arrival:"", _value_for_money:""}
+dom("html, body").addEventListener('submit', event => {
+    if (event.target) {
+        if (event.target.id == "user-like") {
+            event.preventDefault()
+            var formData = new FormData(event.target);
+            var object = {};
+                formData.forEach((value, key) => object[key] = value);
+            var json = JSON.stringify(object);
+                check = JSON.parse(json)
+
+            data._cleanliness = check._cleanliness ? check._cleanliness : data._cleanliness
+            data._precision = check._precision ? check._precision : data._precision
+            data._communication = check._communication ? check._communication : data._communication
+            data._location = check._location ? check._location : data._location
+            data._arrival = check._arrival ? check._arrival : data._arrival
+            data._value_for_money = check._value_for_money ? check._value_for_money : data._value_for_money
+            data._dwelling = check.btn_like ? event.target.dataset.dwelling : data._dwelling;
+            
+            if (check.btn_like) {
+                fetch("/product/likes", 
+                    {headers: {
+                    'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                    }, method: 'POST', body: JSON.stringify(data) })
+                    .then(res => res.json())
+                    .then(response => {
+                        const obj = JSON.parse(response);
+                        if(obj.response == "success") {
+                            notification(obj.message, obj.icon)
+                            event.target.closest('form').remove()
+                        } else {
+                            notification(obj.message, obj.icon)
+                        }
+                    })
+            }
+            
+            
+        } else if (event.target.id == "user-comment"){
+            event.preventDefault()
+            var formData = new FormData(event.target);
+            var object = {};
+                formData.forEach((value, key) => object[key] = value);
+            var json = JSON.stringify(object);
+                fetch("/product/comments", 
+                    {headers: {
+                    'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
+                    }, method: 'POST', body: json })
+                    .then(res => res.json())
+                    .then(response => {
+                        const obj = JSON.parse(response);
+                        if(obj.response == "success") {
+                            notification(obj.message, obj.icon)
+                            event.target.closest('form').remove()
+                        } else {
+                            notification(obj.message, obj.icon)
+                        }
+                })
+            
+        }
     }
 })

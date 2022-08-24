@@ -1,135 +1,30 @@
 {% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
 <div class="atypikhouse-container">
-
-<h3>Historique de réservation de mes clients</h3>
-<table id="historical-table" class="text-center ath-table-form">
-    <thead>
-        <tr>
-            <th></th>
-            <th colspan="3">Client</th>
-            <th>Habitation</th>
-            <th>Période de la réservation</th>
-            <th>Prix</th>
-            <th>Statut</th>
-            <th>Détails</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td></td>
-            <td class="bg-c5">Prénom</td>
-            <td class="bg-c5">Nom</td>
-            <td class="bg-c5">E-mail</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" value="1" class="historical-checked"></td>
-            <td>Nathan</td>
-            <td>DIAFOUKA</td>
-            <td>n@gmail.com</td>
-            <td><a href="">Cabane perchée</a></td>
-            <td>01 juillet 2022 - 07 juillet 2022</td>
-            <td>150 €</td>
-            <td>NOT_ACCEPTED</td>
-            <td><a href="" class="fas fa-eye"></a></td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" value="2" class="historical-checked"></td>
-            <td>Nathan</td>
-            <td>DIAFOUKA</td>
-            <td>n@gmail.com</td>
-            <td><a href="">Cabane perchée</a></td>
-            <td>01 juillet 2022 - 07 juillet 2022</td>
-            <td>150 €</td>
-            <td>NOT_ACCEPTED</td>
-            <td><a href="" class="fas fa-eye"></a></td>
-        </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td><input type="checkbox" class="historical-checked-all"></td>
-            <td>Action</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="d-flex gap-1 m-auto w-max-content">
-            {# <a href="" class="click click-brown">Détails</a> #}
-            <input type="submit" class="click click-grown" value="Refuser" name="btn-refuse">
-            <input type="submit" class="click click-success" value="Valider" name="btn-valid">
-            </td>
-            <td></td>
-        </tr>
-    </tfoot>
-</table>
-
-<h3>Historique de mes réservations</h3>
-<table id="historical-table" class="text-center ath-table-form">
-    <thead>
-        <tr>
-            <th></th>
-            <th colspan="3">Client</th>
-            <th>Habitation</th>
-            <th>Période de la réservation</th>
-            <th>Prix</th>
-            <th>Statut</th>
-            <th>Détails</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td></td>
-            <td class="bg-c5">Prénom</td>
-            <td class="bg-c5">Nom</td>
-            <td class="bg-c5">E-mail</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" value="1" class="historical-checked"></td>
-            <td>Nathan</td>
-            <td>DIAFOUKA</td>
-            <td>n@gmail.com</td>
-            <td><a href="">Cabane perchée</a></td>
-            <td>01 juillet 2022 - 07 juillet 2022</td>
-            <td>150 €</td>
-            <td>NOT_ACCEPTED</td>
-            <td><a href="" class="fas fa-eye"></a></td>
-        </tr>
-        <tr>
-            <td><input type="checkbox" value="2" class="historical-checked"></td>
-            <td>Nathan</td>
-            <td>DIAFOUKA</td>
-            <td>n@gmail.com</td>
-            <td><a href="">Cabane perchée</a></td>
-            <td>01 juillet 2022 - 07 juillet 2022</td>
-            <td>150 €</td>
-            <td>NOT_ACCEPTED</td>
-            <td><a href="" class="fas fa-eye"></a></td>
-        </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td><input type="checkbox" class="historical-checked-all"></td>
-            <td>Action</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="d-flex gap-1 m-auto w-max-content">
-            {# <a href="" class="click click-brown">Détails</a> #}
-            <input type="submit" class="click click-grown" value="Refuser" name="btn-refuse">
-            <input type="submit" class="click click-success" value="Valider" name="btn-valid">
-            </td>
-            <td></td>
-        </tr>
-    </tfoot>
-</table>
+    {% if title %}
+    <div class="page-title my-3">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    {% endif %}
+    <div class="dashboard-wrapper my-4">
+        <div class="navigation-link d-flex gap-1">
+            <a data-checked="client" class="click click-success">Client</a>
+            {% if is_granted('ROLE_HOST') %}
+            <a data-checked="host" class="click click-c5">Hôte</a>
+            {% endif %}
+        </div>
+        
+        <div data-selected="client">
+            <h2 class="size18">Historique de mes réservations</h2>
+            <div class="table-wrapper historical-client-wrapper historical-wrapper"></div>
+        </div>
+        {% if is_granted('ROLE_HOST') %}
+        <div data-selected="host" class="d-none">
+            <h2 class="size18">Historique de réservation de mes clients</h2>
+            <div class="table-wrapper historical-host-wrapper historical-wrapper"></div>
+        </div>
+        {% endif %}
+    </div>
 </div>
+
 {% include 'inc/parts/footer.html.twig' %}

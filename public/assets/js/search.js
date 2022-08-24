@@ -10,6 +10,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
     })
 
     dom('html, body').addEventListener("click", event => {
+        if (dom('.calendar-wrapper')) {
         let bodyClosest = event.target.closest('body')
         let targetDateClosest = event.target.closest('.target-data')
         let searchClosest = event.target.closest('.module-search-wrapper')
@@ -35,7 +36,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                         }
                     }
                 });
-                let search = bodyClosest.querySelector('.search-place > label')
+                let search = bodyClosest.querySelector('.search-place > span')
                 if (search.querySelector('input')) {
                     if (search.querySelector('input').value == "" || search.querySelector('input').value == " ") {
                         search.innerHTML = ''
@@ -51,11 +52,11 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 bodyClosest.querySelector('.popup-search').classList.remove('popup-search-active')
             } else if (event.target.classList.contains('search-place')) {
                 input.type = "text"
-                input.value = event.target.querySelector('label').innerHTML
-                event.target.querySelector('label').innerHTML = ""
+                input.value = event.target.querySelector('span').innerHTML
+                event.target.querySelector('span').innerHTML = ""
                 input.classList.add("search-place-input")
                 input.placeholder = "Où allez-vous"
-                event.target.querySelector('label').appendChild(input)
+                event.target.querySelector('span').appendChild(input)
                 input.focus()
             } else if (event.target.classList.contains('search-place-input')) {
                 event.target.focus()
@@ -64,9 +65,9 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 let target = event.target.closest('.target-data').querySelector('.superpose')
                 
                 if (event.target.closest(".target-data").classList.contains("search-arrival-date")) {
-                    if (dispoClosest.querySelector(".search-arrival-date > label").dataset.period) {
-                        dispoClosest.querySelector(".search-departure-date > label").dataset.period = ""
-                        dispoClosest.querySelector(".search-departure-date > label").classList.contains("single-product-departure") ? dispoClosest.querySelector(".search-departure-date > label").innerHTML = "_ _ / _ _ / _ _ _ _" : dispoClosest.querySelector(".search-departure-date > label").innerHTML = ""
+                    if (dispoClosest.querySelector(".search-arrival-date > span").dataset.period) {
+                        dispoClosest.querySelector(".search-departure-date > span").dataset.period = ""
+                        dispoClosest.querySelector(".search-departure-date > span").classList.contains("single-product-departure") ? dispoClosest.querySelector(".search-departure-date > span").innerHTML = "_ _ / _ _ / _ _ _ _" : dispoClosest.querySelector(".search-departure-date > span").innerHTML = ""
                         dispoClosest.querySelector(".date-departure-selected") ? dispoClosest.querySelector(".date-departure-selected").classList.remove("date-departure-selected") : "";
                         let generalCalendar = dispoClosest.querySelector(".search-departure-date .general-calendar").innerHTML 
                         dispoClosest.querySelector(".search-arrival-date .general-calendar").innerHTML = generalCalendar
@@ -102,7 +103,7 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 let dispoClosest = event.target.closest('.atypikhouse-search-dispo')
 
                 if (event.target.closest(".search-departure-date")) {
-                    let dateArrival = dispoClosest.querySelector(".search-arrival-date>label").dataset.period
+                    let dateArrival = dispoClosest.querySelector(".search-arrival-date>span").dataset.period
                     let dates = []
                     let $response = []
                     let theDate = new Date(dateArrival)
@@ -141,8 +142,8 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                     dispoClosest.querySelector("."+search+' .calendar').classList.add('d-none')
                 }, 200);
 
-                targetDateClosest.querySelector('label').innerHTML = dateShow
-                targetDateClosest.querySelector('label').dataset.period = date
+                targetDateClosest.querySelector('span').innerHTML = dateShow
+                targetDateClosest.querySelector('span').dataset.period = date
 
                 let generalCalendar = dispoClosest.querySelector("."+search+" .general-calendar").innerHTML 
                 dispoClosest.querySelector("."+reverse+" .general-calendar").innerHTML = generalCalendar
@@ -159,26 +160,26 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
 
             } else if(event.target.closest('.travelers input')){
                 let travelers = event.target.closest('.nb-travelers')
-                    adult = travelers.querySelector('#traveler-adult').value
-                    children = travelers.querySelector('#traveler-children').value
-                    baby = travelers.querySelector('#traveler-baby').value
-                    animal = travelers.querySelector('#traveler-animal').value
+                    adult = travelers.querySelector('.traveler-adult').value
+                    children = travelers.querySelector('.traveler-children').value
+                    baby = travelers.querySelector('.traveler-baby').value
+                    animal = travelers.querySelector('.traveler-animal').value
                 total = parseInt(adult) + parseInt(children) + parseInt(baby) + parseInt(animal)
                 let tr = "voyageurs";
                 (total > 1) ? tr = "voyageurs" : tr = "voyageur";
-                travelers.querySelector('label').innerHTML = total+' '+tr
+                travelers.querySelector('span').innerHTML = total+' '+tr
             } else if(event.target.classList.contains('btn-search')){
                 let form = event.target.closest('.module-search-wrapper')
-                    adult = form.querySelector('#traveler-adult').value
-                    children = form.querySelector('#traveler-children').value
-                    baby = form.querySelector('#traveler-baby').value
-                    animal = form.querySelector('#traveler-animal').value
-                    arrival = form.querySelector('.search-arrival-date>label').dataset.period
-                    departure = form.querySelector('.search-departure-date>label').dataset.period
+                    adult = form.querySelector('.traveler-adult').value
+                    children = form.querySelector('.traveler-children').value
+                    baby = form.querySelector('.traveler-baby').value
+                    animal = form.querySelector('.traveler-animal').value
+                    arrival = form.querySelector('.search-arrival-date>span').dataset.period
+                    departure = form.querySelector('.search-departure-date>span').dataset.period
                     arrival ? arrival = arrival : arrival = '';
                     departure ? departure = departure : departure = '';
-                    form.querySelector('.search-place').querySelector('label') != "" ? place = form.querySelector('.search-place').querySelector('label') .innerHTML : place = form.querySelector('.search-place').querySelector('label') .innerHTML;
-                    form.querySelector('.search-place-input') ? place = form.querySelector('.search-place-input').value : place = form.querySelector('.search-place').querySelector('label').innerHTML;
+                    form.querySelector('.search-place').querySelector('span') != "" ? place = form.querySelector('.search-place').querySelector('span') .innerHTML : place = form.querySelector('.search-place').querySelector('span') .innerHTML;
+                    form.querySelector('.search-place-input') ? place = form.querySelector('.search-place-input').value : place = form.querySelector('.search-place').querySelector('span').innerHTML;
                     
                 window.location.href= '/search?place='+place+'&arrival='+arrival+'&departure='+departure+'&adult='+adult+'&children='+children+'&baby='+baby+'&animal='+animal
             } else if(event.target.classList.contains('edit-reservation-date')){
@@ -188,10 +189,11 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 elClosest.classList.add('d-none')
             } else if(event.target.classList.contains("list-location-item")){
                 let closest = event.target.closest(".search-place")
-                closest.querySelector('label').innerHTML = event.target.innerHTML
+                closest.querySelector('span').innerHTML = event.target.innerHTML
                 closest.querySelector('ul').remove()
             }
         }
+    }
     })
 
 
@@ -243,8 +245,9 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
               if (event.target.className == "search-place-input" || event.target.className == "seach-location") {
                 text = event.target.value
                 let closestHost = event.target.closest(".host-wrapper")
-                if (dom(".search-place > ul")) {
-                    dom(".search-place > ul").remove()
+                let container = event.target.closest('.atypikhouse-container')
+                if (container.querySelector(".search-place > ul")) {
+                    container.querySelector(".search-place > ul").remove()
                 }
                 var requestOptions = {
                     method: 'GET',
@@ -253,10 +256,10 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                 fetch("https://api.geoapify.com/v1/geocode/autocomplete?text="+text+"&lang=fr&limit=10&apiKey=a62343cecdbe4c1d8576e33086719fa7", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    if (dom(".search-place>ul")) {
-                        let ul = dom(".search-place>ul")
+                    if (container.querySelector(".search-place>ul")) {
+                        let ul = container.querySelector(".search-place>ul")
                     } else {
-                        let search = dom(".search-place")
+                        let search = container.querySelector(".search-place")
                             ul = document.createElement('ul')
                             ul.setAttribute('class', 'list-location search-location')
                             search.appendChild(ul)
@@ -287,7 +290,6 @@ window.addEventListener("DOMContentLoaded", (loadedEvent) => {
                             }
                         }
                     });
-                    console.log(result)
                 })
                 .catch(error => console.log('error', error));
                 } else {

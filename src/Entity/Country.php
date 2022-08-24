@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CountryRepository::class)]
-#[ApiResource]
 class Country
 {
     #[ORM\Id]
@@ -47,9 +46,13 @@ class Country
     #[ORM\OneToMany(mappedBy: 'country', targetEntity: Dwelling::class)]
     private $dwellings;
 
+    #[ORM\OneToMany(mappedBy: 'Country', targetEntity: Users::class)]
+    private $users;
+
     public function __construct()
     {
         $this->dwellings = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,6 +132,68 @@ class Country
         return $this;
     }
 
+    // /**
+    //  * @return Collection<int, Dwelling>
+    //  */
+    // public function getDwellings(): Collection
+    // {
+    //     return $this->dwellings;
+    // }
+
+    // public function addDwelling(Dwelling $dwelling): self
+    // {
+    //     if (!$this->dwellings->contains($dwelling)) {
+    //         $this->dwellings[] = $dwelling;
+    //         $dwelling->setCountry($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeDwelling(Dwelling $dwelling): self
+    // {
+    //     if ($this->dwellings->removeElement($dwelling)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($dwelling->getCountry() === $this) {
+    //             $dwelling->setCountry(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
+
+
+    // /**
+    //  * @return Collection<int, Users>
+    //  */
+    // public function getUsers(): Collection
+    // {
+    //     return $this->users;
+    // }
+
+    // public function addUser(Users $user): self
+    // {
+    //     if (!$this->users->contains($user)) {
+    //         $this->users[] = $user;
+    //         $user->setCountry($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeUser(Users $user): self
+    // {
+    //     if ($this->users->removeElement($user)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($user->getCountry() === $this) {
+    //             $user->setCountry(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
     /**
      * @return Collection<int, Dwelling>
      */
@@ -153,6 +218,36 @@ class Country
             // set the owning side to null (unless already changed)
             if ($dwelling->getCountry() === $this) {
                 $dwelling->setCountry(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Users>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(Users $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setCountry($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(Users $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getCountry() === $this) {
+                $user->setCountry(null);
             }
         }
 

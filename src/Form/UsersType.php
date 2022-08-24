@@ -30,7 +30,7 @@ class UsersType extends AbstractType
             ->add('lastName', null, ['required' => true,'attr' => ['class' => 'form-control w-100', 'placeholder' => 'Nom *'], 'label' => 'Nom *'])
             ->add('password', RepeatedType::class, array(
                 'type' => PasswordType::class,
-                'required' => '',
+                'required' => false,
                 'first_options'  => array('label' => 'Mot de passe *', 'required' => false,'attr' => ['class' => 'form-control w-100', 'placeholder' => '**********']),
                 'second_options' => array('label' => 'Répéter le mot de passe *', 'required' => false,'attr' => ['class' => 'form-control w-100', 'placeholder' => '**********']),
             ))
@@ -59,7 +59,9 @@ class UsersType extends AbstractType
     }
     public function __construct(ManagerRegistry $doctrine){
         $repository = $doctrine->getRepository(Country::class);
-        $countries = $repository->findBy([], ['nameFr' => "ASC"]);
+        $countries = $repository->findBy([], ["nameFr" => "ASC"]);
         $this->countries = $countries;
     }
 }
+
+
