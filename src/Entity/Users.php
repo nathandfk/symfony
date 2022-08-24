@@ -66,17 +66,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\Length(max: 100)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[A-Za-zÀ-ÖØ-öø-ÿ -]{2, 100}$/")]
+    #[Assert\Regex("/^[A-Za-z0-9À-ÖØ-öø-ÿ\- ]*$/")]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank()]
-    #[Assert\Regex("/^[A-Za-zÀ-ÖØ-öø-ÿ -]{2, 50}$/")]
+    #[Assert\Regex("/^[A-Za-z0-9À-ÖØ-öø-ÿ\- ]*$/")]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
+    #[Assert\Regex("/^[A-Za-z0-9À-ÖØ-öø-ÿ\- ]*$/")]
     private $society;
 
     #[ORM\Column(type: 'date', nullable: true)]
@@ -100,6 +101,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 150)]
     #[Assert\Length(max: 150)]
     #[Assert\NotBlank()]
+    #[Assert\Regex("/^[A-Za-z0-9À-ÖØ-öø-ÿ\- ]*$/")]
     private $address;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -113,6 +115,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 75)]
     #[Assert\Length(max: 75)]
     #[Assert\NotBlank()]
+    #[Assert\Regex("/^[A-Za-z0-9À-ÖØ-öø-ÿ\- ]*$/")]
     private $city;
 
 
