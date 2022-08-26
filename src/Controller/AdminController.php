@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Data\Calendar;
 use App\Entity\Users;
 use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,6 +70,23 @@ class AdminController extends AbstractController
         return $this->render('inc/pages/admin/users-list.html.twig', $response);
     }
 
+    // Page de gestion de commentaires
+    #[Route('/admin/moderation', name: 'moderation')]
+    public function moderation(Security $security, Calendar $calendar): Response
+    {
+        $auth = $security->getUser();
+        if (!$auth) {
+            return $this->redirectToRoute('app_index');
+        }
+        if (!in_array("ROLE_ADMIN", $auth->getRoles()) && !in_array("ROLE_MODERATOR", $auth->getRoles())) {
+            return $this->redirectToRoute('app_index');
+        }
+        $calendar = $calendar::calendar();
+        return $this->render('inc/pages/admin/comments.html.twig', [
+            'title' => 'Gestion des commentaires',
+            'calendar' => $calendar,
+        ]);
+    }
 
 
     // Données enregistrées en base de données de l'utilisateur sélectionné

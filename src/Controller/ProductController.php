@@ -179,29 +179,31 @@ class ProductController extends AbstractController
 
             // Vérifier si l'utilisateur n'a pas encore commenté ou apprécié un logement
             $reservationTable = $doctrine->getRepository(Reservation::class);
-            $data = $reservationTable->findOneBy(['user' => $user->getId(), 'dwelling' => $id, 'statut' => 'CONFIRMED']);
+            $data = $reservationTable->findBy(['user' => $user->getId(), 'dwelling' => $id], ["id" => "DESC"], 1);
 
             if ($data) {
-                $likes = $comments = true;
-                $old = strtotime($data->getReservedAt()->format('Y-m-d'));
-                $new = new DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
-
-                $postTable = $doctrine->getRepository(Posts::class);
-                $postsLike = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'LIKES', 'number' => $data->getId()]);
-                $postsComments = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'COMMENTS', 'number' => $data->getId()]);
-                
-                // Affichage du formulaire de commentaire et d'appréciation si une réservation est arrivé à son jour ou est passé
-                if ((strtotime($new->format('Y-m-d')) - $old) >= 0) {
+                if ($data[0]->getStatut() == "CONFIRMED") {
                     $likes = $comments = true;
-                } else {
-                    $likes = $comments = false;
+                    $old = strtotime($data[0]->getStartDate()->format('Y-m-d'));
+                    $new = new DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+
+                    $postTable = $doctrine->getRepository(Posts::class);
+                    $postsLike = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'LIKES', 'number' => $data[0]->getId()], ["id" => "DESC"], 1);
+                    $postsComments = $postTable->findBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'COMMENTS', 'number' => $data[0]->getId()], ["id" => "DESC"], 1);
+
+                    // Affichage du formulaire de commentaire et d'appréciation si une réservation est arrivé à son jour ou est passé
+                    if ((strtotime($new->format('Y-m-d')) - $old) >= 0) {
+                        $likes = $comments = true;
+                    } else {
+                        $likes = $comments = false;
+                    }
+                    if ($postsLike) {
+                        $likes = false;
+                    }
+                    if($postsComments){
+                        $comments = false;
+                    } 
                 }
-                if ($postsLike) {
-                    $likes = false;
-                }
-                if($postsComments){
-                    $comments = false;
-                } 
             }
         }
         return $this->render('inc/pages/product/show-dwelling.html.twig', [

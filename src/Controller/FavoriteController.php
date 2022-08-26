@@ -34,22 +34,14 @@ class FavoriteController extends AbstractController
             $user = $userRep->findOneBy(['email' => $auth->getUserIdentifier()]);
 
             $postsRep = $doctrine->getRepository(Posts::class);
-            $posts = $postsRep->findBy(['dwelling' => $id, 'type' => 'FAVORITE']);
+            $posts = $postsRep->findOneBy(['user' => $user->getId(), 'dwelling' => $id, 'type' => 'FAVORITE']);
             
-
             if ($posts) {
-                foreach ($posts as $post) {
-                    if ($post->getUser()->getId() == $user->getId()) {
-                        $em = $doctrine->getManager();
-                        $em->remove($post);
-                        $em->flush();
-                        $this->addFlash("success","L'habitat mis en favoris a bien été supprimé");
-                        return $this->redirectToRoute("dwelling_favorite");
-                    } else {
-                        $this->addFlash("error","Une erreur est survenue, veuillez réessayer");
-                        return $this->redirectToRoute("dwelling_favorite");
-                    }
-                }
+                $em = $doctrine->getManager();
+                $em->remove($posts);
+                $em->flush();
+                $this->addFlash("success","L'habitat mis en favoris a bien été supprimé");
+                return $this->redirectToRoute("dwelling_favorite");
             } else {
                 $this->addFlash("error","Une erreur est survenue, veuillez réessayer");
                 return $this->redirectToRoute("dwelling_favorite");

@@ -103,8 +103,22 @@ class HostController extends AbstractController
                                     $this->getParameter('pictures_directory'),
                                     $newFilename
                                 );
+
                             } catch (FileException $e) {}
-                        array_push($finalPictures, $newFilename);
+
+                            $img_upload_path = $this->getParameter('pictures_directory').'/'.$newFilename;
+                            $ex = explode(".", $img_upload_path);
+                            switch ($ex[1]) {
+                                case 'jpeg':
+                                    $img = imagecreatefromjpeg($img_upload_path);
+                                    imagejpeg($img, $img_upload_path, 20);  
+                                    break;
+                                case 'jpg':
+                                    $img = imagecreatefromjpeg($img_upload_path);
+                                    imagejpeg($img, $img_upload_path, 20);  
+                                    break;
+                            }
+                            array_push($finalPictures, $newFilename);
                         }
                     }
                     if (count($finalPictures) >= 4 && count($finalPictures) <= 10)  {

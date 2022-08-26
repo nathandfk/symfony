@@ -62,6 +62,7 @@ class IndexController extends AbstractController
                 
             }
         }
+
         // Retournons les valeurs dans la page d'accueil
         return $this->render('index.html.twig', $response);
     }

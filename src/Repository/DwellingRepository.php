@@ -163,8 +163,8 @@ class DwellingRepository extends ServiceEntityRepository
             }
             $location = $this->doctrine->getRepository(Country::class)->find($dwelRep->getCountry());
 
-            $countComments = $this->posts->showPosts("count(*) count", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');
-            $comments = $this->posts->showPosts("user_id, dwelling_id, type, description, added_at", 'WHERE dwelling_id='.$id.' AND type="COMMENTS"');
+            $countComments = $this->posts->showPosts("count(*) count", 'WHERE dwelling_id='.$id.' AND type="COMMENTS" AND statut="PUBLIC"');
+            $comments = $this->posts->showPosts("user_id, dwelling_id, type, description, added_at", 'WHERE dwelling_id='.$id.' AND type="COMMENTS" AND statut="PUBLIC"');
             $dataComments = [];
             if (!empty($comments)) {
                 foreach ($comments as $comment) {

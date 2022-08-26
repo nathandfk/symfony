@@ -14,7 +14,9 @@
         <meta property="og:site_name" content="Service de réservation d'habitat en ligne"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="google-site-verification" content="7imeEP2sObBQHPFxwXPbeDBCsN4kfs-y0gnmSvh3H_8"/>
+        {% if app.request.get('_route') == 'app_habitation' %}
         <script src="https://js.stripe.com/v3/"></script>
+        {% endif %}
         {% block stylesheets %}
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
             integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
@@ -45,6 +47,9 @@
             {% if app.request.get('_route') == 'message' %}
             <script src='{{ ath_link }}/assets/js/message.js'></script>
             {% endif %}
+            {% if app.request.get('_route') == 'moderation' %}
+            <script src='{{ ath_link }}/assets/js/moderation.js'></script>
+            {% endif %}
             <script src='{{ ath_link }}/assets/js/settings.js'></script>
             <script src='{{ ath_link }}/assets/js/category.js'></script>
             <script src='{{ ath_link }}/assets/js/dwellings.js'></script>
@@ -53,8 +58,10 @@
             <script src='{{ ath_link }}/assets/js/home.js'></script>
             {% endif %}
             <script src="https://kit.fontawesome.com/06fe12cea6.js"></script>
+            {% if app.request.get('_route') == 'app_habitation' %}
             <script src='{{ ath_link }}/assets/js/single-product.js' defer></script>
             <script src="{{ ath_link }}/assets/js/checkout.js" defer></script>
+            {% endif %}
         {% endblock %}
             <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3V1MB9V9Z"></script>

@@ -65,6 +65,7 @@ class DwellingController extends AbstractController
                                 $postAdd->setUser($user);
                                 $postAdd->setDwelling($reservation->getDwelling());
                                 $postAdd->setType("COMMENTS");
+                                $postAdd->setStatut("PRIVATE");
                                 $postAdd->setTitle("");
                                 $postAdd->setAbstract("");
                                 $postAdd->setDescription($comment);
@@ -207,7 +208,7 @@ class DwellingController extends AbstractController
                                 $last = $user->getLastName();
                                 $emailUser = $user->getEmail();
                                 $email = (new Email())
-                                    ->from("Site AtypikHouse <".$post->getDescription().">")
+                                    ->from("AtypikHouse <".$post->getDescription().">")
                                     ->to($post->getDescription())
                                     ->subject('SIGNALEMENT')
                                     ->text('SIGNALEMENT')

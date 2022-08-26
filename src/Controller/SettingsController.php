@@ -71,8 +71,15 @@ class SettingsController extends AbstractController
                                 } else {
                                     $aboutpic = $img_name_text;
                                 }
-                                $img_upload_path = $this->getParameter('pictures_directory_pages').$img_name_text;
+                                $img_upload_path = $this->getParameter('pictures_directory_pages')."/".$img_name_text;
                                 move_uploaded_file($tmp_name, $img_upload_path);
+
+                                switch ($img_type) {
+                                    case 'image/jpeg':
+                                        $img = imagecreatefromjpeg($img_upload_path);
+                                        imagejpeg($img, $img_upload_path, 20);  
+                                        break;
+                                }
                             }
                         }
                     }

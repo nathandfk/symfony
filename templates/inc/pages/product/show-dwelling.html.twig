@@ -1,7 +1,7 @@
 {% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
 
-<div class="atypikhouse-container my-6">
+<div class="atypikhouse-container">
     <div class="main-page">
         <div class="dwelling-wrapper">
             
@@ -301,9 +301,11 @@
                         {% if dwelling[4] %}
                         <div class="product-user-comments">
                                 {% for comments in dwelling[4] %}
-                                    <h4>{{ comments[1].first_name }}</h4>
-                                    <p>{{ comments[0].added_at }}</p>
-                                    <p>{{ comments[0].description }}</p>
+                                        <div class="product-comment-item">
+                                            <h4>{{ comments[1].first_name }}</h4>
+                                            <p>{{ comments[0].added_at }}</p>
+                                            <p>{{ comments[0].description }}</p>
+                                        </div>
                                 {% endfor %}
                         </div>
                         {% endif %}
@@ -356,7 +358,7 @@
                         return [$url, $ckeck_url, $dwelling_id, $arrival, $departure, $local, $auth, "{{ path('login') }}"]
                     }
                 </script>
-                <div id="map"></div>
+                <div class="my-2" id="map"></div>
                 <script>
                 var ville = {
                     "lat": "{{ dwelling[0].longitude }}", "lon": "{{ dwelling[0].latitude }}",
