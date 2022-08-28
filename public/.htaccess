@@ -57,6 +57,7 @@ DirectoryIndex index.php
 
     RewriteCond %{HTTPS} off 
     RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
 </IfModule>
 
 <IfModule !mod_rewrite.c>

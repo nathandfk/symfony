@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Data\Calendar;
+use App\Entity\Dwelling;
 use App\Entity\Posts;
 use App\Repository\DwellingRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -65,5 +66,25 @@ class IndexController extends AbstractController
 
         // Retournons les valeurs dans la page d'accueil
         return $this->render('index.html.twig', $response);
+    }
+
+
+    // Données Sitemap
+    #[Route('/sitemap.xml', defaults: ["_format" => "xml"], name: 'sitemap')]
+    public function sitemap(DwellingRepository $dwelRep)
+    {
+        // Récupérons les données de nos logements
+        $dwel = $dwelRep->showDataDwellings();
+        
+        $response = ["dwellings" => $dwel];
+
+        // retourne une réponse au format XML
+        $output = new Response(
+            $this->renderView('sitemap.html.twig', $response),
+            200
+        );
+        $output->headers->set('Content-Type', 'text/xml');
+
+        return $output;
     }
 }
