@@ -32,7 +32,7 @@ class IndexController extends AbstractController
             'controller_name' => 'IndexController',
             'calendar' => $calendar,
             'homepic' => '',
-            'title' => "Réservez votre yourte, votre cabane sur l'eau ou votre cabane dans les arbres",
+            'title' => "Réservez votre habitation insolite : yourte, cabane et autres",
             'hometitle' => '',
             'abouttitle' => '',
             'aboutabstract' => '',
