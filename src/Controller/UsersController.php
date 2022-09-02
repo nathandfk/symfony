@@ -390,50 +390,53 @@ class UsersController extends AbstractController
             $this->addFlash("success", "Insertion de l'IBAN réussie");
             return $this->redirectToRoute('payment');
         }
-        if ($auth) {
-            if (isset($_POST['payment_made'])) {
-                if (in_array('ROLE_ADMIN', $auth->getRoles())) {
-                    $id = $_POST['payment_dwelling_id'];
-                    $em = $doctrine->getManager();
-                    $reservRep = $doctrine->getRepository(Reservation::class);
-                    $reservation = $reservRep->findOneBy(['id' => $id]);
+        if (isset($_POST['payment_made'])) {
+            if ($auth && in_array('ROLE_ADMIN', $auth->getRoles())) {
+                $id = $_POST['payment_dwelling_id'];
+                $em = $doctrine->getManager();
+                $reservRep = $doctrine->getRepository(Reservation::class);
+                $reservation = $reservRep->find($id);
 
-                    $userRep = $doctrine->getRepository(Users::class);
-                    $user = $userRep->findOneBy(['id' => $reservation->getUser()->getId()]);
-
-                    if ($user) {
-                        $userMetaRep = $doctrine->getRepository(UserMeta::class);
-                        $userMeta = $userMetaRep->findBy(['user' => $user->getId(), "field" => '_host_iban']);
-                        foreach ($userMeta as $meta) {
-                            if ($meta) {
-                                $reservMetaRep = $doctrine->getRepository(ReservationMeta::class);
-                                $reservationMeta = $reservMetaRep->findBy(['reservation' => $id]);
-                                $date = new \DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
-                                foreach ($reservationMeta as $key) {
-                                    $em = $doctrine->getManager();
-                                    switch ($key->getField()) {
-                                        case '_payment_iban':
-                                            $key->setValue($meta->getValue());
-                                            break;
-                                        case '_payment_date':
-                                            $key->setValue($date->format('d-m-Y H:i:s'));
-                                            break;
-                                        case '_payment_statut':
-                                            $key->setValue('PAYMENT');
-                                            break;
-                                    }
-                                    $em->persist($key);
-                                    $em->flush();
-                                }
-                                $this->addFlash('success', 'Les modifications ont bien été appliquées');
-                                return $this->redirectToRoute('payment');
+                $dwelRep = $doctrine->getRepository(Dwelling::class);
+                $dwel = $dwelRep->find($reservation->getDwelling());
+                
+                if ($reservation && $dwel) {
+                    $userMetaRep = $doctrine->getRepository(UserMeta::class);
+                    $meta = $userMetaRep->findOneBy(['user' => $dwel->getUser()->getId(), "field" => '_host_iban']);
+                    
+                    if ($meta) {
+                        $reservMetaRep = $doctrine->getRepository(ReservationMeta::class);
+                        $reservationMeta = $reservMetaRep->findBy(['reservation' => $id]);
+                        $date = new \DateTimeImmutable('now', new DateTimeZone('Europe/Paris'));
+                        foreach ($reservationMeta as $key) {
+                            $em = $doctrine->getManager();
+                            switch ($key->getField()) {
+                                case '_payment_iban':
+                                    $key->setValue($meta->getValue());
+                                    break;
+                                case '_payment_date':
+                                    $key->setValue($date->format('d-m-Y H:i:s'));
+                                    break;
+                                case '_payment_statut':
+                                    $key->setValue('PAYMENT');
+                                    break;
                             }
+                            $em->persist($key);
+                            $em->flush();
                         }
+                        $this->addFlash('success', 'Les modifications ont bien été appliquées');
+                        return $this->redirectToRoute('payment');
                     } else {
-                        $this->addFlash('success', "Vous n'avez pas les droits nécessaires pour exécuter cette action");
+                        $this->addFlash('success', "L'IBAN du client n'a toujours pas encore été renseigné, veuillez contacter l'administrateur si l'erreur persiste");
                         return $this->redirectToRoute('payment');
                     }
+                } else {
+                    $this->addFlash('success', "Une erreur s'est produite, veuillez recommencer");
+                    return $this->redirectToRoute('payment');
                 }
+            } else {
+                $this->addFlash('success', "Vous n'avez pas les droits nécessaires pour exécuter cette action");
+                return $this->redirectToRoute('payment');
             }
         }
 

@@ -51,7 +51,6 @@ security:
         - { path: ^/docs, roles: ROLE_ADMIN }
         - { path: ^/mon-compte, roles: ROLE_USER }
         - { path: ^/mon-compte/paiement, roles: ROLE_HOST }
-        - { path: ^/admin, roles: [ROLE_ADMIN, ROLE_MODERATOR] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 # when@test:
