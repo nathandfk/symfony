@@ -197,7 +197,7 @@ class SettingsController extends AbstractController
                                             <p>Nous vous informons que des ajouts au niveau du type d'habitation ou équipements ont été fait sur notre site internet AtypikHouse.</p>
                                             <p>L'équipe AtypikHouse.</p>
                                             <div style='text-align: center;'>
-                                            <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                            <a href='https://f2i-dev14-nd-hh-mr.nathandfk.fr'><img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
                                             </div>
                                             ");
 
@@ -436,7 +436,7 @@ class SettingsController extends AbstractController
                             <p>Profitez pleinement de notre site internet et de tout ce qu'il vous offre.</p>
                             <p>L'équipe AtypikHouse.</p>
                             <div style='text-align: center;'>
-                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            <img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
                             </div>
                             ");
 
@@ -503,7 +503,7 @@ class SettingsController extends AbstractController
                                             <p>Nous vous informons que des modifications au niveau du type d'habitation ou équipements ont été appliqué sur notre site internet AtypikHouse.</p>
                                             <p>L'équipe AtypikHouse.</p>
                                             <div style='text-align: center;'>
-                                            <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                            <a href='https://f2i-dev14-nd-hh-mr.nathandfk.fr'><img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
                                             </div>
                                             ");
 
@@ -578,7 +578,7 @@ class SettingsController extends AbstractController
                                 <p>Nous vous informons que des modifications au niveau du type d'habitation ou équipements ont été appliqué sur notre site internet AtypikHouse.</p>
                                 <p>L'équipe AtypikHouse.</p>
                                 <div style='text-align: center;'>
-                                <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                <a href='https://f2i-dev14-nd-hh-mr.nathandfk.fr'><img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
                                 </div>
                                 ");
 

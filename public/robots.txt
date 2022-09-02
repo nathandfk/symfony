@@ -8,4 +8,4 @@ Disallow: /
 User-agent: *
 Disallow: /
 
-Sitemap: https://f2i-dev14-nd.nathandfk.fr/sitemap.xml
+Sitemap: https://f2i-dev14-nd-hh-mr.nathandfk.fr/sitemap.xml

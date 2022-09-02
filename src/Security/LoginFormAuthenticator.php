@@ -67,7 +67,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 $posts = $postsRep->findBy(["type" => "ADMIN_EMAIL"]);
                 $firstName = $user->getFirstName();
                 $emailUser = $user->getEmail();
-                $link = "https://f2i-dev14-nd.nathandfk.fr/membre/compte?key=".$activate."&email=".$user->getEmail();
+                $link = "https://f2i-dev14-nd-hh-mr.nathandfk.fr/membre/compte?key=".$activate."&email=".$user->getEmail();
                 if ($posts) {
                     foreach ($posts as $post) {
                         $email = (new Email())
@@ -86,7 +86,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                             <p>Profitez pleinement de notre site internet et de tout ce qu'il vous offre.</p>
                             <p>L'équipe AtypikHouse.</p>
                             <div style='text-align: center;'>
-                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            <img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
                             </div>
                             ");
 

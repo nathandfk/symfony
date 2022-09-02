@@ -111,7 +111,7 @@ class PageController extends AbstractController
                                     <p>Merci de nous avoir contacter nous allons traité votre demande dans les moindres détails et nous revenons vers vous.</p>
                                     <p>L'équipe AtypikHouse.</p>
                                     <div style='text-align: center;'>
-                                    <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                    <a href='https://f2i-dev14-nd-hh-mr.nathandfk.fr'><img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
                                     </div>
                                     ");
 
@@ -135,7 +135,7 @@ class PageController extends AbstractController
                                     <div>Message: <b>$message</b></div>
                                     <p>L'équipe AtypikHouse.</p>
                                     <div style='text-align: center;'>
-                                    <a href='https://f2i-dev14-nd.nathandfk.fr'><img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
+                                    <a href='https://f2i-dev14-nd-hh-mr.nathandfk.fr'><img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'></a>
                                     </div>
                                     ");
 

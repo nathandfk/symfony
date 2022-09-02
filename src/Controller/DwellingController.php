@@ -222,7 +222,7 @@ class DwellingController extends AbstractController
                                     <p>Email: <b>$emailUser</b></p>
                                     <p>L'équipe AtypikHouse.</p>
                                     <div style='text-align: center;'>
-                                    <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                    <img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
                                     </div>
                                     ");
 
@@ -299,7 +299,7 @@ class DwellingController extends AbstractController
                                     <p>Nous vous remercions pour la confiance que vous nous accorder.</p>
                                     <p>L'équipe AtypikHouse.</p>
                                     <div style='text-align: center;'>
-                                    <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                    <img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
                                     </div>
                                     ");
 

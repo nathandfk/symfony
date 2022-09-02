@@ -80,7 +80,7 @@ class UsersController extends AbstractController
                 $emailUser = $user->getEmail();
                 // Envoie d'email de confirmation avec un lien d'activation
                 // Lien expirant sous 24h
-                $link = "https://f2i-dev14-nd.nathandfk.fr/membre/compte?key=".$activate."&email=".$user->getEmail();
+                $link = "https://f2i-dev14-nd-hh-mr.nathandfk.fr/membre/compte?key=".$activate."&email=".$user->getEmail();
                 if ($posts) {
                     foreach ($posts as $post) {
                         $email = (new Email())
@@ -99,7 +99,7 @@ class UsersController extends AbstractController
                             <p>Profitez pleinement de notre site internet et de tout ce qu'il vous offre.</p>
                             <p>L'équipe AtypikHouse.</p>
                             <div style='text-align: center;'>
-                            <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                            <img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
                             </div>
                             ");
 
@@ -215,7 +215,7 @@ class UsersController extends AbstractController
                         $firstName = $user->getFirstName();
                         $emailUser = $user->getEmail();
                         // Ensuite envoyons lui un email de réinitialisation
-                        $link = "https://f2i-dev14-nd.nathandfk.fr/membre/reinit?key=".$activate."&email=".$user->getEmail();
+                        $link = "https://f2i-dev14-nd-hh-mr.nathandfk.fr/membre/reinit?key=".$activate."&email=".$user->getEmail();
                         if ($posts) {
                             foreach ($posts as $post) {
                                 $email = (new Email())
@@ -232,7 +232,7 @@ class UsersController extends AbstractController
                                     <p>Nous sommes très ravis de vous compter parmi nous.</p>
                                     <p>L'équipe AtypikHouse.</p>
                                     <div style='text-align: center;'>
-                                    <img src='https://f2i-dev14-nd.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
+                                    <img src='https://f2i-dev14-nd-hh-mr.nathandfk.fr/assets/pictures/logo-ath4.png' width='220'>
                                     </div>
                                     ");
         

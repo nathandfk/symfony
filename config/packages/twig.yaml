@@ -1,7 +1,7 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
-        ath_link: 'https://f2i-dev14-nd.nathandfk.fr'
+        ath_link: 'https://f2i-dev14-nd-hh-mr.nathandfk.fr'
 
 when@test:
     twig:
