@@ -158,7 +158,7 @@ class SettingsController extends AbstractController
                             $notif = new Posts();
                             $notif->setUser($user);
                             $notif->setType("NOTIFICATION");
-                            $notif->setTitle("AtypikHouse : Type d'habition");
+                            $notif->setTitle("AtypikHouse : Type d'habitation");
                             $notif->setAbstract("Une modification a été appliquée sur les types d'habitations");
                             $notif->setDescription("");
                             $em->persist($notif);
