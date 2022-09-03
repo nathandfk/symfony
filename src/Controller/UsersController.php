@@ -313,6 +313,9 @@ class UsersController extends AbstractController
         && $form->get('city')->isValid()
         && $form->get('country')->isValid()
         && $form->get('password')->isValid()) {
+            $countriesRep = $doctrine->getRepository(Country::class);
+            $countries = $countriesRep->find($user->getCountry());
+            if ($countries) {
                 $em = $doctrine->getManager();
                 $getUser->setLastName($user->getLastName());
                 $getUser->setFirstName($user->getFirstName());
@@ -322,13 +325,15 @@ class UsersController extends AbstractController
                 $getUser->setCity($user->getCity());
                 $getUser->setSociety($user->getSociety());
                 $getUser->setBirthday($user->getBirthday());
-                $getUser->setCountry($user->getCountry());
+                $getUser->setCountry($countries);
                 $getUser->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-                $password = is_null($user->getPassword()) ? $getUser->getCountry() : $passwordHasher->hashPassword($user, $user->getPassword());
+                $password = $passwordHasher->hashPassword($user, $user->getPassword());
+
                 $getUser->setPassword($password);
                 $em->persist($getUser);
                 $em->flush();
                 $this->addFlash("success", "Mise à jour de votre profil réussie, votre mot de passe a également été modifié");
+            }
                 return $this->redirectToRoute('dashboard');
         }
         return $this->render('inc/pages/users/dashboard.html.twig', [
