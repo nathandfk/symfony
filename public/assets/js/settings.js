@@ -33,7 +33,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 }
             } else if (options == "update") {
                 const obj = JSON.parse(response)
-                if (obj.response == "success") {
+                if (obj.response == "success" || obj.response == "error") {
                     notification(obj.message, obj.icon)
                     request("/account/settings/signal", JSON.stringify({value:""}), false, "signal")
                 }

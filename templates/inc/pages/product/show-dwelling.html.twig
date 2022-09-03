@@ -11,24 +11,29 @@
                     {% set pictures = dwelling[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
                     <div class="product-items">
                         <div class="product-grid">
-                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="AtypikHouse header">
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"
+                             srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="AtypikHouse header">
                         </div>
                         <div class="product-grid">
-                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[1] }}" alt="AtypikHouse header">
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[1] }}"
+                             srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[1] }}" alt="AtypikHouse header">
                         </div>
                         <div class="product-grid">
-                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[2] }}" alt="AtypikHouse header">
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[2] }}"
+                             srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[2] }}" alt="AtypikHouse header">
                         </div>
                         <div class="product-grid product-more-picture cp">
                             <div class="more-picture">Afficher plus d'images</div>
-                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[3] }}" alt="AtypikHouse header">
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[3] }}"
+                             srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[3] }}" alt="AtypikHouse header">
                         </div>
                     </div>
                     <div class="product-galery product-galery-dismiss d-none">
                         <div class="product-galery-items">
                         {% for picture in pictures %}
                             <div class="product-galery-cell">
-                                <img src="{{ ath_link }}/uploads/dwellings/{{ picture }}" alt="AtypikHouse Galerie d'images {{ dwelling[0].title }}">
+                                <img src="{{ ath_link }}/uploads/dwellings/{{ picture }}"
+                                 srcset="{{ ath_link }}/uploads/dwellings/{{ picture }}" alt="AtypikHouse Galerie d'images {{ dwelling[0].title }}">
                             </div>
                         {% endfor %}
                         </div>

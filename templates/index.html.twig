@@ -5,7 +5,8 @@
 <header class="atypikhouse-container">
     <div class="atypikhouse-header-inner grid-level-3">
         <div class="header-background-picture">
-            <img src="{{ ath_link }}/uploads/pages/{{ homepic }}" alt="AtypikHouse image mise en avant, logement insolite">
+            <img src="{{ ath_link }}/uploads/pages/{{ homepic }}"
+             srcset="{{ ath_link }}/uploads/pages/{{ homepic }}" alt="AtypikHouse image mise en avant, logement insolite">
         </div>
         <div class="header-cover"></div>
         <div class="header-text">
@@ -38,7 +39,8 @@
             <a href="{{ path('app_habitation', {'slug': productUrl, 'id': dwellings[0].id}) | lower }}" class="section-display-child">
                 <div class="section-child-picture img">
                     {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
-                    <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="AtypikHouse image d'une idée de la prochaine réservation"/>
+                    <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"
+                     srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="AtypikHouse image d'une idée de la prochaine réservation"/>
                 </div>
                 <div class="display-child-text">
                     <h3 class="child-text-city size22">{{ dwellings[0].city }}</h3>
@@ -61,7 +63,8 @@
         <div class="section-why-col1 atypikhouse-grid-form1 mr-auto">
             <div class="card-picture border-solid-2 c1"></div>
             <div class="card-picture">
-                <img src="{{ ath_link }}/uploads/pages/{{ aboutpic }}" alt="Image découverte habitations insolites">
+                <img src="{{ ath_link }}/uploads/pages/{{ aboutpic }}"
+                 srcset="{{ ath_link }}/uploads/pages/{{ aboutpic }}" alt="Image découverte habitations insolites">
             </div>
         </div>
         <div class="section-why-col2 d-flex jc-space-between gap-3 flex-dir-col">

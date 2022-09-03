@@ -469,17 +469,30 @@ class SettingsController extends AbstractController
                 $value = $data['value'];
 
                 $em = $doctrine->getManager();
-                $repository = $doctrine->getRepository(Posts::class);
-                $findPost = $repository->find($id);
+                $repPosts = $doctrine->getRepository(Posts::class);
+                $findPost = $repPosts->find($id);
                 if ($findPost && !empty($id) && !empty($value)) {
                     $repository = $doctrine->getRepository(Users::class);
                     $user = $repository->findOneBy(['email' => $auth->getUserIdentifier()]);
-    
-                    $findPost->setUser($user);
-                    $findPost->setDescription($value);
-                    $findPost->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
-                    $em->persist($findPost);
-                    $em->flush();
+                        if ($findPost->getDescription() == $value) {
+                            $output = '{"response":"error", "message":"La modification n\'a pas été appliquée", "icon":"fas fa-exclamation"}';
+                            return new JsonResponse($output);
+                        }
+                        $checkTypePost = $repPosts->findOneBy(['type' => "TYPE", 'description' => $value]);
+                        if ($checkTypePost) {
+                            $output = '{"response":"error", "message":"La modification n\'a pas été appliquée, ce type existe déjà", "icon":"fas fa-exclamation"}';
+                            return new JsonResponse($output);
+                        }
+                        $checkEquipPost = $repPosts->findOneBy(['type' => "EQUIPMENT", 'description' => $value]);
+                        if ($checkEquipPost) {
+                            $output = '{"response":"error", "message":"La modification n\'a pas été appliquée, cet équipement existe déjà", "icon":"fas fa-exclamation"}';
+                            return new JsonResponse($output);
+                        }
+                        $findPost->setUser($user);
+                        $findPost->setDescription($value);
+                        $findPost->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
+                        $em->persist($findPost);
+                        $em->flush();
 
                         // Informons nos hôtes que des mises à jour ont été faite
                         $userRep = $doctrine->getRepository(Users::class);
@@ -512,10 +525,10 @@ class SettingsController extends AbstractController
                                 }
                             }
                         }
-                    $output = '{"response":"success", "message":"Les modifications ont été appliqué avec succès", "icon":"fas fa-exclamation"}';
+                    $output = '{"response":"success", "message":"Les modifications ont été appliqué avec succès", "icon":"fas fa-check"}';
                 } else {
 
-                    $output = '{"response":"success", "message":"Une erreure est survenue, merci de recommencer", "icon":"fas fa-exclamation"}';
+                    $output = '{"response":"error", "message":"Une erreure est survenue, merci de recommencer", "icon":"fas fa-exclamation"}';
                 }
 
 
@@ -555,6 +568,27 @@ class SettingsController extends AbstractController
             $findPost->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
             $em->persist($findPost);
             $em->flush();
+            
+            // Insertion du type et de l'équipement
+            if ($findPost->getType() == "TYPE") {
+                $notif = new Posts();
+                $notif->setUser($user);
+                $notif->setType("NOTIFICATION");
+                $notif->setTitle("AtypikHouse : Type d'habitation");
+                $notif->setAbstract("Une modification a été appliquée sur les types d'habitations");
+                $notif->setDescription("");
+                $em->persist($notif);
+                $em->flush();
+            } else if ($findPost->getType() == "EQUIPMENT"){
+                $notif = new Posts();
+                $notif->setUser($user);
+                $notif->setType("NOTIFICATION");
+                $notif->setTitle("AtypikHouse : Équipement");
+                $notif->setAbstract("Une modification a été appliquée sur les équipements");
+                $notif->setDescription("");
+                $em->persist($notif);
+                $em->flush();
+            }
 
             // Informons nos hôtes que des mises à jour ont été faite
             $userRep = $doctrine->getRepository(Users::class);

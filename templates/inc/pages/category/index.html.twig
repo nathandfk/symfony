@@ -58,7 +58,8 @@
                     <a href="{{ path('app_habitation', {'slug': productUrl, 'id': dwellings[0].id}) | lower }}" class="dwelling-item">
                         <div class="dwelling-item-picture border-radius-form">
                             {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
-                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="Atypikhouse, {{ dwellings[0].title }}"/>
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"
+                             srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="Atypikhouse, {{ dwellings[0].title }}"/>
                         </div>
                         
                         <div class="dwelling-item-info">

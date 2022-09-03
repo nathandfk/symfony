@@ -233,5 +233,18 @@ class PageController extends AbstractController
             'datas' => $posts,
         ]);
     }
+
+
+    #[Route('/plan-du-site', name: 'plandusite')]
+    public function plan(): Response
+    {
+        $calendar = new Calendar();
+        $calendar = $calendar::calendar();
+        return $this->render('inc/pages/simple-pages/plan.html.twig', [
+            'carousel' => true,
+            'title' => 'Plan du site',
+            'calendar' => $calendar,
+        ]);
+    }
     
 }

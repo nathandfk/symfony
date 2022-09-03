@@ -62,6 +62,10 @@
             <script src='{{ ath_link }}/assets/js/single-product.js' defer></script>
             <script src="{{ ath_link }}/assets/js/checkout.js" defer></script>
             {% endif %}
+
+            {% if (app.request.get('_route') == 'contact') or (app.request.get('_route') == 'register') or (app.request.get('_route') == 'login') %}
+            <script src="https://www.google.com/recaptcha/api.js?render=6LdtFc4hAAAAAFLGPW3c2NPEaWhaClpjyhMVyyuO"></script>
+            {% endif %}
         {% endblock %}
             <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3V1MB9V9Z"></script>
