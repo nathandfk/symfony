@@ -214,6 +214,7 @@
     text-align: center;
     font-size: 14px;
     width: max-content;
+    border: 0;
 }
 .click-rounded{
     width: 40px;
@@ -235,6 +236,9 @@
 
 .w-7r{
     width: 7rem;
+}
+.h-7r{
+    height: 7rem;
 }
 .w-10r{
     width: 10rem;
@@ -472,7 +476,7 @@
 }
 .module-search-wrapper{
     display: grid;
-    grid-template: auto/95% 5%;
+    grid-template: auto/auto .1fr;
     align-items: center;
     align-content: center;
     border: .5px solid;
@@ -494,6 +498,7 @@
     position: absolute;
     top: 30px;
     opacity: 1;
+    z-index: 20;
 }
 
 .col-lg-6{
@@ -529,13 +534,45 @@
 .alert{
     padding: 10px;
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 3rem;
+    right: -20rem;
     width: 19rem;
+    height: max-content;
+    z-index: 200;
     border-radius: 5px;
     box-shadow: 0px 0px 5px var(--black20);
     transition: all .5s;
 }
-.alert-dismiss{
-    right: -20rem;
+.alert-not-dismiss{
+    right: 2rem;
+}
+
+.card{
+    box-shadow: 0px 0px 7px var(--black20);
+    padding: 20px;
+    border-radius: 7px;
+    max-width: 30rem;
+    opacity: 1;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 500;
+    transition: all .5s;
+}
+.card-dismiss{
+    opacity: 0;
+    transform: translate(-50%, -80%);
+}
+
+.form-input{
+    z-index: -1;
+}
+.accessibility-form{
+    padding: 1rem;
+    font-size: 18px;
+    width: fit-content;
+    border-radius: 7px;
+    margin: auto;
+    max-width: 90%;
 }

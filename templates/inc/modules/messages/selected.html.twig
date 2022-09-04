@@ -1,0 +1,18 @@
+{% if selected %}
+    {% for element in selected %}
+    {% if element.sender_id != app.user.id %}
+    {% set id = element.sender_id %}
+    {% else %}
+    {% set id = element.recipient_id %}
+    {% endif %}
+    <div class="bg-c5 choice-discussion" data-id="{{ id }}">
+        {% if element.sender_id == app.user.id %}
+        <h4>{{ element.fn2 }} {{ element.ln2 }}</h4>
+        {% else %}
+        <h4>{{ element.fn1 }} {{ element.ln1 }}</h4>
+        {% endif %}
+        <h5>{{ element.added_at }}</h5>
+        <p>{{ element.message |slice(0, 150)}}...</p>
+    </div>
+    {% endfor %}
+{% endif %}

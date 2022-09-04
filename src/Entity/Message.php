@@ -31,6 +31,12 @@ class Message
     #[ORM\Column(type: 'datetime_immutable')]
     private $addedAt;
 
+    public function __construct(){
+        $this->senderDeleteMsg = False;
+        $this->recipientDeleteMsg = False;
+        $this->addedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,7 +95,7 @@ class Message
         return $this->recipientDeleteMsg;
     }
 
-    public function setRecipientDeleteMsg(bool $recipientDeleteMsg): self
+    public function setRecipientDeleteMsg(?bool $recipientDeleteMsg): self
     {
         $this->recipientDeleteMsg = $recipientDeleteMsg;
 

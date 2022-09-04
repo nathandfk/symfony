@@ -17,7 +17,7 @@ Class Calendar{
         $m = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
         $calendar .= "<div class='calendar-inner'>
                 <div class='calendar-navigate'>
-                    <div class='calendar-navigate-btn calendar-navigate-left size28 click click-light-green'><</div>
+                    <div class='calendar-navigate-btn calendar-navigate-left size28 click click-light-green'></div>
                     <div class='calendar-navigate-btn calendar-navigate-right size28 click click-light-green'>></div>
                 </div>
                 <div class='calendar-wrapper'>";
@@ -49,12 +49,14 @@ Class Calendar{
                     <td>dim.</td>
                 </tr>";
                 $day = $monthStartDay;
+                $countCase = 0;
                 if ($monthStartDay > 1) {
                     $calendar .= "<tr>";
                     for ($i=1; $i < $monthStartDay; $i++) { 
                         $monthPad = str_pad($month, 2, '0', STR_PAD_LEFT);
                         $iPad = str_pad($i, 2, '0', STR_PAD_LEFT);
                         $calendar .= "<td class='table-calendar'></td>";
+                        $countCase++;
                     }
                 } else {
                     $calendar .= "<tr>";
@@ -94,14 +96,26 @@ Class Calendar{
                         $iPad = str_pad($i, 2, '0', STR_PAD_LEFT);
                         $calendar .= "<td class='table-calendar $class' data-period='$year-$monthPad-$iPad' data-show='$i ".$m[$month-1]." $year'>".$i."</td>";
                         if ($day < 7) {
+                            if ($i == $limit) {
+                                for ($j=0; $j < 7-$day; $j++) { 
+                                    $calendar .= "<td class='table-calendar'></td>";
+                                }
+                            }
                             $day++;
                         } else {
-                            $calendar .= "</tr><tr>";
+                            $calendar .= "</tr>";
+                            if ($i < $limit) {
+                                $calendar .= "<tr>";
+                            }
                             $day = 1;
                         }
+                        $countCase++;
                     }
-                    $calendar .= "</tr>";
 
+                    if ($countCase < $limit) {
+                        $calendar .= "</tr>";
+                    }
+                    
                 $calendar .= "</tbody>";
                 $calendar .= "</table>";
                 $calendar .= "</div>";

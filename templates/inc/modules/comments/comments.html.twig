@@ -1,0 +1,51 @@
+{% if data %}
+<div class="responsive-table">
+    <table id="historical-table" class="text-center ath-table-form">
+        <thead>
+            <tr>
+                <th colspan="3">Client</th>
+                <th>Habitation</th>
+                <th>Commentaire</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="bg-c5">Prénom</td>
+                <td class="bg-c5">Nom</td>
+                <td class="bg-c5">E-mail</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% for comments in data %}
+            <tr data-id='{{ comments.id }}'>
+                <td>{{ comments.first_name }}</td>
+                <td>{{ comments.last_name }}</td>
+                <td>{{ comments.email }}</td>
+                {% set productUrl = comments.title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+                <td><a href="{{ path('app_habitation', {'slug': productUrl, 'id': comments.dwel_id }) | lower }}">{{ comments.title }}</a></td>
+                <td>{{ comments.comment }}</td>
+                <td>{{ comments.date|date("d-m-Y") }} à {{ comments.date|date("H:i:s") }}</td>
+                <td class="d-flex gap-1 w-max-content m-auto">
+                {% if comments.statut == "PRIVATE" %}
+                <input type="submit" class="click click-success" value="Publier" name="manage_comment">
+                {% else %}   
+                <input type="submit" class="click click-brown" value="Archiver" name="manage_comment">
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="btn-navigate paginate-moderation-comment d-flex jc-center gap-2 my-3">
+    {{ knp_pagination_render(data) }}
+</div>
+{% endif %}
+
+{% if message %}
+<p class="size18 ff-m c2 text-center">{{ message }}</p>
+{% endif %}

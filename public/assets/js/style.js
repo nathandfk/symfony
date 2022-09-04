@@ -40,8 +40,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     let pictures = event.target
                     if (pictures.value != "") {
                         for (var i = 0; i < pictures.files.length; i++) {
-
-                            dom('.img').src=pictures.files[i]
+                            if (dom('.img')) {
+                                dom('.img').src=pictures.files[i]
+                            }
                         }
                         clearInterval()
                     }
@@ -58,6 +59,20 @@ window.addEventListener("DOMContentLoaded", (event) => {
                     targetInner.querySelector('[name=value_location]').value = event.target.dataset.checkedLocation
                     targetInner.querySelector('.location-content').innerHTML = ""
                 }
+            } else if(event.target.classList.contains("open-responsive-menu")){
+                let navbar = event.target.closest('#navbar')
+                    navbar.querySelector(".responsive-menu-cover").classList.remove('d-none')
+                    setTimeout(() => {
+                        navbar.querySelector(".responsive-menu-cover").classList.remove('menu-cover-dismiss')
+                        navbar.querySelector(".responsive-menu").classList.remove('responsive-menu-dismiss')
+                    }, 200);
+            } else if(event.target.classList.contains("close-responsive-menu")){
+                let navbar = event.target.closest('#navbar')
+                    navbar.querySelector(".responsive-menu-cover").classList.add('menu-cover-dismiss')
+                    navbar.querySelector(".responsive-menu").classList.add('responsive-menu-dismiss')
+                    setTimeout(() => {
+                        navbar.querySelector(".responsive-menu-cover").classList.add('d-none')
+                    }, 500);
             }
         }
     })
@@ -81,33 +96,16 @@ window.addEventListener("DOMContentLoaded", (event) => {
         }
     })
     }
-    // dom('html, body').addEventListener("keyup", event => {
-    //     if (event.target.className == "seach-location") {
-    //         let element = event.target
-    //         let targetInner = event.target.closest('.location-inner')
-    //         if (element.value.length >= 3){
-    //             fetch(element.dataset.link, {headers: {
-    //                 'Accept': 'application/json', 'Content-Type': 'application/json; charset=UTF-8'
-    //                 }, method: 'POST', body: JSON.stringify({location: element.value}) })
-    //             .then(data => data.text())
-    //             .then(response => {
-    //                 if (response != "" && response != " ") {
-    //                     targetInner.querySelector('.location-content').innerHTML = response
-    //                 } else {
-    //                     targetInner.querySelector('.location-content').innerHTML = ""
-    //                 }
-    //             })
-    //         } else {
-    //             targetInner.querySelector('.location-content').innerHTML = ""
-    //         }
-    //     }
-    // })
+
     if (dom('.alert')) {
         setTimeout(() => {
-            dom('.alert').classList.add('alert-dismiss')
+            dom('.alert').classList.add('alert-not-dismiss')
             setTimeout(() => {
-                dom('.alert').remove()
-            }, 500);
-        }, 6000);
+                dom('.alert').classList.remove('alert-not-dismiss')
+                setTimeout(() => {
+                    dom('.alert').remove()
+                }, 500);
+            }, 7000);
+        }, 300);
     }
 })

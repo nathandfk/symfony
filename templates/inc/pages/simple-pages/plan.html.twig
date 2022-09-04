@@ -1,0 +1,37 @@
+{% include 'inc/parts/head.html.twig' %}
+{% include 'inc/parts/nav.html.twig' %}
+
+<div class="atypikhouse-container">
+    <div class="page-title my-3">
+        <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+    </div>
+    <ul class="my-3">
+        <ol><a href="{{ path('app_index') }}">Accueil</a></ol>
+        <ol><a href="{{ path('app_habitations') }}">Habitations</a></ol>
+        <ol><a href="{{ path('host') }}">Mode hôte</a></ol>
+        <ol><a href="{{ path('contact') }}">Contact</a></ol>
+        <ol><a href="{{ path('login') }}">Connexion</a></ol>
+        <ol><a href="{{ path('register') }}">Inscription</a></ol>
+
+        {% if app.user %}
+        <ol><a href="{{ path('dashboard') }}">Mon compte</a></ol>
+        <ol><a href="{{ path('dwelolng_favorite') }}">Favoris</a></ol>
+        <ol><a href="{{ path('payment') }}">Paiement</a></ol>
+        <ol><a href="{{ path('message') }}">Messages</a></ol>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
+        <ol><a href="{{ path('moderation') }}">Commentaires</a></ol>
+        {% endif %}
+        <ol><a href="{{ path('historical') }}">Historique</a></ol>
+        {% endif %}
+
+        <ol><a href="{{ path('about') }}">A propos</a></ol>
+        <ol><a href="{{ path('plandusite') }}">Plan du site</a></ol>
+        <ol><a href="{{ path('legalnotice') }}">Mentions légales</a></ol>
+        <ol><a href="{{ path('cgv') }}">CGV</a></ol>
+        <ol><a href="{{ path('cgu') }}">CGU</a></ol>
+        <ol><a href="{{ path('faq') }}">FAQ</a></ol>
+    </ul>
+</div>
+
+
+{% include 'inc/parts/footer.html.twig' %}

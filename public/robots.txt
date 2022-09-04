@@ -1,0 +1,11 @@
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Googlebot
+User-agent: AdsBot-Google
+Disallow: /
+
+User-agent: *
+Disallow: /
+
+Sitemap: https://f2i-dev14-nd-hh-mr.nathandfk.fr/sitemap.xml

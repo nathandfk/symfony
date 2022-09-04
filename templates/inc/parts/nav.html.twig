@@ -1,32 +1,67 @@
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" role="navigation">
     <div class="atypikhouse-navbar-wrapper atypikhouse-container">
         <div class="atypikhouse-navbar-display"> 
             <div class="atypikhouse-logo">
-                <a href="{{ path('app_index') }}"><img src="{{ ath_link }}/assets/pictures/logo-ath4.png"></a>
+                <a href="{{ path('app_index') }}">
+                <img src="{{ ath_link }}/assets/pictures/logo-ath4.png"
+                 srcset="{{ ath_link }}/assets/pictures/logo-ath4.png" alt="Logo de la société AtypikHouse">
+                </a>
             </div>
             <ul class="atypikhouse-menu">
                 <li><a href="{{ path('app_habitations') }}">Habitations</a></li>
                 <li><a href="{{ path('host') }}">Mode hôte</a></li>
                 <li><a href="{{ path('contact') }}">Contact</a></li>
-                <li><a class="fas fa-search size18 popup-open-search" href="javascript:void(0);"></a></li>
+                <li><span class="fas fa-search size18 popup-open-search cp"></span></li>
             </ul>
             <div class="atypikhouse-account">
                 <ul class="atypikhouse-account-menu" id="atypikhouse-account-menu">
-                    <a href="" class="navbar-account"><div class="navbar-user-rounded"><span class="fas fa-user"></span></div> <span>{% if app.user %}{{ app.user.firstName }} {{ app.user.lastName }}{% else %}Mon compte{% endif %}</span></a>
-                    <ul class="atypikhouse-account-submenu">
-                        {% if app.user %}
-                        <li><a href="{{ path('dashboard') }}">Mon compte</a></li>
-                        <li><a href="{{ path('payment') }}">Paiement</a></li>
-                        <li><a href="{{ path('message') }}">Messages</a></li>
-                        <li><a href="{{ path('historical') }}">Historique</a></li>
-                        <li class="click-brown"><a href="{{ path('app_logout') }}">Déconnexion</a></li>
-                        {% else %}
-                        <li><a href="{{ path('login') }}">Connexion</a></li>
-                        <li><a href="{{ path('register') }}">Inscription</a></li>
-                        {% endif %}
-                    </ul>
+                    {% if app.user %}
+                    <li><a href="{{ path('dashboard') }}" class="navbar-account"><div class="navbar-user-rounded"><span class="fas fa-user"></span></div> <span>{% set firstname = app.user.firstName|split(' ') %}{{ firstname[0] }} {% set lastname = app.user.lastName|split(' ') %}{{ lastname[0] }}</span></a></li>
+                    {% else %}
+                    <li><a href="{{ path('login') }}" class="navbar-account"><div class="navbar-user-rounded"><span class="fas fa-user"></span></div> <span>Mon compte</span></a></li>
+                    {% endif %}
+                    <li class="atypikhouse-account-submenu">
+                        <ul class="atypikhouse-submenu">
+                            {% if app.user %}
+                            <li><a href="{{ path('dashboard') }}">Mon compte</a></li>
+                            <li><a href="{{ path('dwelling_favorite') }}">Favoris</a></li>
+                            <li><a href="{{ path('payment') }}">Paiement</a></li>
+                            <li><a href="{{ path('message') }}">Messages</a></li>
+                            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
+                            <li><a href="{{ path('moderation') }}">Commentaires</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('historical') }}">Historique</a></li>
+                            <li class="click-brown"><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                            {% else %}
+                            <li><a href="{{ path('login') }}">Connexion</a></li>
+                            <li><a href="{{ path('register') }}">Inscription</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
                 </ul>
+                <div class="fas fa-bars size24 click click-c5 open-responsive-menu"></div>
             </div>
         </div>
+    </div>
+    <div class="responsive-menu-cover close-responsive-menu menu-cover-dismiss d-none"></div>
+    <div class="responsive-menu responsive-menu-dismiss">
+        <div class="fas fa-times size24 click click-c5 close-responsive-menu btn-close-menu"></div>
+        <ul>
+            <li><a href="{{ path('app_habitations') }}">Habitations</a></li>
+            <li><a href="{{ path('host') }}">Mode hôte</a></li>
+            <li><a href="{{ path('contact') }}">Contact</a></li>
+            <li><a class="fas fa-search size18 popup-open-search" href="javascript:void(0);"></a></li>
+            {% if app.user %}
+            <li><a href="{{ path('dwelling_favorite') }}">Favoris</a></li>
+            <li><a href="{{ path('payment') }}">Paiement</a></li>
+            <li><a href="{{ path('message') }}">Messages</a></li>
+            <li><a href="{{ path('historical') }}">Historique</a></li>
+            <li><a href="{{ path('dashboard') }}">Mon compte</a></li>
+            <li class="click-brown"><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+            {% else %}
+            <li><a href="{{ path('login') }}">Connexion</a></li>
+            <li><a href="{{ path('register') }}">Inscription</a></li>
+            {% endif %}
+        </ul>
     </div>
 </nav>

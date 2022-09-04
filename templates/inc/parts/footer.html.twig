@@ -1,4 +1,4 @@
-    <footer class="footer bg-c5 py-3" id="footer">
+    <footer class="footer bg-c5 py-3" id="footer" role="contentinfo">
         <div class="atypikhouse-container">
             <div class="footer-line-1">
                 <div class="d-grid grid-lg-4 grid-md-4 grid-sm-4">
@@ -6,13 +6,13 @@
                         <p><i class="fas fa-credit-card"></i> Paiement sécurisé</p>
                         <p><i class="fas fa-clock"></i> Réservation 24H/24 - 7J/7</p>
                         <p><i class="fas fa-headset"></i> Service client</p>
-                        <p><i class="fas fa-credit-card"></i> Traveller’s Choice 2022</p>
+                        <p>Traveller’s Choice 2022</p>
                         <div class="w-7r">
                             <img src="{{ ath_link }}/assets/pictures/logo-ath1.png" alt="AtypikHouse Logo">
                         </div>
                     </div>
                     <div>
-                        <h4 class="ff-m">Membres</h4>
+                        <h2 class="ff-m">Membres</h2>
                         {% if not app.user %}
                         <p><a href="{{ path('register') }}">S'inscrire</a></p>
                         <p><a href="{{ path('register') }}">Mode hôte</a></p>
@@ -21,17 +21,16 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h4 class="ff-m">Assistance</h4>
+                        <h2 class="ff-m">Assistance</h2>
                         <p><a href="{{ path('contact') }}">Contact</a></p>
-                        <p><a href="">Annuler une réservation</a></p>
-                        <p><a href="javascript:void(0);" data-popup = 'covid'>Nos mésures face au Covid-19</a></p>
+                        <p><a href="{{ path('historical') }}">Annuler une réservation</a></p>
                         <p><a href="{{ path('contact', {'object': 'problème'}) }}">Signaler un problème</a></p>
                     </div>
                     <div>
-                        <h4 class="ff-m">Autres</h4>
-                        <p><a href="">A propos</a></p>
-                        <p><a href="">Actualité</a></p>
-                        <p><a href="">Réservation</a></p>
+                        <h2 class="ff-m">Autres</h2>
+                        <p><a href="{{ path('about') }}">A propos</a></p>
+                        <p><a href="{{ path('app_habitations') }}">Réservation</a></p>
+                        <p><a href="{{ path('plandusite') }}">Plan du site</a></p>
                     </div>
                 </div>
             </div>
@@ -42,8 +41,11 @@
                     <i class="fab fa-cc-mastercard size28"></i>
                 </div>
                 <hr class="my-3">
-                <div class="d-flex jc-space-between">
-                    <div>© 2022 AtypikHouse</div>
+                <div class="d-flex jc-space-between subfooter">
+                    <div>© 2022 AtypikHouse
+                    <div>Projet étudiant fictif pour lequel aucun réel achat</div>
+                    <div>ou aucune réservation ne pourrait être effectué.</div>
+                    </div>
                     <div class="d-flex gap-1">
                         <a href="{{ path('legalnotice') }}">Mentions légales</a>
                         <a href="{{ path('cgv') }}">CGV</a>
@@ -51,14 +53,26 @@
                         <a href="{{ path('faq') }}">FAQ</a>
                     </div>
                     <div class="d-flex gap-1">
-                        <a href=""><i class="fab fa-facebook-f size22"></i></a>
-                        <a href=""><i class="fab fa-tiktok size22"></i></a>
-                        <a href=""><i class="fab fa-instagram size22"></i></a>
+                        <a href="https://www.facebook.com/atypikhousef2i" class="d-flex flex-dir-col gap-1 ai-center"><i class="fab fa-facebook-f size22"></i> Facebook</a>
+                        <a href="https://www.tiktok.com/@atypikhousef2i" class="d-flex flex-dir-col gap-1 ai-center"><i class="fab fa-tiktok size22"></i> TikTok</a>
+                        <a href="https://www.instagram.com/atypikhousef2i" class="d-flex flex-dir-col gap-1 ai-center"><i class="fab fa-instagram size22"></i> Instagram</a>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
     <div class="append-script"></div>
+    <script>
+        window.axeptioSettings = {
+        clientId: "62e8bfa7c231db01ef05ff90",
+        cookiesVersion: "projet final-fr",
+        };
+        
+        (function(d, s) {
+        var t = d.getElementsByTagName(s)[0], e = d.createElement(s);
+        e.async = true; e.src = "//static.axept.io/sdk.js";
+        t.parentNode.insertBefore(e, t);
+        })(document, "script");
+    </script>
     </body>
 </html>

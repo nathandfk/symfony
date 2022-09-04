@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FunctionsRepository::class)]
-#[ApiResource]
 class Functions
 {
     #[ORM\Id]

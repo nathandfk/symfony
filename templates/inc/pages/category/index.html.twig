@@ -4,8 +4,6 @@
 {% if carousel == true %}
 {% include 'inc/parts/carousel.html.twig' %}
 {% endif %}
-{% include 'inc/modules/search/popupsearch.html.twig' %}
-
 
 <div class="atypikhouse-container my-3">
     <div class="main-page">
@@ -14,24 +12,62 @@
             {% include 'inc/modules/search/search.html.twig' %}
 
             </div> 
+            {% if (dataDwellings and min and max and value) %}
+            <div class="w-10r my-4 filter-wrapper">
+                <div class="my-2">
+                    <div class="cp w-max-content text-link-success" id="open_filter"><i class="fas fa-filter"></i> Filtre</div>
+                    <div class="card card-dismiss d-none">
+                        <div class="d-flex jc-space-between">
+                            <h3>Filtre</h3> <span class="fas fa-times size24" id="close_filter"></span>
+                        </div>
+                        <div>
+                            
+                            <div>
+                                <label>Ordre</label>
+                                <select name="order">
+                                    <option value="toc" {% if app.request.query.get("type") == 'toc' %}selected="selected"{% endif %}>Classé les titres par ordre croissant</option>
+                                    <option value="tod" {% if app.request.query.get("type") == 'tod' %}selected="selected"{% endif %}>Classé les titres par ordre décroissant</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Type</label>
+                                <select name="type">
+                                    <option value="">Choisir le type</option>
+                                    {% for type in types %}
+                                    <option value="{{ type.id }}" {% if app.request.query.get("type") == type.id %}selected="selected"{% endif %}>{{ type.description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <input type="submit" value="Appliquer" id="filter_apply" class="click click-success ml-auto">
+                    </div>
+                </div>
+                <div class="filter_range">
+                    <label>{{ value }}</label>
+                    <input type="range" id="price_range" name="price_range" data-link="{{ path('app_habitations') }}"
+                    min="{{ min }}" max="{{ max }}" value="{{ value }}" step="1">
+                </div>
+            </div>
+            {% endif %}
             <div class="page-title my-2">
                 <h1 class="text-uppercase c1 size22 ff-r">{{ title }}</h1>
             </div>
             <div class="grid-lg-4 dwelling-items">
                 {% for dwellings in dataDwellings %}
-                {% set productUrl = dwellings[0].title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
+                {% set productUrl = dwellings[0].title | replace({'%20':'-', ' ':'-', '%c3%a9':'e', '%27':'', 'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u'}) %}
                     <a href="{{ path('app_habitation', {'slug': productUrl, 'id': dwellings[0].id}) | lower }}" class="dwelling-item">
                         <div class="dwelling-item-picture border-radius-form">
                             {% set pictures = dwellings[0].pictures|replace({'"':'', '[':'', ']':''})|split(',') %}
-                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"/>
+                            <img src="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}"
+                             srcset="{{ ath_link }}/uploads/dwellings/{{ pictures[0] }}" alt="Atypikhouse, {{ dwellings[0].title }}"/>
                         </div>
                         
                         <div class="dwelling-item-info">
                             <div class="my-1"><i class="fas fa-star c1 size18"></i> {{ dwellings[5] }} ( {{ dwellings[3].count }} {% if dwellings[3].count > 1 %} Commentaires {% else %} Commentaire {% endif %})</div>
                             <div>A partir de <span class="c1 ff-m size24">{{ dwellings[0].price }}€</span></div>
                             <div>{{ dwellings[0].title }}</div>
-                            <div>{{ dwellings[2].real_name }} ({{ dwellings[2].code }}) - {{ dwellings[2].nom }}</div>
-                            <div class="c1 ff-m size22">{{ dwellings[2].name_fr }}</div>
+                            <div>{{ dwellings[0].city }}, {{ dwellings[0].state }}</div>
+                            <div class="c1 ff-m size22">{{ dwellings[2] }}</div>
                         </div>
                     </a>
                 {% endfor %}

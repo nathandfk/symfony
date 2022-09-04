@@ -1,10 +1,19 @@
 {% include 'inc/parts/head.html.twig' %}
 {% include 'inc/parts/nav.html.twig' %}
+
 <div class="atypikhouse-container">
+{% if title %}
+<div class="page-title my-3">
+    <h1 class="text-uppercase c1 size20 ff-r">{{ title }}</h1>
+</div>
+{% endif %}
 <div class="dashboard-wrapper my-4">
     <div class="navigation-link d-flex gap-1">
         <a data-checked="profil" class="click click-success">Mon profil</a>
+        <a data-checked="signal" class="click click-c5">Habitations signalés</a>
+        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
         <a data-checked="users" class="click click-c5">Utilisateurs</a>
+        {% endif %}
         <a data-checked="settings" class="click click-c5">Paramètres</a>
     </div>
     <div data-selected="profil" class="form-style">
@@ -18,12 +27,12 @@
             <div class="form-row">
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.firstName) }}
-                    {{ form_widget(form.firstName, {'value': userdata.first_name}) }}
+                    {{ form_widget(form.firstName, {'value': userdata.firstName}) }}
                     {{ form_errors(form.firstName) }}
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.lastName) }}
-                    {{ form_widget(form.lastName, {'value': userdata.last_name}) }}
+                    {{ form_widget(form.lastName, {'value': userdata.lastName}) }}
                     {{ form_errors(form.lastName) }}
                 </div>
             </div>
@@ -35,8 +44,10 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.birthday) }}
-                    {{ form_widget(form.birthday, {value: "now"|date("dd-MM-yyyy")}) }}
+                    
+                    {{ form_widget(form.birthday, {values: '2022'}) }}
                     {{ form_errors(form.birthday) }}
+                    {{ form_help(form.birthday) }}
                 </div>
             </div>
             <div class="form-row">
@@ -46,7 +57,7 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.phoneNumber) }}
-                    {{ form_widget(form.phoneNumber, {'value': userdata.phone_number}) }}
+                    {{ form_widget(form.phoneNumber, {'value': userdata.phoneNumber}) }}
                     {{ form_errors(form.phoneNumber) }}
                 </div>
             </div>
@@ -58,7 +69,7 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.complAddress) }}
-                    {{ form_widget(form.complAddress, {'value': userdata.compl_address}) }}
+                    {{ form_widget(form.complAddress, {'value': userdata.complAddress}) }}
                     {{ form_errors(form.complAddress) }}
                 </div>
             </div>
@@ -70,7 +81,7 @@
                 </div>
                 <div class="form-group bloc-lg-6">
                     {{ form_label(form.country) }}
-                    {{ form_widget(form.country, {'value': userdata.country}) }}
+                    {{ form_widget(form.country, {'value': userdata.country.id}) }}
                     {{ form_errors(form.country) }}
                 </div>
             </div>
@@ -96,33 +107,45 @@
         </div>  
         {{ form_end(form) }}
     </div>
+    {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
     <div data-selected="users" class="d-none">
         <h3>Utilisateurs du site</h3>
-        <input type="text" name="" placeholder="Recherche l'utilisateur">
-        <table id="historical-table" class="text-center ath-table-form">
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Rôles</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>DIAFOUKA</td>
-                    <td>Nathan</td>
-                    <td>En cours de traitement</td>
-                    <td class="d-flex gap-1">
-                        <input type="submit" class="click click-brown" value="Supprimer" name="btn-valid">
-                        <input type="submit" class="click click-success" value="Détails" name="btn-valid">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <input type="text" id="search-users" data-link="{{ path('admin_users_list') }}" placeholder="Recherche l'utilisateur">
+        <div class="users-list"></div>
     </div>
+    {% endif %}
     <div data-selected="settings" class="d-none">
-        <h3>Paramètres</h3>
+        {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR')) %}
+        <div class="my-2">
+            <h3>Recherche</h3>
+            <input type="text" id="settings-search" placeholder="Rechercher un équipement ou un type">
+            <div class="settings-result"></div>
+        </div>
+        <div class="my-4">
+            <h3>Paramètres</h3>
+            <form id="settings-wrapper" method="POST" action="{{ path('account_settings') }}" enctype="multipart/form-data">
+            </form>
+        </div>
+        {% endif %}
+        <div id='delete-account' class="my-2">
+            <div class="card card-dismiss d-none text-center">
+                <h3>Attention !</h3>
+                <p>En supprimant votre compte, vous serez déconnecté du site 
+                et ne pourrez pas créer un nouveau compte avec une même adresse email pendant un certain moment.</p>
+                <p>Nous retirons immédiatement tout élément reliant à votre compte dès lors où vous acceptez de supprimer votre compte. 
+                Vos données seront définitivement supprimé de notre site sous une période de 2 ans.</p>
+                <h3>Voulez-vous vraiment supprimer votre compte ?</h3>
+                <div class="d-flex gap-1 w-max-content m-auto">
+                    <input type="submit" value="Non" id='btn-delete-cancel' class="click click-success">
+                    <input type="submit" value="Oui" id='btn-delete-confirm' class="click click-brown">
+                </div>
+            </div>
+            <input type="submit" value="Supprimer mon compte" id='btn-delete-account' class="click click-brown">
+        </div>
+    </div>
+
+    <div data-selected="signal" class="d-none">
+        <div class="settings-signal-historical"></div>
     </div>
 </div>
 </div>
