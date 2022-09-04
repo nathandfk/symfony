@@ -15,7 +15,6 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use Error;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

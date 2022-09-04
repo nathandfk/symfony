@@ -63,7 +63,7 @@
             <script src="{{ ath_link }}/assets/js/checkout.js" defer></script>
             {% endif %}
 
-            {% if (app.request.get('_route') == 'contact') or (app.request.get('_route') == 'register') or (app.request.get('_route') == 'login') %}
+            {% if (app.request.get('_route') == 'contact') or (app.request.get('_route') == 'register') or (app.request.get('_route') == 'login') or (app.request.get('_route') == 'app_habitation') or (app.request.get('_route') == 'app_index') %}
             <script src="https://www.google.com/recaptcha/api.js?render=6LdtFc4hAAAAAFLGPW3c2NPEaWhaClpjyhMVyyuO"></script>
             {% endif %}
         {% endblock %}

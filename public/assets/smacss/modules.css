@@ -197,6 +197,7 @@
     border-radius: 10px;
     position: absolute;
     z-index: 50;
+    top: 3.1rem;
     background: var(--c4);
     width: calc(320px * 2);
 }

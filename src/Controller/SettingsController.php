@@ -493,6 +493,27 @@ class SettingsController extends AbstractController
                         $findPost->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));
                         $em->persist($findPost);
                         $em->flush();
+                        
+                        // Insertion du type et de l'équipement
+                        if ($findPost->getType() == "TYPE") {
+                            $notif = new Posts();
+                            $notif->setUser($user);
+                            $notif->setType("NOTIFICATION");
+                            $notif->setTitle("AtypikHouse : Type d'habitation");
+                            $notif->setAbstract("Une modification a été appliquée sur les types d'habitations");
+                            $notif->setDescription("");
+                            $em->persist($notif);
+                            $em->flush();
+                        } else if ($findPost->getType() == "EQUIPMENT"){
+                            $notif = new Posts();
+                            $notif->setUser($user);
+                            $notif->setType("NOTIFICATION");
+                            $notif->setTitle("AtypikHouse : Équipement");
+                            $notif->setAbstract("Une modification a été appliquée sur les équipements");
+                            $notif->setDescription("");
+                            $em->persist($notif);
+                            $em->flush();
+                        }
 
                         // Informons nos hôtes que des mises à jour ont été faite
                         $userRep = $doctrine->getRepository(Users::class);
